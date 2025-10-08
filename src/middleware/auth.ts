@@ -1,0 +1,45 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
+import { getUserRole } from "~/lib/user-roles";
+
+export async function withAuth(
+  request: NextRequest,
+  requiredPermissions: string[] = [],
+  allowedRoles: string[] = []
+) {
+  const token = await getToken({ req: request });
+
+  if (!token) {
+    return NextResponse.redirect(new URL("/auth", request.url));
+  }
+
+  // Get user role data
+  const roleData = await getUserRole(token.sub!);
+
+  // Check if user has required role
+  if (allowedRoles.length > 0 && roleData.role && !allowedRoles.includes(roleData.role)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // Check if user has required permissions
+  if (requiredPermissions.length > 0) {
+    const hasAllPermissions = requiredPermissions.every(permission =>
+      roleData.permissions.includes(permission)
+    );
+
+    if (!hasAllPermissions) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export function createAuthMiddleware(
+  requiredPermissions: string[] = [],
+  allowedRoles: string[] = []
+) {
+  return async (request: NextRequest) => {
+    return withAuth(request, requiredPermissions, allowedRoles);
+  };
+}
