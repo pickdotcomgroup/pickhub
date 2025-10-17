@@ -4,7 +4,7 @@ export type UserRole = "client" | "talent" | "agency" | null;
 
 export interface UserRoleData {
   role: UserRole;
-  profile: any;
+  profile: unknown;
   permissions: string[];
 }
 

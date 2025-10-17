@@ -39,7 +39,6 @@ export default function TalentFolderPage() {
   const canApplyToProjects = hasPermission(session.user.permissions, "apply_to_projects");
   const canCreatePortfolio = hasPermission(session.user.permissions, "create_portfolio");
   const canReceivePayments = hasPermission(session.user.permissions, "receive_payments");
-  const canViewProjectDetails = hasPermission(session.user.permissions, "view_project_details");
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-green-900 to-slate-900">

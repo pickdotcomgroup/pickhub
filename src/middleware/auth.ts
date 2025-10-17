@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getUserRole } from "~/lib/user-roles";
 

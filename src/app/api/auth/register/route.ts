@@ -1,15 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "~/server/db";
 
+interface ClientProfileData {
+  professionalType: "client";
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  industry: string;
+  companySize?: string;
+}
+
+interface TalentProfileData {
+  professionalType: "talent";
+  firstName: string;
+  lastName: string;
+  title: string;
+  skills: string[];
+  experience: string;
+  hourlyRate?: string;
+  portfolio?: string;
+}
+
+interface AgencyProfileData {
+  professionalType: "agency";
+  firstName: string;
+  lastName: string;
+  agencyName: string;
+  description: string;
+  teamSize?: string;
+  skills: string[];
+}
+
+interface RequestBody {
+  email: string;
+  password: string;
+  name: string;
+  professionalData?: ClientProfileData | TalentProfileData | AgencyProfileData;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as RequestBody;
     const { email, password, name, professionalData } = body;
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
-      where: { email },
+      where: { email: email },
     });
 
     if (existingUser) {
@@ -25,9 +62,9 @@ export async function POST(request: NextRequest) {
     // Create user
     const user = await db.user.create({
       data: {
-        email,
+        email: email,
         password: hashedPassword,
-        name,
+        name: name,
       },
     });
 
@@ -36,30 +73,51 @@ export async function POST(request: NextRequest) {
       const { professionalType, ...profileData } = professionalData;
 
       switch (professionalType) {
-        case "client":
+        case "client": {
+          const clientData = profileData as Omit<ClientProfileData, "professionalType">;
           await db.clientProfile.create({
             data: {
               userId: user.id,
-              ...profileData,
+              firstName: clientData.firstName,
+              lastName: clientData.lastName,
+              companyName: clientData.companyName,
+              industry: clientData.industry,
+              companySize: clientData.companySize,
             },
           });
           break;
-        case "talent":
+        }
+        case "talent": {
+          const talentData = profileData as Omit<TalentProfileData, "professionalType">;
           await db.talentProfile.create({
             data: {
               userId: user.id,
-              ...profileData,
+              firstName: talentData.firstName,
+              lastName: talentData.lastName,
+              title: talentData.title,
+              skills: talentData.skills,
+              experience: talentData.experience,
+              hourlyRate: talentData.hourlyRate,
+              portfolio: talentData.portfolio,
             },
           });
           break;
-        case "agency":
+        }
+        case "agency": {
+          const agencyData = profileData as Omit<AgencyProfileData, "professionalType">;
           await db.agencyProfile.create({
             data: {
               userId: user.id,
-              ...profileData,
+              firstName: agencyData.firstName,
+              lastName: agencyData.lastName,
+              agencyName: agencyData.agencyName,
+              description: agencyData.description,
+              teamSize: agencyData.teamSize,
+              skills: agencyData.skills,
             },
           });
           break;
+        }
       }
     }
 

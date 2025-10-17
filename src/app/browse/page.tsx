@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Header from "../_components/header";
+import Footer from "../_components/footer";
 
-type BrowseCategory = "projects" | "talents" | "agencies";
+type BrowseCategory = "clients" | "talents" | "agencies";
 
 interface Project {
   id: string;
@@ -49,10 +51,12 @@ interface Agency {
 }
 
 export default function BrowsePage() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data: session } = useSession();
-  const [activeCategory, setActiveCategory] = useState<BrowseCategory>("projects");
+  const [activeCategory, setActiveCategory] = useState<BrowseCategory>("clients");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [showJoinModal, setShowJoinModal] = useState(false);
 
   const skillOptions = [
     "React", "Next.js", "TypeScript", "JavaScript", "Python", "Node.js",
@@ -69,7 +73,7 @@ export default function BrowsePage() {
       description: "Looking for a skilled developer to build a modern e-commerce platform with React and Node.js. Must have experience with payment integration and responsive design.",
       budget: "$5,000 - $10,000",
       skills: ["React", "Node.js", "TypeScript", "E-commerce"],
-      client: "TechStart Inc.",
+      client: "Jhon doe",
       postedDate: "2 days ago",
       category: "Web Development"
     },
@@ -128,7 +132,36 @@ export default function BrowsePage() {
     }
   ];
 
-  const mockClients: Client[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const mockClients: Client[] = [
+    {
+      id: "1",
+      name: "TechStart Inc.",
+      company: "TechStart Inc.",
+      projectsPosted: 12,
+      totalSpent: "$45,000",
+      rating: 4.8,
+      industry: "E-commerce"
+    },
+    {
+      id: "2",
+      name: "FitLife Solutions",
+      company: "FitLife Solutions",
+      projectsPosted: 8,
+      totalSpent: "$28,000",
+      rating: 4.9,
+      industry: "Health & Fitness"
+    },
+    {
+      id: "3",
+      name: "DataCorp Analytics",
+      company: "DataCorp Analytics",
+      projectsPosted: 15,
+      totalSpent: "$120,000",
+      rating: 4.7,
+      industry: "Data Science"
+    }
+  ];
 
   const mockAgencies: Agency[] = [
     {
@@ -168,11 +201,11 @@ export default function BrowsePage() {
     );
   };
 
-  const filteredData = () => {
-    let data: any[] = [];
+  const filteredData = (): (Project | Talent | Agency)[] => {
+    let data: (Project | Talent | Agency)[] = [];
     
     switch (activeCategory) {
-      case "projects":
+      case "clients":
         data = mockProjects;
         break;
       case "talents":
@@ -186,22 +219,29 @@ export default function BrowsePage() {
     // Filter by search query
     if (searchQuery) {
       data = data.filter(item => {
-        const searchFields = activeCategory === "projects" 
-          ? [item.title, item.description, item.client]
-          : activeCategory === "talents"
-          ? [item.name, item.title]
-          : [item.name, item.description];
-        
-        return searchFields.some(field => 
-          field.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        if (activeCategory === "clients") {
+          const project = item as Project;
+          return [project.title, project.description, project.client].some(field => 
+            field.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        } else if (activeCategory === "talents") {
+          const talent = item as Talent;
+          return [talent.name, talent.title].some(field => 
+            field.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        } else {
+          const agency = item as Agency;
+          return [agency.name, agency.description].some(field => 
+            field.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
       });
     }
 
     // Filter by selected skills
     if (selectedSkills.length > 0) {
       data = data.filter(item => {
-        const itemSkills = item.skills || [];
+        const itemSkills = item.skills ?? [];
         return selectedSkills.some(skill => itemSkills.includes(skill));
       });
     }
@@ -209,17 +249,9 @@ export default function BrowsePage() {
     return data;
   };
 
-  const handlePick = (category: string, item: any) => {
-    // Handle pick action - could redirect to auth if not logged in, or show a modal
-    if (!session?.user) {
-      // Redirect to auth page if not logged in
-      window.location.href = '/auth';
-    } else {
-      // Handle pick action for authenticated users
-      console.log(`Picked ${category}:`, item);
-      // You could show a modal, redirect to a detailed page, or add to favorites
-      alert(`You picked: ${item.title || item.name}`);
-    }
+  const handlePick = (_category: string, _item: Project | Talent | Agency) => {
+    // Show join modal when pick button is clicked
+    setShowJoinModal(true);
   };
 
   const renderStars = (rating: number) => {
@@ -232,41 +264,120 @@ export default function BrowsePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Header */}
-      <header className="border-b border-white/10 bg-black/20 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/onboarding" className="text-2xl font-bold text-white">
-              <span className="text-purple-400">Pick</span>Hub
-            </Link>
-            <div className="flex items-center space-x-4">
-              {session?.user ? (
+      <Header />
+
+      {/* Join Modal */}
+      {showJoinModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-white">Join PickHub</h2>
+              <button
+                onClick={() => setShowJoinModal(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <p className="text-xl text-gray-300 text-center mb-8">
+              Choose your professional path to get started
+            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {/* Client Professional Signup */}
+              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
+                <div className="text-center mb-4">
+                  <div className="text-4xl mb-3">🏢</div>
+                  <h3 className="text-xl font-bold text-white mb-2">Join as Client</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Post projects and hire top talent for your business needs
+                  </p>
+                </div>
+                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                  <li>• Post unlimited projects</li>
+                  <li>• Access to verified professionals</li>
+                  <li>• Project management tools</li>
+                  <li>• Secure payment system</li>
+                </ul>
                 <Link
-                  href="/dashboard"
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                  href="/auth?type=client"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
-                  Dashboard
+                  Sign Up as Client
                 </Link>
-              ) : (
-                <>
-                  <Link
-                    href="/auth"
-                    className="text-gray-300 hover:text-white transition"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/auth"
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
+              </div>
+
+              {/* Talent Professional Signup */}
+              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-green-400/50 transition-all duration-300">
+                <div className="text-center mb-4">
+                  <div className="text-4xl mb-3">👨‍💻</div>
+                  <h3 className="text-xl font-bold text-white mb-2">Join as Talent</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Showcase your skills and find exciting freelance opportunities
+                  </p>
+                </div>
+                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                  <li>• Create professional profile</li>
+                  <li>• Bid on quality projects</li>
+                  <li>• Build your reputation</li>
+                  <li>• Secure payment guarantee</li>
+                </ul>
+                <Link
+                  href="/auth?type=talent"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                >
+                  Sign Up as Talent
+                </Link>
+              </div>
+
+              {/* Agency Professional Signup */}
+              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-400/50 transition-all duration-300">
+                <div className="text-center mb-4">
+                  <div className="text-4xl mb-3">🏛️</div>
+                  <h3 className="text-xl font-bold text-white mb-2">Join as Agency</h3>
+                  <p className="text-gray-300 text-sm mb-4">
+                    Scale your business and manage multiple client relationships
+                  </p>
+                </div>
+                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                  <li>• Team collaboration tools</li>
+                  <li>• Multi-project management</li>
+                  <li>• Client relationship tools</li>
+                  <li>• Advanced analytics</li>
+                </ul>
+                <Link
+                  href="/auth?type=agency"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                >
+                  Sign Up as Agency
+                </Link>
+              </div>
+            </div>
+
+            {/* General CTA */}
+            <div className="text-center border-t border-white/10 pt-8">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Already have an account?
+              </h3>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/auth"
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth"
+                  className="bg-transparent border-2 border-purple-400 hover:bg-purple-400/10 text-purple-400 font-semibold py-3 px-8 rounded-lg transition duration-200"
+                >
+                  General Sign Up
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </header>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Title */}
@@ -283,7 +394,7 @@ export default function BrowsePage() {
         {/* Category Tabs */}
         <div className="flex flex-wrap justify-center mb-8">
           {[
-            { key: "projects", label: "Projects", icon: "💼" },
+            { key: "clients", label: "Clients", icon: "🏢" },
             { key: "talents", label: "Talents", icon: "👨‍💻" },
             { key: "agencies", label: "Agencies", icon: "🏛️" }
           ].map(({ key, label, icon }) => (
@@ -351,58 +462,29 @@ export default function BrowsePage() {
               key={item.id}
               className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-purple-400/50 transition-all duration-300"
             >
-              {activeCategory === "projects" && (
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
-                      <p className="text-gray-300 mb-3">{item.description}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-400">
-                        <span>💰 {item.budget}</span>
-                        <span>🏢 {item.client}</span>
-                        <span>📅 {item.postedDate}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handlePick('project', item)}
-                      className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
-                    >
-                      Pick
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {item.skills.map((skill: string) => (
-                      <span
-                        key={skill}
-                        className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeCategory === "talents" && (
-                <div className="flex items-start space-x-4">
-                  <div className="text-4xl">{item.avatar}</div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-xl font-semibold text-white">{item.name}</h3>
-                        <p className="text-purple-300">{item.title}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {renderStars(item.rating)}
-                          <span className="text-gray-300 text-sm">({item.rating})</span>
+              {activeCategory === "clients" && (() => {
+                const project = item as Project;
+                return (
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
+                        <p className="text-gray-300 mb-3">{project.description}</p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-400">
+                          <span>💰 {project.budget}</span>
+                          <span>🏢 {project.client}</span>
+                          <span>📅 {project.postedDate}</span>
                         </div>
-                        <p className="text-green-400 font-semibold">{item.hourlyRate}</p>
                       </div>
+                      <button
+                        onClick={() => handlePick('project', item)}
+                        className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
+                      >
+                        Pick
+                      </button>
                     </div>
-                    <p className="text-gray-400 text-sm mb-3">{item.experience} experience</p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {item.skills.map((skill: string) => (
+                    <div className="flex flex-wrap gap-2">
+                      {project.skills.map((skill: string) => (
                         <span
                           key={skill}
                           className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
@@ -411,55 +493,92 @@ export default function BrowsePage() {
                         </span>
                       ))}
                     </div>
-                    <div className="flex justify-end">
+                  </div>
+                );
+              })()}
+
+              {activeCategory === "talents" && (() => {
+                const talent = item as Talent;
+                return (
+                  <div className="flex items-start space-x-4">
+                    <div className="text-4xl">{talent.avatar}</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="text-xl font-semibold text-white">{talent.name}</h3>
+                          <p className="text-purple-300">{talent.title}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {renderStars(talent.rating)}
+                            <span className="text-gray-300 text-sm">({talent.rating})</span>
+                          </div>
+                          <p className="text-green-400 font-semibold">{talent.hourlyRate}</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-400 text-sm mb-3">{talent.experience} experience</p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {talent.skills.map((skill: string) => (
+                          <span
+                            key={skill}
+                            className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          onClick={() => handlePick('talent', item)}
+                          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+                        >
+                          Pick
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {activeCategory === "agencies" && (() => {
+                const agency = item as Agency;
+                return (
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-white">{agency.name}</h3>
+                        <p className="text-gray-300 mb-2">{agency.description}</p>
+                        <p className="text-gray-400 text-sm">Team Size: {agency.teamSize}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center space-x-1 mb-1">
+                          {renderStars(agency.rating)}
+                          <span className="text-gray-300 text-sm">({agency.rating})</span>
+                        </div>
+                        <p className="text-gray-400 text-sm">{agency.projectsCompleted} projects completed</p>
+                      </div>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="flex flex-wrap gap-2">
+                        {agency.skills.map((skill: string) => (
+                          <span
+                            key={skill}
+                            className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
                       <button
-                        onClick={() => handlePick('talent', item)}
-                        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+                        onClick={() => handlePick('agency', item)}
+                        className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
                       >
                         Pick
                       </button>
                     </div>
                   </div>
-                </div>
-              )}
-
-
-              {activeCategory === "agencies" && (
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-white">{item.name}</h3>
-                      <p className="text-gray-300 mb-2">{item.description}</p>
-                      <p className="text-gray-400 text-sm">Team Size: {item.teamSize}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center space-x-1 mb-1">
-                        {renderStars(item.rating)}
-                        <span className="text-gray-300 text-sm">({item.rating})</span>
-                      </div>
-                      <p className="text-gray-400 text-sm">{item.projectsCompleted} projects completed</p>
-                    </div>
-                  </div>
-                  <div className="flex items-end justify-between">
-                    <div className="flex flex-wrap gap-2">
-                      {item.skills.map((skill: string) => (
-                        <span
-                          key={skill}
-                          className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => handlePick('agency', item)}
-                      className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
-                    >
-                      Pick
-                    </button>
-                  </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           ))}
         </div>
@@ -471,111 +590,9 @@ export default function BrowsePage() {
             <p className="text-gray-300">Try adjusting your search or filters</p>
           </div>
         )}
-
-        {/* Professional Signup Section */}
-        <div className="mt-16 bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Join as a Professional
-            </h2>
-            <p className="text-xl text-gray-300">
-              Choose your professional path and start building your career on PickHub
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {/* Client Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
-              <div className="text-center mb-4">
-                <div className="text-4xl mb-3">🏢</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Client</h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Post projects and hire top talent for your business needs
-                </p>
-              </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
-                <li>• Post unlimited projects</li>
-                <li>• Access to verified professionals</li>
-                <li>• Project management tools</li>
-                <li>• Secure payment system</li>
-              </ul>
-              <Link
-                href="/auth?type=client"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
-              >
-                Sign Up as Client
-              </Link>
-            </div>
-
-            {/* Talent Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-green-400/50 transition-all duration-300">
-              <div className="text-center mb-4">
-                <div className="text-4xl mb-3">👨‍💻</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Talent</h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Showcase your skills and find exciting freelance opportunities
-                </p>
-              </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
-                <li>• Create professional profile</li>
-                <li>• Bid on quality projects</li>
-                <li>• Build your reputation</li>
-                <li>• Secure payment guarantee</li>
-              </ul>
-              <Link
-                href="/auth?type=talent"
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
-              >
-                Sign Up as Talent
-              </Link>
-            </div>
-
-            {/* Agency Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-400/50 transition-all duration-300">
-              <div className="text-center mb-4">
-                <div className="text-4xl mb-3">🏛️</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Agency</h3>
-                <p className="text-gray-300 text-sm mb-4">
-                  Scale your business and manage multiple client relationships
-                </p>
-              </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
-                <li>• Team collaboration tools</li>
-                <li>• Multi-project management</li>
-                <li>• Client relationship tools</li>
-                <li>• Advanced analytics</li>
-              </ul>
-              <Link
-                href="/auth?type=agency"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
-              >
-                Sign Up as Agency
-              </Link>
-            </div>
-          </div>
-
-          {/* General CTA */}
-          <div className="text-center border-t border-white/10 pt-8">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              Already have an account?
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/auth"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/auth"
-                className="bg-transparent border-2 border-purple-400 hover:bg-purple-400/10 text-purple-400 font-semibold py-3 px-8 rounded-lg transition duration-200"
-              >
-                General Sign Up
-              </Link>
-            </div>
-          </div>
-        </div>
       </div>
+      
+      <Footer />
     </main>
   );
 }

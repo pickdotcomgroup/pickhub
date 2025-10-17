@@ -43,6 +43,7 @@ export default function OnboardingPage() {
       details: ["Real-time messaging", "Video conferencing", "Project discussions", "File attachments"]
     }
   ];
+  
 
   const roles = [
     {
@@ -189,7 +190,7 @@ export default function OnboardingPage() {
                     <div key={index} className="bg-white/5 rounded-lg p-3">
                       <span className="text-sm text-purple-300">{detail}</span>
                     </div>
-                  )) || []}
+                  )) ?? []}
                 </div>
               </div>
             </div>
@@ -217,9 +218,9 @@ export default function OnboardingPage() {
             <h2 className="text-4xl font-bold text-white mb-4">
               Built for everyone
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Whether you're a client, developer, or agency, PickHub has the tools you need
-            </p>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Whether you&apos;re a client, developer, or agency, PickHub has the tools you need
+          </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">

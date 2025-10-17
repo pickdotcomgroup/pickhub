@@ -147,7 +147,7 @@ export default function AgencyFolderPage() {
               <div className="text-3xl mb-4">🎯</div>
               <h3 className="text-xl font-semibold text-white mb-2">Client Acquisition</h3>
               <p className="text-gray-300 mb-4">
-                Find new clients and showcase your agency's capabilities.
+                Find new clients and showcase your agency&apos;s capabilities.
               </p>
               <Link
                 href="/browse?category=projects"
@@ -164,7 +164,7 @@ export default function AgencyFolderPage() {
               <div className="text-3xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-white mb-2">Talent Recruitment</h3>
               <p className="text-gray-300 mb-4">
-                Recruit skilled freelancers to expand your agency's capabilities.
+                Recruit skilled freelancers to expand your agency&apos;s capabilities.
               </p>
               <Link
                 href="/browse?category=talents"

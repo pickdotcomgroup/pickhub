@@ -3,10 +3,10 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { getRoleDisplayName, getRoleColor } from "~/lib/user-roles";
+import { useEffect, Suspense } from "react";
+import { getRoleDisplayName } from "~/lib/user-roles";
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -165,7 +165,7 @@ export default function DashboardPage() {
               href="/browse"
               className="text-purple-400 hover:text-purple-300 underline"
             >
-              Browse the platform first to get a feel for what's available
+              Browse the platform first to get a feel for what&apos;s available
             </Link>
           </div>
         </div>
@@ -216,9 +216,9 @@ export default function DashboardPage() {
           <h2 className="text-4xl font-bold text-white mb-4">
             Welcome to Your Dashboard! 🎉
           </h2>
-          <p className="text-xl text-gray-300">
-            Your onboarding is complete. Here's where your freelance journey begins.
-          </p>
+            <p className="text-xl text-gray-300">
+              Your onboarding is complete. Here&apos;s where your freelance journey begins.
+            </p>
         </div>
 
         {/* Quick Actions Grid */}
@@ -311,7 +311,7 @@ export default function DashboardPage() {
               <div className="text-2xl">✅</div>
               <div>
                 <p className="text-white font-medium">Profile Setup Complete</p>
-                <p className="text-gray-400 text-sm">You've completed the onboarding process</p>
+                <p className="text-gray-400 text-sm">You&apos;ve completed the onboarding process</p>
               </div>
             </div>
           </div>
@@ -341,5 +341,17 @@ export default function DashboardPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-white text-xl">Loading...</div>
+      </main>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }

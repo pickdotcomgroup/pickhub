@@ -49,7 +49,7 @@ export default function ProfileSetupPage() {
       ...prev,
       skills: prev.skills?.includes(skill)
         ? prev.skills.filter(s => s !== skill)
-        : [...(prev.skills || []), skill]
+        : [...(prev.skills ?? []), skill]
     }));
   };
 
@@ -58,7 +58,7 @@ export default function ProfileSetupPage() {
       ...prev,
       projectTypes: prev.projectTypes?.includes(projectType)
         ? prev.projectTypes.filter(p => p !== projectType)
-        : [...(prev.projectTypes || []), projectType]
+        : [...(prev.projectTypes ?? []), projectType]
     }));
   };
 
@@ -123,7 +123,7 @@ export default function ProfileSetupPage() {
           <h1 className="text-4xl font-bold text-white mb-2">
             Complete Your <span className="text-purple-400">PickHub</span> Profile
           </h1>
-          <p className="text-gray-300">Let's set up your profile to get started</p>
+          <p className="text-gray-300">Let&apos;s set up your profile to get started</p>
         </div>
 
         {/* Progress Bar */}
@@ -232,7 +232,7 @@ export default function ProfileSetupPage() {
                   </label>
                   <input
                     type="text"
-                    value={data.companyName || ""}
+                    value={data.companyName ?? ""}
                     onChange={(e) => setData(prev => ({ ...prev, companyName: e.target.value }))}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder={`Enter your ${data.role === "client" ? "company" : "agency"} name`}
@@ -272,7 +272,7 @@ export default function ProfileSetupPage() {
                     Experience Level
                   </label>
                   <select
-                    value={data.experience || ""}
+                    value={data.experience ?? ""}
                     onChange={(e) => setData(prev => ({ ...prev, experience: e.target.value }))}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
@@ -288,7 +288,7 @@ export default function ProfileSetupPage() {
               {(data.role === "client" || data.role === "agency") && (
                 <div>
                   <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Project Types You're Interested In
+                    Project Types You&apos;re Interested In
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                     {projectTypeOptions.map((projectType) => (
@@ -316,7 +316,7 @@ export default function ProfileSetupPage() {
                     Typical Project Budget
                   </label>
                   <select
-                    value={data.budget || ""}
+                    value={data.budget ?? ""}
                     onChange={(e) => setData(prev => ({ ...prev, budget: e.target.value }))}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
@@ -337,7 +337,7 @@ export default function ProfileSetupPage() {
                     Team Size
                   </label>
                   <select
-                    value={data.teamSize || ""}
+                    value={data.teamSize ?? ""}
                     onChange={(e) => setData(prev => ({ ...prev, teamSize: e.target.value }))}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >

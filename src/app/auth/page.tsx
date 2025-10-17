@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -46,9 +46,7 @@ interface ProfessionalFormData {
   description?: string;
 }
 
-interface FormErrors {
-  [key: string]: string;
-}
+type FormErrors = Record<string, string>;
 
 const skillOptions = [
   "React", "Next.js", "TypeScript", "JavaScript", "Python", "Node.js",
@@ -62,7 +60,7 @@ const industries = [
   "Real Estate", "Manufacturing", "Media & Entertainment", "Non-profit", "Other"
 ];
 
-export default function AuthPage() {
+function AuthContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -212,10 +210,10 @@ export default function AuthPage() {
           }),
         });
 
-        const data = await response.json();
+        const data = (await response.json()) as { error?: string };
 
         if (!response.ok) {
-          setErrors({ general: data.error || "Registration failed" });
+          setErrors({ general: data.error ?? "Registration failed" });
           return;
         }
 
@@ -243,10 +241,10 @@ export default function AuthPage() {
           }),
         });
 
-        const data = await response.json();
+        const data = (await response.json()) as { error?: string };
 
         if (!response.ok) {
-          setErrors({ general: data.error || "Registration failed" });
+          setErrors({ general: data.error ?? "Registration failed" });
           return;
         }
 
@@ -272,9 +270,9 @@ export default function AuthPage() {
           setErrors({ general: "Invalid email or password" });
         }
       }
-    } catch (error) {
-      setErrors({ general: "An unexpected error occurred. Please try again." });
-    } finally {
+  } catch {
+    setErrors({ general: "An unexpected error occurred. Please try again." });
+  } finally {
       setIsLoading(false);
     }
   };
@@ -297,7 +295,7 @@ export default function AuthPage() {
       ...prev,
       [fieldName]: prev[fieldName]?.includes(skill)
         ? prev[fieldName].filter(s => s !== skill)
-        : [...(prev[fieldName] || []), skill]
+        : [...(prev[fieldName] ?? []), skill]
     }));
   };
 
@@ -524,7 +522,7 @@ export default function AuthPage() {
                           type="text"
                           id="companyName"
                           name="companyName"
-                          value={professionalFormData.companyName || ""}
+                          value={professionalFormData.companyName ?? ""}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                             errors.companyName ? "border-red-500" : "border-white/20"
@@ -542,7 +540,7 @@ export default function AuthPage() {
                           <select
                             id="industry"
                             name="industry"
-                            value={professionalFormData.industry || ""}
+                            value={professionalFormData.industry ?? ""}
                             onChange={handleInputChange}
                             className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                               errors.industry ? "border-red-500" : "border-white/20"
@@ -565,7 +563,7 @@ export default function AuthPage() {
                           <select
                             id="companySize"
                             name="companySize"
-                            value={professionalFormData.companySize || ""}
+                            value={professionalFormData.companySize ?? ""}
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                           >
@@ -592,7 +590,7 @@ export default function AuthPage() {
                           type="text"
                           id="title"
                           name="title"
-                          value={professionalFormData.title || ""}
+                          value={professionalFormData.title ?? ""}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                             errors.title ? "border-red-500" : "border-white/20"
@@ -633,7 +631,7 @@ export default function AuthPage() {
                           <select
                             id="experience"
                             name="experience"
-                            value={professionalFormData.experience || ""}
+                            value={professionalFormData.experience ?? ""}
                             onChange={handleInputChange}
                             className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                               errors.experience ? "border-red-500" : "border-white/20"
@@ -656,7 +654,7 @@ export default function AuthPage() {
                             type="text"
                             id="hourlyRate"
                             name="hourlyRate"
-                            value={professionalFormData.hourlyRate || ""}
+                            value={professionalFormData.hourlyRate ?? ""}
                             onChange={handleInputChange}
                             className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             placeholder="e.g., $50/hr"
@@ -672,7 +670,7 @@ export default function AuthPage() {
                           type="url"
                           id="portfolio"
                           name="portfolio"
-                          value={professionalFormData.portfolio || ""}
+                          value={professionalFormData.portfolio ?? ""}
                           onChange={handleInputChange}
                           className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                           placeholder="https://your-portfolio.com"
@@ -692,7 +690,7 @@ export default function AuthPage() {
                           type="text"
                           id="agencyName"
                           name="agencyName"
-                          value={professionalFormData.agencyName || ""}
+                          value={professionalFormData.agencyName ?? ""}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                             errors.agencyName ? "border-red-500" : "border-white/20"
@@ -710,7 +708,7 @@ export default function AuthPage() {
                           id="description"
                           name="description"
                           rows={4}
-                          value={professionalFormData.description || ""}
+                          value={professionalFormData.description ?? ""}
                           onChange={handleInputChange}
                           className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                             errors.description ? "border-red-500" : "border-white/20"
@@ -727,7 +725,7 @@ export default function AuthPage() {
                         <select
                           id="teamSize"
                           name="teamSize"
-                          value={professionalFormData.teamSize || ""}
+                          value={professionalFormData.teamSize ?? ""}
                           onChange={handleInputChange}
                           className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         >
@@ -778,7 +776,7 @@ export default function AuthPage() {
                       type="text"
                       id="name"
                       name="name"
-                      value={formData.name}
+                      value={formData.name ?? ""}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
                         errors.name ? "border-red-500" : "border-white/20"
@@ -917,5 +915,17 @@ export default function AuthPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-white text-xl">Loading...</div>
+      </main>
+    }>
+      <AuthContent />
+    </Suspense>
   );
 }

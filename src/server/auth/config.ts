@@ -1,4 +1,3 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -46,7 +45,7 @@ export const authConfig = {
           },
         });
 
-        if (!user || !user.password) {
+        if (!user?.password) {
           return null;
         }
 
