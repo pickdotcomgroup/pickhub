@@ -12,11 +12,22 @@ export default function JoinPage() {
         {/* Page Title */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-white mb-4">
-            Join PickHub
+            Join TechPickHub
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Choose your professional path and start building your career on PickHub
           </p>
+
+          {/* Back to Browse */}
+          <div className="text-center mt-8">
+            <Link
+              href="/browse"
+              className="text-purple-400 hover:text-purple-300 transition"
+            >
+              ← Back to Browse
+            </Link>
+          </div>
+
         </div>
 
         {/* Professional Signup Section */}
@@ -112,16 +123,6 @@ export default function JoinPage() {
               </Link>
             </div>
           </div>
-        </div>
-
-        {/* Back to Browse */}
-        <div className="text-center mt-8">
-          <Link
-            href="/browse"
-            className="text-purple-400 hover:text-purple-300 transition"
-          >
-            ← Back to Browse
-          </Link>
         </div>
       </div>
     </main>

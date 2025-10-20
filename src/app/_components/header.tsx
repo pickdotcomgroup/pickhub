@@ -11,7 +11,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-white">
-            <span className="text-purple-400">Pick</span>Hub
+            <span className="text-purple-400">TechPick</span>Hub
           </Link>
           <div className="flex items-center space-x-4">
             {session?.user ? (

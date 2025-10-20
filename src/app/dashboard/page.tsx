@@ -66,7 +66,7 @@ function DashboardContent() {
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center">
                 <h1 className="text-2xl font-bold text-white">
-                  <span className="text-purple-400">Pick</span>Hub
+                  <span className="text-purple-400">TechPick</span>Hub
                 </h1>
               </div>
               <div className="flex items-center space-x-4">

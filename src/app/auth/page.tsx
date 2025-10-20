@@ -121,8 +121,7 @@ function AuthContent() {
 
       // Professional type specific validation
       if (professionalType === "client") {
-        if (!professionalFormData.companyName?.trim()) newErrors.companyName = "Company name is required";
-        if (!professionalFormData.industry) newErrors.industry = "Industry is required";
+        // No required professional fields for clients - all optional
       } else if (professionalType === "talent") {
         if (!professionalFormData.title?.trim()) newErrors.title = "Professional title is required";
         if (!professionalFormData.skills?.length) newErrors.skills = "At least one skill is required";
@@ -508,79 +507,12 @@ function AuthContent() {
                 </div>
 
                 {/* Professional Information */}
-                <div className="border-t border-white/20 pt-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Professional Information</h3>
-                  
-                  {/* Client Fields */}
-                  {professionalType === "client" && (
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="companyName" className="block text-sm font-medium text-gray-200 mb-1">
-                          Company Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="companyName"
-                          name="companyName"
-                          value={professionalFormData.companyName ?? ""}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                            errors.companyName ? "border-red-500" : "border-white/20"
-                          }`}
-                          placeholder="Enter your company name"
-                        />
-                        {errors.companyName && <p className="mt-1 text-sm text-red-400">{errors.companyName}</p>}
-                      </div>
+                {professionalType !== "client" && (
+                  <div className="border-t border-white/20 pt-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Professional Information</h3>
 
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <label htmlFor="industry" className="block text-sm font-medium text-gray-200 mb-1">
-                            Industry *
-                          </label>
-                          <select
-                            id="industry"
-                            name="industry"
-                            value={professionalFormData.industry ?? ""}
-                            onChange={handleInputChange}
-                            className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                              errors.industry ? "border-red-500" : "border-white/20"
-                            }`}
-                          >
-                            <option value="">Select industry</option>
-                            {industries.map((industry) => (
-                              <option key={industry} value={industry} className="bg-slate-800">
-                                {industry}
-                              </option>
-                            ))}
-                          </select>
-                          {errors.industry && <p className="mt-1 text-sm text-red-400">{errors.industry}</p>}
-                        </div>
-
-                        <div>
-                          <label htmlFor="companySize" className="block text-sm font-medium text-gray-200 mb-1">
-                            Company Size
-                          </label>
-                          <select
-                            id="companySize"
-                            name="companySize"
-                            value={professionalFormData.companySize ?? ""}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          >
-                            <option value="">Select company size</option>
-                            <option value="1-10" className="bg-slate-800">1-10 employees</option>
-                            <option value="11-50" className="bg-slate-800">11-50 employees</option>
-                            <option value="51-200" className="bg-slate-800">51-200 employees</option>
-                            <option value="201-1000" className="bg-slate-800">201-1000 employees</option>
-                            <option value="1000+" className="bg-slate-800">1000+ employees</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Talent Fields */}
-                  {professionalType === "talent" && (
+                    {/* Talent Fields */}
+                    {professionalType === "talent" && (
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="title" className="block text-sm font-medium text-gray-200 mb-1">
@@ -679,8 +611,8 @@ function AuthContent() {
                     </div>
                   )}
 
-                  {/* Agency Fields */}
-                  {professionalType === "agency" && (
+                    {/* Agency Fields */}
+                    {professionalType === "agency" && (
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="agencyName" className="block text-sm font-medium text-gray-200 mb-1">
@@ -760,8 +692,9 @@ function AuthContent() {
                         {errors.agencySkills && <p className="mt-1 text-sm text-red-400">{errors.agencySkills}</p>}
                       </div>
                     </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               // Regular Auth Form

@@ -95,7 +95,7 @@ export default function Home() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
           <h1 className="text-2xl font-bold text-white mb-2">
-            <span className="text-purple-400">Pick</span>Hub
+            <span className="text-purple-400">TechPick</span>Hub
           </h1>
           <p className="text-gray-300">Loading...</p>
         </div>
@@ -116,10 +116,10 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Welcome to <span className="text-purple-400">PickHub</span>
+              Welcome to <span className="text-purple-400">TechPickHub</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              The ultimate web freelance platform with integrated project management. 
+              The ultimate Web freelance platform for IT Development Projects with integrated project management. 
               Connect, collaborate, and create amazing projects together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

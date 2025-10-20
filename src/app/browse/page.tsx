@@ -383,7 +383,7 @@ export default function BrowsePage() {
         {/* Page Title */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-4">
-            Explore IT Opportunities
+            Explore IT Development Opportunities
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Discover projects, talents, clients, and agencies in the IT industry. 

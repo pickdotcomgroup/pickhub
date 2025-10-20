@@ -80,10 +80,10 @@ model ClientProfile {
     userId      String  @unique
     user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     
-    firstName   String
-    lastName    String
-    companyName String
-    industry    String
+    firstName   String?
+    lastName    String?
+    companyName String?
+    industry    String?
     companySize String?
     
     createdAt   DateTime @default(now())

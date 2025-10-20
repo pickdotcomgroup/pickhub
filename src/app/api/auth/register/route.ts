@@ -4,10 +4,10 @@ import { db } from "~/server/db";
 
 interface ClientProfileData {
   professionalType: "client";
-  firstName: string;
-  lastName: string;
-  companyName: string;
-  industry: string;
+  firstName?: string;
+  lastName?: string;
+  companyName?: string;
+  industry?: string;
   companySize?: string;
 }
 
@@ -75,16 +75,19 @@ export async function POST(request: NextRequest) {
       switch (professionalType) {
         case "client": {
           const clientData = profileData as Omit<ClientProfileData, "professionalType">;
-          await db.clientProfile.create({
-            data: {
-              userId: user.id,
-              firstName: clientData.firstName,
-              lastName: clientData.lastName,
-              companyName: clientData.companyName,
-              industry: clientData.industry,
-              companySize: clientData.companySize,
-            },
-          });
+          // Only create client profile if professional data is provided
+          if (clientData.firstName || clientData.lastName || clientData.companyName || clientData.industry) {
+            await db.clientProfile.create({
+              data: {
+                userId: user.id,
+                firstName: clientData.firstName || "",
+                lastName: clientData.lastName || "",
+                companyName: clientData.companyName || "",
+                industry: clientData.industry || "",
+                companySize: clientData.companySize,
+              },
+            });
+          }
           break;
         }
         case "talent": {
