@@ -80,10 +80,10 @@ export async function POST(request: NextRequest) {
             await db.clientProfile.create({
               data: {
                 userId: user.id,
-                firstName: clientData.firstName || "",
-                lastName: clientData.lastName || "",
-                companyName: clientData.companyName || "",
-                industry: clientData.industry || "",
+                firstName: clientData.firstName ?? "",
+                lastName: clientData.lastName ?? "",
+                companyName: clientData.companyName ?? "",
+                industry: clientData.industry ?? "",
                 companySize: clientData.companySize,
               },
             });
