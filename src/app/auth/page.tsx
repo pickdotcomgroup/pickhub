@@ -64,7 +64,7 @@ function AuthContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [authMode, setAuthMode] = useState<AuthMode>("signin");
+  const [authMode] = useState<AuthMode>("signin");
   const [professionalType, setProfessionalType] = useState<ProfessionalType>("talent");
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -89,7 +89,6 @@ function AuthContent() {
   useEffect(() => {
     const type = searchParams.get("type") as ProfessionalType;
     if (type && ["client", "talent", "agency"].includes(type)) {
-      setAuthMode("professional");
       setProfessionalType(type);
       setProfessionalFormData(prev => ({ ...prev, professionalType: type }));
     }
@@ -365,33 +364,6 @@ function AuthContent() {
 
         {/* Auth Form Card */}
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
-          {/* Form Toggle - only show for non-professional mode */}
-          {authMode !== "professional" && (
-            <div className="flex mb-6">
-              <button
-                type="button"
-                onClick={() => setAuthMode("signin")}
-                className={`flex-1 py-2 px-4 text-sm font-medium rounded-l-lg transition ${
-                  authMode === "signin"
-                    ? "bg-purple-600 text-white"
-                    : "bg-transparent text-gray-300 hover:text-white"
-                }`}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => setAuthMode("signup")}
-                className={`flex-1 py-2 px-4 text-sm font-medium rounded-r-lg transition ${
-                  authMode === "signup"
-                    ? "bg-purple-600 text-white"
-                    : "bg-transparent text-gray-300 hover:text-white"
-                }`}
-              >
-                Sign Up
-              </button>
-            </div>
-          )}
 
           {/* Professional Mode Header */}
           {authMode === "professional" && (

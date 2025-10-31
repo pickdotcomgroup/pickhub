@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import Header from "../_components/header";
 import Footer from "../_components/footer";
 
-type BrowseCategory = "clients" | "talents" | "agencies";
+type BrowseCategory = "clients" | "developer" | "agencies";
 
 interface Project {
   id: string;
@@ -208,7 +208,7 @@ export default function BrowsePage() {
       case "clients":
         data = mockProjects;
         break;
-      case "talents":
+      case "developer":
         data = mockTalents;
         break;
       case "agencies":
@@ -224,7 +224,7 @@ export default function BrowsePage() {
           return [project.title, project.description, project.client].some(field => 
             field.toLowerCase().includes(searchQuery.toLowerCase())
           );
-        } else if (activeCategory === "talents") {
+        } else if (activeCategory === "developer") {
           const talent = item as Talent;
           return [talent.name, talent.title].some(field => 
             field.toLowerCase().includes(searchQuery.toLowerCase())
@@ -395,7 +395,7 @@ export default function BrowsePage() {
         <div className="flex flex-wrap justify-center mb-8">
           {[
             { key: "clients", label: "Clients", icon: "🏢" },
-            { key: "talents", label: "Talents", icon: "👨‍💻" },
+            { key: "developer", label: "Developer", icon: "👨‍💻" },
             { key: "agencies", label: "Agencies", icon: "🏛️" }
           ].map(({ key, label, icon }) => (
             <button
@@ -497,7 +497,7 @@ export default function BrowsePage() {
                 );
               })()}
 
-              {activeCategory === "talents" && (() => {
+              {activeCategory === "developer" && (() => {
                 const talent = item as Talent;
                 return (
                   <div className="flex items-start space-x-4">

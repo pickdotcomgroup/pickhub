@@ -115,12 +115,6 @@ export default function JoinPage() {
               >
                 Sign In
               </Link>
-              <Link
-                href="/auth"
-                className="bg-transparent border-2 border-purple-400 hover:bg-purple-400/10 text-purple-400 font-semibold py-3 px-8 rounded-lg transition duration-200"
-              >
-                General Sign Up
-              </Link>
             </div>
           </div>
         </div>
