@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import LayoutWrapper from "./_components/layout-wrapper";
 
 export const metadata: Metadata = {
   title: "PickHub - Freelance Project Management",
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <SessionProvider>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </TRPCReactProvider>
         </SessionProvider>
       </body>
     </html>

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import Header from "../_components/header";
 import Footer from "../_components/footer";
 
 type BrowseCategory = "clients" | "developer" | "agencies";
@@ -57,6 +56,8 @@ export default function BrowsePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   const skillOptions = [
     "React", "Next.js", "TypeScript", "JavaScript", "Python", "Node.js",
@@ -249,6 +250,29 @@ export default function BrowsePage() {
     return data;
   };
 
+  // Pagination logic
+  const allFilteredData = filteredData();
+  const totalPages = Math.ceil(allFilteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = allFilteredData.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  const handleCategoryChange = (category: BrowseCategory) => {
+    setActiveCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleSkillToggleWithReset = (skill: string) => {
+    handleSkillToggle(skill);
+    setCurrentPage(1);
+  };
+
   const handlePick = (_category: string, _item: Project | Talent | Agency) => {
     // Show join modal when pick button is clicked
     setShowJoinModal(true);
@@ -264,8 +288,6 @@ export default function BrowsePage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <Header />
-
       {/* Join Modal */}
       {showJoinModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -380,84 +402,84 @@ export default function BrowsePage() {
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Explore IT Development Opportunities
-          </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Discover projects, talents, clients, and agencies in the IT industry. 
-            Browse freely and find your perfect match.
-          </p>
-        </div>
 
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center mb-8">
-          {[
-            { key: "clients", label: "Clients", icon: "🏢" },
-            { key: "developer", label: "Developer", icon: "👨‍💻" },
-            { key: "agencies", label: "Agencies", icon: "🏛️" }
-          ].map(({ key, label, icon }) => (
-            <button
-              key={key}
-              onClick={() => setActiveCategory(key as BrowseCategory)}
-              className={`flex items-center space-x-2 px-6 py-3 m-1 rounded-lg font-semibold transition ${
-                activeCategory === key
-                  ? "bg-purple-600 text-white"
-                  : "bg-white/10 text-gray-300 hover:bg-white/20"
-              }`}
-            >
-              <span>{icon}</span>
-              <span>{label}</span>
-            </button>
-          ))}
-        </div>
+        {/* Column Layout: Sidebar + Main Content */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Sidebar */}
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 sticky top-8">
+              {/* Category Toggles */}
+              <div className="mb-6">
+                <h3 className="text-white font-semibold mb-3">Browse Categories</h3>
+                <div className="space-y-2">
+                  {[
+                    { key: "clients", label: "Clients", icon: "🏢" },
+                    { key: "developer", label: "Developer", icon: "👨‍💻" },
+                    { key: "agencies", label: "Agencies", icon: "🏛️" }
+                  ].map(({ key, label, icon }) => (
+                    <button
+                      key={key}
+                      onClick={() => handleCategoryChange(key as BrowseCategory)}
+                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg font-semibold transition ${
+                        activeCategory === key
+                          ? "bg-purple-600 text-white"
+                          : "bg-white/10 text-gray-300 hover:bg-white/20"
+                      }`}
+                    >
+                      <span className="text-xl">{icon}</span>
+                      <span>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-white/20">
-          {/* Search Bar */}
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder={`Search ${activeCategory}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
-          </div>
+              {/* Search Bar */}
+              <div className="mb-6">
+                <h3 className="text-white font-semibold mb-3">Search</h3>
+                <input
+                  type="text"
+                  placeholder={`Search ${activeCategory}...`}
+                  value={searchQuery}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
 
-          {/* Skills Filter */}
-          <div>
-            <h3 className="text-white font-semibold mb-3">Filter by Skills:</h3>
-            <div className="flex flex-wrap gap-2">
-              {skillOptions.map((skill) => (
-                <button
-                  key={skill}
-                  onClick={() => handleSkillToggle(skill)}
-                  className={`px-3 py-1 rounded-full text-sm transition ${
-                    selectedSkills.includes(skill)
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/10 text-gray-300 hover:bg-white/20"
-                  }`}
-                >
-                  {skill}
-                </button>
-              ))}
+              {/* Skills Filter */}
+              <div>
+                <h3 className="text-white font-semibold mb-3">Filter by Skills</h3>
+                <div className="flex flex-wrap gap-2 max-h-96 overflow-y-auto">
+                  {skillOptions.map((skill) => (
+                    <button
+                      key={skill}
+                      onClick={() => handleSkillToggleWithReset(skill)}
+                      className={`px-3 py-1 rounded-full text-sm transition ${
+                        selectedSkills.includes(skill)
+                          ? "bg-purple-600 text-white"
+                          : "bg-white/10 text-gray-300 hover:bg-white/20"
+                      }`}
+                    >
+                      {skill}
+                    </button>
+                  ))}
+                </div>
+                {selectedSkills.length > 0 && (
+                  <button
+                    onClick={() => setSelectedSkills([])}
+                    className="mt-3 text-purple-400 hover:text-purple-300 text-sm"
+                  >
+                    Clear all filters
+                  </button>
+                )}
+              </div>
             </div>
-            {selectedSkills.length > 0 && (
-              <button
-                onClick={() => setSelectedSkills([])}
-                className="mt-3 text-purple-400 hover:text-purple-300 text-sm"
-              >
-                Clear all filters
-              </button>
-            )}
           </div>
-        </div>
 
-        {/* Results */}
-        <div className="grid gap-6">
-          {filteredData().map((item) => (
+          {/* Main Content Area */}
+          <div className="flex-1">
+            {/* Results */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {paginatedData.map((item) => (
             <div
               key={item.id}
               className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-purple-400/50 transition-all duration-300"
@@ -465,60 +487,17 @@ export default function BrowsePage() {
               {activeCategory === "clients" && (() => {
                 const project = item as Project;
                 return (
-                  <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
-                        <p className="text-gray-300 mb-3">{project.description}</p>
-                        <div className="flex items-center space-x-4 text-sm text-gray-400">
-                          <span>💰 {project.budget}</span>
-                          <span>🏢 {project.client}</span>
-                          <span>📅 {project.postedDate}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => handlePick('project', item)}
-                        className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
-                      >
-                        Pick
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {project.skills.map((skill: string) => (
-                        <span
-                          key={skill}
-                          className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {activeCategory === "developer" && (() => {
-                const talent = item as Talent;
-                return (
-                  <div className="flex items-start space-x-4">
-                    <div className="text-4xl">{talent.avatar}</div>
+                  <div className="flex flex-col h-full">
                     <div className="flex-1">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="text-xl font-semibold text-white">{talent.name}</h3>
-                          <p className="text-purple-300">{talent.title}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="flex items-center space-x-1 mb-1">
-                            {renderStars(talent.rating)}
-                            <span className="text-gray-300 text-sm">({talent.rating})</span>
-                          </div>
-                          <p className="text-green-400 font-semibold">{talent.hourlyRate}</p>
-                        </div>
+                      <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
+                      <p className="text-gray-300 mb-3">{project.description}</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-400 mb-4">
+                        <span>💰 {project.budget}</span>
+                        <span>🏢 {project.client}</span>
+                        <span>📅 {project.postedDate}</span>
                       </div>
-                      <p className="text-gray-400 text-sm mb-3">{talent.experience} experience</p>
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {talent.skills.map((skill: string) => (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.skills.map((skill: string) => (
                           <span
                             key={skill}
                             className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
@@ -527,15 +506,56 @@ export default function BrowsePage() {
                           </span>
                         ))}
                       </div>
-                      <div className="flex justify-end">
-                        <button
-                          onClick={() => handlePick('talent', item)}
-                          className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
-                        >
-                          Pick
-                        </button>
+                    </div>
+                    <button
+                      onClick={() => handlePick('project', item)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+                    >
+                      Pick
+                    </button>
+                  </div>
+                );
+              })()}
+
+              {activeCategory === "developer" && (() => {
+                const talent = item as Talent;
+                return (
+                  <div className="flex flex-col h-full">
+                    <div className="flex items-start space-x-4 flex-1 mb-4">
+                      <div className="text-4xl">{talent.avatar}</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h3 className="text-xl font-semibold text-white">{talent.name}</h3>
+                            <p className="text-purple-300">{talent.title}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center space-x-1 mb-1">
+                              {renderStars(talent.rating)}
+                              <span className="text-gray-300 text-sm">({talent.rating})</span>
+                            </div>
+                            <p className="text-green-400 font-semibold">{talent.hourlyRate}</p>
+                          </div>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-3">{talent.experience} experience</p>
+                        <div className="flex flex-wrap gap-2">
+                          {talent.skills.map((skill: string) => (
+                            <span
+                              key={skill}
+                              className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
+                    <button
+                      onClick={() => handlePick('talent', item)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+                    >
+                      Pick
+                    </button>
                   </div>
                 );
               })()}
@@ -543,23 +563,23 @@ export default function BrowsePage() {
               {activeCategory === "agencies" && (() => {
                 const agency = item as Agency;
                 return (
-                  <div>
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-white">{agency.name}</h3>
-                        <p className="text-gray-300 mb-2">{agency.description}</p>
-                        <p className="text-gray-400 text-sm">Team Size: {agency.teamSize}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex items-center space-x-1 mb-1">
-                          {renderStars(agency.rating)}
-                          <span className="text-gray-300 text-sm">({agency.rating})</span>
+                  <div className="flex flex-col h-full">
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold text-white">{agency.name}</h3>
+                          <p className="text-gray-300 mb-2">{agency.description}</p>
+                          <p className="text-gray-400 text-sm">Team Size: {agency.teamSize}</p>
                         </div>
-                        <p className="text-gray-400 text-sm">{agency.projectsCompleted} projects completed</p>
+                        <div className="text-right">
+                          <div className="flex items-center space-x-1 mb-1">
+                            {renderStars(agency.rating)}
+                            <span className="text-gray-300 text-sm">({agency.rating})</span>
+                          </div>
+                          <p className="text-gray-400 text-sm">{agency.projectsCompleted} projects completed</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-end justify-between">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {agency.skills.map((skill: string) => (
                           <span
                             key={skill}
@@ -569,27 +589,81 @@ export default function BrowsePage() {
                           </span>
                         ))}
                       </div>
-                      <button
-                        onClick={() => handlePick('agency', item)}
-                        className="ml-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex-shrink-0"
-                      >
-                        Pick
-                      </button>
                     </div>
+                    <button
+                      onClick={() => handlePick('agency', item)}
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200"
+                    >
+                      Pick
+                    </button>
                   </div>
                 );
               })()}
             </div>
-          ))}
-        </div>
+              ))}
 
-        {filteredData().length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-2xl font-semibold text-white mb-2">No results found</h3>
-            <p className="text-gray-300">Try adjusting your search or filters</p>
+              {allFilteredData.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="text-2xl font-semibold text-white mb-2">No results found</h3>
+                  <p className="text-gray-300">Try adjusting your search or filters</p>
+                </div>
+              )}
+            </div>
+
+            {/* Pagination Controls */}
+            {allFilteredData.length > 0 && totalPages > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-lg font-semibold transition ${
+                    currentPage === 1
+                      ? "bg-white/5 text-gray-500 cursor-not-allowed"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  Previous
+                </button>
+
+                <div className="flex gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-4 py-2 rounded-lg font-semibold transition ${
+                        currentPage === page
+                          ? "bg-purple-600 text-white"
+                          : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-lg font-semibold transition ${
+                    currentPage === totalPages
+                      ? "bg-white/5 text-gray-500 cursor-not-allowed"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+
+            {/* Results Info */}
+            {allFilteredData.length > 0 && (
+              <div className="mt-4 text-center text-gray-400 text-sm">
+                Showing {startIndex + 1}-{Math.min(endIndex, allFilteredData.length)} of {allFilteredData.length} results
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
       
       <Footer />
