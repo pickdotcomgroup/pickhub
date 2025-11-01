@@ -126,9 +126,22 @@ export default function ClientMessagesPage() {
     }
   };
 
-  const handleSelectConversation = (conversation: Conversation) => {
+  const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
-    void fetchMessages(conversation.id);
+    await fetchMessages(conversation.id);
+    
+    // Mark messages as read
+    try {
+      await fetch("/api/messages/mark-read", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: conversation.id,
+        }),
+      });
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+    }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -181,147 +194,149 @@ export default function ClientMessagesPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
+      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-white text-xl">Loading...</div>
+      </main>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-6 text-3xl font-bold">Messages</h1>
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="mb-6 text-3xl font-bold text-white">Messages</h1>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {/* Conversations List */}
-        <div className="rounded-lg border bg-white p-4 shadow-sm md:col-span-1">
-          <h2 className="mb-4 text-xl font-semibold">Conversations</h2>
-          {conversations.length === 0 ? (
-            <p className="text-gray-500">No conversations yet</p>
-          ) : (
-            <div className="space-y-2">
-              {conversations.map((conversation) => {
-                const otherUser = getOtherUser(conversation);
-                const lastMessage = conversation.messages[0];
-                const unreadCount = conversation._count.messages;
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {/* Conversations List */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 md:col-span-1">
+            <h2 className="mb-4 text-xl font-semibold text-white">Conversations</h2>
+            {conversations.length === 0 ? (
+              <p className="text-gray-400">No conversations yet</p>
+            ) : (
+              <div className="space-y-2">
+                {conversations.map((conversation) => {
+                  const otherUser = getOtherUser(conversation);
+                  const lastMessage = conversation.messages[0];
+                  const unreadCount = conversation._count.messages;
 
-                return (
-                  <button
-                    key={conversation.id}
-                    onClick={() => handleSelectConversation(conversation)}
-                    className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-gray-50 ${
-                      selectedConversation?.id === conversation.id
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="font-semibold">
-                          {getUserDisplayName(otherUser)}
-                        </div>
-                        {otherUser.talentProfile && (
-                          <div className="text-sm text-gray-500">
-                            {otherUser.talentProfile.title}
-                          </div>
-                        )}
-                        {lastMessage && (
-                          <div className="mt-1 truncate text-sm text-gray-600">
-                            {lastMessage.content}
-                          </div>
-                        )}
-                      </div>
-                      {unreadCount > 0 && (
-                        <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs text-white">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Messages Area */}
-        <div className="rounded-lg border bg-white shadow-sm md:col-span-2">
-          {selectedConversation ? (
-            <div className="flex h-[600px] flex-col">
-              {/* Header */}
-              <div className="border-b p-4">
-                <h2 className="text-xl font-semibold">
-                  {getUserDisplayName(getOtherUser(selectedConversation))}
-                </h2>
-                {getOtherUser(selectedConversation).talentProfile && (
-                  <p className="text-sm text-gray-500">
-                    {getOtherUser(selectedConversation).talentProfile!.title}
-                  </p>
-                )}
-              </div>
-
-              {/* Messages */}
-              <div className="flex-1 space-y-4 overflow-y-auto p-4">
-                {messages.map((message) => {
-                  const isOwn = message.senderId === session?.user?.id;
                   return (
-                    <div
-                      key={message.id}
-                      className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                    <button
+                      key={conversation.id}
+                      onClick={() => handleSelectConversation(conversation)}
+                      className={`w-full rounded-lg p-3 text-left transition-colors ${
+                        selectedConversation?.id === conversation.id
+                          ? "bg-purple-500/20 border border-purple-500/50"
+                          : "bg-white/5 border border-white/10 hover:bg-white/10"
+                      }`}
                     >
-                      <div
-                        className={`max-w-[70%] rounded-lg p-3 ${
-                          isOwn
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-100 text-gray-900"
-                        }`}
-                      >
-                        <p className="whitespace-pre-wrap break-words">
-                          {message.content}
-                        </p>
-                        <p
-                          className={`mt-1 text-xs ${
-                            isOwn ? "text-blue-100" : "text-gray-500"
-                          }`}
-                        >
-                          {new Date(message.createdAt).toLocaleString()}
-                        </p>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="font-semibold text-white">
+                            {getUserDisplayName(otherUser)}
+                          </div>
+                          {otherUser.talentProfile && (
+                            <div className="text-sm text-gray-400">
+                              {otherUser.talentProfile.title}
+                            </div>
+                          )}
+                          {lastMessage && (
+                            <div className="mt-1 truncate text-sm text-gray-400">
+                              {lastMessage.content}
+                            </div>
+                          )}
+                        </div>
+                        {unreadCount > 0 && (
+                          <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-500 text-xs text-white font-semibold">
+                            {unreadCount}
+                          </span>
+                        )}
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
+            )}
+          </div>
 
-              {/* Input */}
-              <form
-                onSubmit={handleSendMessage}
-                className="border-t p-4"
-              >
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                    disabled={sending}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!newMessage.trim() || sending}
-                    className="rounded-lg bg-blue-500 px-6 py-2 text-white transition-colors hover:bg-blue-600 disabled:bg-gray-300"
-                  >
-                    {sending ? "Sending..." : "Send"}
-                  </button>
+          {/* Messages Area */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 md:col-span-2">
+            {selectedConversation ? (
+              <div className="flex h-[600px] flex-col">
+                {/* Header */}
+                <div className="border-b border-white/10 p-4">
+                  <h2 className="text-xl font-semibold text-white">
+                    {getUserDisplayName(getOtherUser(selectedConversation))}
+                  </h2>
+                  {getOtherUser(selectedConversation).talentProfile && (
+                    <p className="text-sm text-gray-400">
+                      {getOtherUser(selectedConversation).talentProfile!.title}
+                    </p>
+                  )}
                 </div>
-              </form>
-            </div>
-          ) : (
-            <div className="flex h-[600px] items-center justify-center text-gray-500">
-              Select a conversation to start messaging
-            </div>
-          )}
+
+                {/* Messages */}
+                <div className="flex-1 space-y-4 overflow-y-auto p-4">
+                  {messages.map((message) => {
+                    const isOwn = message.senderId === session?.user?.id;
+                    return (
+                      <div
+                        key={message.id}
+                        className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                      >
+                        <div
+                          className={`max-w-[70%] rounded-lg p-3 ${
+                            isOwn
+                              ? "bg-purple-500 text-white"
+                              : "bg-white/10 text-white"
+                          }`}
+                        >
+                          <p className="whitespace-pre-wrap break-words">
+                            {message.content}
+                          </p>
+                          <p
+                            className={`mt-1 text-xs ${
+                              isOwn ? "text-purple-100" : "text-gray-400"
+                            }`}
+                          >
+                            {new Date(message.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Input */}
+                <form
+                  onSubmit={handleSendMessage}
+                  className="border-t border-white/10 p-4"
+                >
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type a message..."
+                      className="flex-1 rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                      disabled={sending}
+                    />
+                    <button
+                      type="submit"
+                      disabled={!newMessage.trim() || sending}
+                      className="rounded-lg bg-purple-500 px-6 py-2 text-white font-semibold transition-colors hover:bg-purple-600 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                    >
+                      {sending ? "Sending..." : "Send"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              <div className="flex h-[600px] items-center justify-center text-gray-400">
+                Select a conversation to start messaging
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

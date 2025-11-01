@@ -5,12 +5,50 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
+// Notification Badge Component
+function NotificationBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  
+  return (
+    <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white shadow-lg">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
 export default function Header() {
   const { data: session } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch unread message count
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const fetchUnreadCount = async () => {
+      try {
+        const response = await fetch("/api/messages/unread-count");
+        if (response.ok) {
+          const data = (await response.json()) as { count: number };
+          setUnreadCount(data.count ?? 0);
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+
+    void fetchUnreadCount();
+    
+    // Poll for updates every 30 seconds
+    const interval = setInterval(() => {
+      void fetchUnreadCount();
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [session?.user]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -112,9 +150,10 @@ export default function Header() {
 
                   <Link
                     href="/client/messages"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className="relative px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
                   >
                     Messages
+                    <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
               ) : session.user.role === "talent" ? (
@@ -139,9 +178,10 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/talent/messages"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className="relative px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
                   >
                     Messages
+                    <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
               ) : null}

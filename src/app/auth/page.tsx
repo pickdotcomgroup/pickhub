@@ -97,7 +97,7 @@ function AuthContent() {
       if (session.user.role === "client") {
         router.push("/client/browse");
       } else if (session.user.role === "talent") {
-        router.push("/talent");
+        router.push("/talent/dashboard");
       } else if (session.user.role === "agency") {
         router.push("/agency");
       } else {
