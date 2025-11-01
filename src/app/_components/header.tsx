@@ -102,7 +102,7 @@ export default function Header() {
                     href="/client/browse"
                     className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
                   >
-                    Browse Talents
+                    Browse Developers
                   </Link>
                   
                   {/* Projects Dropdown */}
@@ -329,12 +329,20 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Link
-                href="/join"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-              >
-                Join Us
-              </Link>
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/auth"
+                  className="text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg hover:bg-white/10 transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/join"
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Join Us
+                </Link>
+              </div>
             )}
           </div>
         </div>
