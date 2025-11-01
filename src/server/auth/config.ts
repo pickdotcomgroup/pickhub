@@ -98,10 +98,22 @@ export const authConfig = {
       }
       return session;
     },
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, trigger }) => {
       if (user) {
         token.sub = user.id;
       }
+      
+      // Add role to token for middleware access
+      if (token.sub && (trigger === "signIn" || trigger === "signUp" || !token.role)) {
+        try {
+          const roleData = await getUserRole(token.sub);
+          token.role = roleData.role;
+        } catch (error) {
+          console.error("Error getting user role in JWT callback:", error);
+          token.role = null;
+        }
+      }
+      
       return token;
     },
     redirect: async ({ url, baseUrl }) => {

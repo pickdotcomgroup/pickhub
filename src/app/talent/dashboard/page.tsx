@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function ClientFolderPage() {
+export default function TalentDashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -16,7 +16,7 @@ export default function ClientFolderPage() {
       return;
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "talent") {
       router.push("/dashboard");
       return;
     }
@@ -30,7 +30,7 @@ export default function ClientFolderPage() {
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || session.user.role !== "talent") {
     return null;
   }
 
@@ -46,7 +46,7 @@ export default function ClientFolderPage() {
                 Welcome back, {session.user.name?.split(' ')[0] ?? 'User'}
               </h1>
               <p className="text-gray-400">
-                Here&apos;s what&apos;s happening with your projects today
+                Here&apos;s your freelance activity overview
               </p>
             </div>
             <div className="hidden md:flex items-center space-x-3">
@@ -65,7 +65,7 @@ export default function ClientFolderPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-500/20 rounded-lg">
                 <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
               <span className="text-xs font-medium text-blue-400 bg-blue-500/20 px-2 py-1 rounded-full">+0%</span>
@@ -91,13 +91,13 @@ export default function ClientFolderPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-purple-500/20 rounded-lg">
                 <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
                 </svg>
               </div>
               <span className="text-xs font-medium text-purple-400 bg-purple-500/20 px-2 py-1 rounded-full">+0%</span>
             </div>
             <h3 className="text-2xl font-bold text-white mb-1">0</h3>
-            <p className="text-sm text-gray-400">Team Members</p>
+            <p className="text-sm text-gray-400">Proposals Sent</p>
           </div>
 
           <div className="bg-gradient-to-br from-orange-500/10 to-orange-600/10 backdrop-blur-sm rounded-xl p-6 border border-orange-500/20">
@@ -110,7 +110,7 @@ export default function ClientFolderPage() {
               <span className="text-xs font-medium text-orange-400 bg-orange-500/20 px-2 py-1 rounded-full">+0%</span>
             </div>
             <h3 className="text-2xl font-bold text-white mb-1">$0</h3>
-            <p className="text-sm text-gray-400">Total Spent</p>
+            <p className="text-sm text-gray-400">Total Earned</p>
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export default function ClientFolderPage() {
               </div>
               <div className="flex-1">
                 <p className="text-white font-medium mb-1">Welcome to TechPickHub!</p>
-                <p className="text-sm text-gray-400">Your client account has been successfully created and verified</p>
+                <p className="text-sm text-gray-400">Your talent account has been successfully created and verified</p>
                 <p className="text-xs text-gray-500 mt-2">Just now</p>
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function ClientFolderPage() {
               </div>
               <div className="flex-1">
                 <p className="text-white font-medium mb-1">Profile Setup Complete</p>
-                <p className="text-sm text-gray-400">You can now start posting projects and hiring talent</p>
+                <p className="text-sm text-gray-400">You can now start browsing and applying to projects</p>
                 <p className="text-xs text-gray-500 mt-2">Just now</p>
               </div>
             </div>

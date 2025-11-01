@@ -55,23 +55,30 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String        @id @default(cuid())
     name          String?
-    email         String?   @unique
+    email         String?       @unique
     emailVerified DateTime?
     image         String?
-    password      String?   // For credentials authentication
+    password      String?       // For credentials authentication
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    projects      Project[]     // Projects posted by client
+    applications  Application[] // Applications submitted by talent
     
     // Professional profiles (one-to-one relationships)
     clientProfile ClientProfile?
     talentProfile TalentProfile?
     agencyProfile AgencyProfile?
     
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    // Messaging relations
+    clientConversations Conversation[] @relation("ClientConversations")
+    talentConversations Conversation[] @relation("TalentConversations")
+    sentMessages        Message[]
+    
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
 }
 
 // Professional Profile Models
@@ -121,6 +128,93 @@ model AgencyProfile {
     
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+}
+
+model Project {
+    id           String        @id @default(cuid())
+    title        String
+    description  String        @db.Text
+    budget       Float
+    deadline     DateTime
+    category     String
+    skills       String[]      // Array of required skills
+    projectType  String        @default("fixed") // fixed or hourly
+    status       String        @default("open") // open, in_progress, completed, cancelled
+    
+    clientId     String
+    client       User          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+    applications Application[] // Applications from talents
+    
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    
+    @@index([clientId])
+    @@index([status])
+    @@index([category])
+}
+
+model Application {
+    id          String   @id @default(cuid())
+    status      String   @default("pending") // pending, accepted, rejected
+    coverLetter String?  @db.Text
+    proposedRate Float?
+    
+    projectId   String
+    project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    
+    talentId    String
+    talent      User     @relation(fields: [talentId], references: [id], onDelete: Cascade)
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    @@unique([projectId, talentId]) // A talent can only apply once to a project
+    @@index([talentId])
+    @@index([projectId])
+    @@index([status])
+}
+
+model Conversation {
+    id           String    @id @default(cuid())
+    
+    // Participants
+    clientId     String
+    client       User      @relation("ClientConversations", fields: [clientId], references: [id], onDelete: Cascade)
+    
+    talentId     String
+    talent       User      @relation("TalentConversations", fields: [talentId], references: [id], onDelete: Cascade)
+    
+    // Optional: Link to a specific project
+    projectId    String?
+    
+    messages     Message[]
+    
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime  @updatedAt
+    
+    @@unique([clientId, talentId, projectId]) // One conversation per client-talent-project combination
+    @@index([clientId])
+    @@index([talentId])
+}
+
+model Message {
+    id             String       @id @default(cuid())
+    content        String       @db.Text
+    
+    conversationId String
+    conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+    
+    senderId       String
+    sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+    
+    isRead         Boolean      @default(false)
+    
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+    
+    @@index([conversationId])
+    @@index([senderId])
+    @@index([createdAt])
 }
 
 model VerificationToken {

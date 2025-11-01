@@ -293,7 +293,7 @@ export default function BrowsePage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-white">Join PickHub</h2>
+              <h2 className="text-3xl font-bold text-white">Join TechPickHub</h2>
               <button
                 onClick={() => setShowJoinModal(false)}
                 className="text-gray-400 hover:text-white text-2xl"
@@ -388,12 +388,6 @@ export default function BrowsePage() {
                   className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
                 >
                   Sign In
-                </Link>
-                <Link
-                  href="/auth"
-                  className="bg-transparent border-2 border-purple-400 hover:bg-purple-400/10 text-purple-400 font-semibold py-3 px-8 rounded-lg transition duration-200"
-                >
-                  General Sign Up
                 </Link>
               </div>
             </div>

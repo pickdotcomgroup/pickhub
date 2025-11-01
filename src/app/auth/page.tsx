@@ -55,16 +55,11 @@ const skillOptions = [
   "Vue.js", "Angular", "Flutter", "React Native", "AWS", "Docker"
 ];
 
-const industries = [
-  "Technology", "Healthcare", "Finance", "E-commerce", "Education", 
-  "Real Estate", "Manufacturing", "Media & Entertainment", "Non-profit", "Other"
-];
-
 function AuthContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [authMode] = useState<AuthMode>("signin");
+  const [authMode, setAuthMode] = useState<AuthMode>("signin");
   const [professionalType, setProfessionalType] = useState<ProfessionalType>("talent");
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -89,15 +84,26 @@ function AuthContent() {
   useEffect(() => {
     const type = searchParams.get("type") as ProfessionalType;
     if (type && ["client", "talent", "agency"].includes(type)) {
+      setAuthMode("professional");
       setProfessionalType(type);
       setProfessionalFormData(prev => ({ ...prev, professionalType: type }));
     }
   }, [searchParams]);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated based on user role
   useEffect(() => {
     if (session?.user) {
-      router.push("/dashboard");
+      // Route users to their role-specific dashboard
+      if (session.user.role === "client") {
+        router.push("/client/browse");
+      } else if (session.user.role === "talent") {
+        router.push("/talent");
+      } else if (session.user.role === "agency") {
+        router.push("/agency");
+      } else {
+        // Users without a role go to general dashboard or onboarding
+        router.push("/dashboard");
+      }
     }
   }, [session, router]);
 
@@ -352,7 +358,7 @@ function AuthContent() {
             <div className="text-6xl mb-4">{professionalInfo.icon}</div>
           )}
           <h1 className="text-4xl font-bold text-white mb-2">
-            <span className="text-purple-400">Pick</span>Hub
+            <span className="text-purple-400">TechPick</span>Hub
           </h1>
           <p className="text-gray-300">
             {authMode === "professional" 
@@ -794,18 +800,54 @@ function AuthContent() {
             </button>
           </form>
 
-          {/* Footer links - only show for non-professional mode */}
-          {authMode !== "professional" && authMode === "signin" && (
-            <div className="mt-4 text-center">
-              <Link
-                href="#"
-                className="text-sm text-purple-400 hover:text-purple-300 transition"
-              >
-                Forgot your password?
-              </Link>
+        {/* Footer links - only show for non-professional mode */}
+        {authMode !== "professional" && (
+          <>
+            {authMode === "signin" && (
+              <div className="mt-4 text-center">
+                <Link
+                  href="#"
+                  className="text-sm text-purple-400 hover:text-purple-300 transition"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+            )}
+            
+            {/* Toggle between Sign In and Sign Up */}
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-300">
+                {authMode === "signin" ? "Don't have an account? " : "Already have an account? "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode(authMode === "signin" ? "signup" : "signin");
+                    setErrors({});
+                  }}
+                  className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                >
+                  {authMode === "signin" ? "Sign Up" : "Sign In"}
+                </button>
+              </p>
             </div>
-          )}
-        </div>
+          </>
+        )}
+
+        {/* Professional mode - link back to join page */}
+        {authMode === "professional" && (
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-300">
+              Want to choose a different account type?{" "}
+              <Link
+                href="/join"
+                className="text-purple-400 hover:text-purple-300 font-semibold transition"
+              >
+                Go back
+              </Link>
+            </p>
+          </div>
+        )}
+      </div>
 
         {/* Terms and Privacy */}
         <div className="mt-6 text-center text-xs text-gray-400">
