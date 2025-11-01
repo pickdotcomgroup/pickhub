@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
@@ -57,12 +57,13 @@ export default function TalentMessagesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [selectedConversation, setSelectedConversation] =
-    useState<Conversation | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<MessageWithSender[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -76,27 +77,29 @@ export default function TalentMessagesPage() {
     }
   }, [status]);
 
-  // Auto-refetch messages every 3 seconds when a conversation is selected
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   useEffect(() => {
     if (!selectedConversation) return;
-
     const interval = setInterval(() => {
       void fetchMessages(selectedConversation.id);
     }, 3000);
-
     return () => clearInterval(interval);
   }, [selectedConversation]);
 
-  // Auto-refetch conversations every 5 seconds
   useEffect(() => {
     if (status !== "authenticated") return;
-
     const interval = setInterval(() => {
       void fetchConversations();
     }, 5000);
-
     return () => clearInterval(interval);
   }, [status]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const fetchConversations = async () => {
     try {
@@ -114,9 +117,7 @@ export default function TalentMessagesPage() {
 
   const fetchMessages = async (conversationId: string) => {
     try {
-      const response = await fetch(
-        `/api/messages?conversationId=${conversationId}`,
-      );
+      const response = await fetch(`/api/messages?conversationId=${conversationId}`);
       if (response.ok) {
         const data = (await response.json()) as MessageWithSender[];
         setMessages(data);
@@ -129,15 +130,12 @@ export default function TalentMessagesPage() {
   const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
     await fetchMessages(conversation.id);
-    
-    // Mark messages as read
+
     try {
       await fetch("/api/messages/mark-read", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          conversationId: conversation.id,
-        }),
+        body: JSON.stringify({ conversationId: conversation.id }),
       });
     } catch (error) {
       console.error("Error marking messages as read:", error);
@@ -163,7 +161,6 @@ export default function TalentMessagesPage() {
         const message = (await response.json()) as MessageWithSender;
         setMessages([...messages, message]);
         setNewMessage("");
-        // Refresh conversations to update last message
         void fetchConversations();
       }
     } catch (error) {
@@ -174,9 +171,7 @@ export default function TalentMessagesPage() {
   };
 
   const getOtherUser = (conversation: Conversation): User => {
-    return session?.user?.id === conversation.clientId
-      ? conversation.talent
-      : conversation.client;
+    return session?.user?.id === conversation.clientId ? conversation.talent : conversation.client;
   };
 
   const getUserDisplayName = (user: User): string => {
@@ -192,149 +187,312 @@ export default function TalentMessagesPage() {
     return user.name ?? user.email ?? "Unknown User";
   };
 
+  const getUserInitials = (user: User): string => {
+    const name = getUserDisplayName(user);
+    const parts = name.split(" ");
+    if (parts.length >= 2) {
+      return `${parts[0]![0]}${parts[1]![0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const getRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  const formatMessageTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+
+    if (isToday) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = date.toDateString() === yesterday.toDateString();
+
+    if (isYesterday) {
+      return `Yesterday ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+    }
+
+    return date.toLocaleDateString([], {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const filteredConversations = conversations.filter((conversation) => {
+    const otherUser = getOtherUser(conversation);
+    const displayName = getUserDisplayName(otherUser).toLowerCase();
+    return displayName.includes(searchQuery.toLowerCase());
+  });
+
   if (status === "loading" || loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="text-lg text-white">Loading messages...</div>
+        </div>
       </main>
     );
   }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="mb-6 text-3xl font-bold text-white">Messages</h1>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white">Messages</h1>
+          <p className="mt-1 text-sm text-gray-400">
+            {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {/* Conversations List */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 md:col-span-1">
-            <h2 className="mb-4 text-xl font-semibold text-white">Conversations</h2>
-            {conversations.length === 0 ? (
-              <p className="text-gray-400">No conversations yet</p>
-            ) : (
-              <div className="space-y-2">
-                {conversations.map((conversation) => {
-                  const otherUser = getOtherUser(conversation);
-                  const lastMessage = conversation.messages[0];
-                  const unreadCount = conversation._count.messages;
-
-                  return (
-                    <button
-                      key={conversation.id}
-                      onClick={() => handleSelectConversation(conversation)}
-                      className={`w-full rounded-lg p-3 text-left transition-colors ${
-                        selectedConversation?.id === conversation.id
-                          ? "bg-purple-500/20 border border-purple-500/50"
-                          : "bg-white/5 border border-white/10 hover:bg-white/10"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="font-semibold text-white">
-                            {getUserDisplayName(otherUser)}
-                          </div>
-                          {otherUser.clientProfile?.companyName && (
-                            <div className="text-sm text-gray-400">
-                              {otherUser.clientProfile.companyName}
-                            </div>
-                          )}
-                          {lastMessage && (
-                            <div className="mt-1 truncate text-sm text-gray-400">
-                              {lastMessage.content}
-                            </div>
-                          )}
-                        </div>
-                        {unreadCount > 0 && (
-                          <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-500 text-xs text-white font-semibold">
-                            {unreadCount}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-6">
+          {/* Conversations Sidebar */}
+          <div className="lg:col-span-4 xl:col-span-3">
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+              {/* Search Bar */}
+              <div className="border-b border-white/10 p-4">
+                <div className="relative">
+                  <svg
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search conversations..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full rounded-lg border border-white/20 bg-white/5 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                  />
+                </div>
               </div>
-            )}
+
+              {/* Conversations List */}
+              <div className="max-h-[calc(100vh-280px)] overflow-y-auto">
+                {filteredConversations.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center p-8 text-center">
+                    <div className="mb-4 rounded-full bg-purple-500/10 p-4">
+                      <svg className="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-400">
+                      {searchQuery ? "No conversations found" : "No conversations yet"}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {searchQuery ? "Try a different search term" : "Start a conversation with a client"}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-white/5">
+                    {filteredConversations.map((conversation) => {
+                      const otherUser = getOtherUser(conversation);
+                      const lastMessage = conversation.messages[0];
+                      const unreadCount = conversation._count.messages;
+
+                      return (
+                        <button
+                          key={conversation.id}
+                          onClick={() => void handleSelectConversation(conversation)}
+                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white/5 ${
+                            selectedConversation?.id === conversation.id
+                              ? "bg-purple-500/10 border-l-4 border-purple-500"
+                              : ""
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-shrink-0">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold shadow-lg">
+                                {getUserInitials(otherUser)}
+                              </div>
+                            </div>
+
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <h3 className="truncate font-semibold text-white">
+                                    {getUserDisplayName(otherUser)}
+                                  </h3>
+                                  {otherUser.clientProfile?.companyName && (
+                                    <p className="truncate text-xs text-gray-400">
+                                      {otherUser.clientProfile.companyName}
+                                    </p>
+                                  )}
+                                </div>
+                                {lastMessage && (
+                                  <span className="flex-shrink-0 text-xs text-gray-500">
+                                    {getRelativeTime(lastMessage.createdAt)}
+                                  </span>
+                                )}
+                              </div>
+
+                              {lastMessage && (
+                                <div className="mt-1 flex items-center justify-between gap-2">
+                                  <p className="truncate text-sm text-gray-400">{lastMessage.content}</p>
+                                  {unreadCount > 0 && (
+                                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-purple-500 text-xs font-semibold text-white">
+                                      {unreadCount}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Messages Area */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 md:col-span-2">
-            {selectedConversation ? (
-              <div className="flex h-[600px] flex-col">
-                {/* Header */}
-                <div className="border-b border-white/10 p-4">
-                  <h2 className="text-xl font-semibold text-white">
-                    {getUserDisplayName(getOtherUser(selectedConversation))}
-                  </h2>
-                  {getOtherUser(selectedConversation).clientProfile
-                    ?.companyName && (
-                    <p className="text-sm text-gray-400">
-                      {
-                        getOtherUser(selectedConversation).clientProfile!
-                          .companyName
-                      }
-                    </p>
-                  )}
-                </div>
+          <div className="lg:col-span-8 xl:col-span-9">
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+              {selectedConversation ? (
+                <div className="flex h-[calc(100vh-200px)] flex-col">
+                  {/* Chat Header */}
+                  <div className="border-b border-white/10 bg-white/5 p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold shadow-lg">
+                        {getUserInitials(getOtherUser(selectedConversation))}
+                      </div>
+                      <div>
+                        <h2 className="font-semibold text-white">
+                          {getUserDisplayName(getOtherUser(selectedConversation))}
+                        </h2>
+                        {getOtherUser(selectedConversation).clientProfile?.companyName && (
+                          <p className="text-sm text-gray-400">
+                            {getOtherUser(selectedConversation).clientProfile!.companyName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
-                {/* Messages */}
-                <div className="flex-1 space-y-4 overflow-y-auto p-4">
-                  {messages.map((message) => {
-                    const isOwn = message.senderId === session?.user?.id;
-                    return (
-                      <div
-                        key={message.id}
-                        className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
-                      >
-                        <div
-                          className={`max-w-[70%] rounded-lg p-3 ${
-                            isOwn
-                              ? "bg-purple-500 text-white"
-                              : "bg-white/10 text-white"
-                          }`}
-                        >
-                          <p className="whitespace-pre-wrap break-words">
-                            {message.content}
-                          </p>
-                          <p
-                            className={`mt-1 text-xs ${
-                              isOwn ? "text-purple-100" : "text-gray-400"
-                            }`}
-                          >
-                            {new Date(message.createdAt).toLocaleString()}
-                          </p>
+                  {/* Messages */}
+                  <div className="flex-1 space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent">
+                    {messages.length === 0 ? (
+                      <div className="flex h-full items-center justify-center text-gray-400">
+                        <div className="text-center">
+                          <svg className="mx-auto h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                          <p className="mt-2">No messages yet</p>
+                          <p className="mt-1 text-sm text-gray-500">Start the conversation!</p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* Input */}
-                <form onSubmit={handleSendMessage} className="border-t border-white/10 p-4">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type a message..."
-                      className="flex-1 rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                      disabled={sending}
-                    />
-                    <button
-                      type="submit"
-                      disabled={!newMessage.trim() || sending}
-                      className="rounded-lg bg-purple-500 px-6 py-2 text-white font-semibold transition-colors hover:bg-purple-600 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                    >
-                      {sending ? "Sending..." : "Send"}
-                    </button>
+                    ) : (
+                      <>
+                        {messages.map((message) => {
+                          const isOwn = message.senderId === session?.user?.id;
+                          return (
+                            <div
+                              key={message.id}
+                              className={`flex ${isOwn ? "justify-end" : "justify-start"} animate-fade-in`}
+                            >
+                              <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
+                                <div
+                                  className={`rounded-2xl px-4 py-2.5 shadow-lg ${
+                                    isOwn
+                                      ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white"
+                                      : "bg-white/10 text-white backdrop-blur-sm"
+                                  }`}
+                                >
+                                  <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+                                    {message.content}
+                                  </p>
+                                  <p
+                                    className={`mt-1.5 text-xs ${
+                                      isOwn ? "text-purple-100" : "text-gray-400"
+                                    }`}
+                                  >
+                                    {formatMessageTime(message.createdAt)}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <div ref={messagesEndRef} />
+                      </>
+                    )}
                   </div>
-                </form>
-              </div>
-            ) : (
-              <div className="flex h-[600px] items-center justify-center text-gray-400">
-                Select a conversation to start messaging
-              </div>
-            )}
+
+                  {/* Input Area */}
+                  <form onSubmit={handleSendMessage} className="border-t border-white/10 bg-white/5 p-4">
+                    <div className="flex gap-3">
+                      <input
+                        type="text"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        placeholder="Type your message..."
+                        className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-gray-400 backdrop-blur-sm transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        disabled={sending}
+                      />
+                      <button
+                        type="submit"
+                        disabled={!newMessage.trim() || sending}
+                        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-purple-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {sending ? (
+                          <>
+                            <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Sending...</span>
+                          </>
+                        ) : (
+                          <>
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                            <span>Send</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              ) : (
+                <div className="flex h-[calc(100vh-200px)] items-center justify-center">
+                  <div className="text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10">
+                      <svg className="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-white">Select a conversation</h3>
+                    <p className="mt-1 text-sm text-gray-400">Choose a conversation from the list to start messaging</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
