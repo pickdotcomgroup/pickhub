@@ -52,7 +52,10 @@ export default function MyProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  const [selectedProjectApplications, setSelectedProjectApplications] = useState<{
+    project: Project;
+    applications: Application[];
+  } | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [selectedDeveloper, setSelectedDeveloper] = useState<Application | null>(null);
   const [loadingAccept, setLoadingAccept] = useState<string | null>(null);
@@ -112,8 +115,11 @@ export default function MyProjectsPage() {
     }
   };
 
-  const toggleProjectApplications = (projectId: string) => {
-    setExpandedProject(expandedProject === projectId ? null : projectId);
+  const openApplicationsModal = (project: Project) => {
+    setSelectedProjectApplications({
+      project,
+      applications: project.applications ?? [],
+    });
   };
 
   const handleAcceptApplication = async (applicationId: string) => {
@@ -152,7 +158,7 @@ export default function MyProjectsPage() {
     }
 
     if (session.user.role !== "client") {
-      router.push("/dashboard");
+      router.push("/client/dashboard");
       return;
     }
 
@@ -331,7 +337,7 @@ export default function MyProjectsPage() {
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition border border-white/10">
-                    View Details
+                    Manage Project
                   </button>
                 </div>
 
@@ -356,188 +362,19 @@ export default function MyProjectsPage() {
                 {project.applications && project.applications.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-white/10">
                     <button
-                      onClick={() => toggleProjectApplications(project.id)}
-                      className="flex items-center justify-between w-full text-left mb-3"
+                      onClick={() => openApplicationsModal(project)}
+                      className="flex items-center space-x-2 text-purple-400 hover:text-purple-300 transition"
                     >
-                      <div className="flex items-center space-x-2">
-                        <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        <span className="text-white font-medium">
-                          {project.applications.length} Developer{project.applications.length !== 1 ? 's' : ''} Applied
-                        </span>
-                      </div>
-                      <svg
-                        className={`w-5 h-5 text-gray-400 transition-transform ${
-                          expandedProject === project.id ? 'rotate-180' : ''
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                      <span className="font-medium">
+                        {project.applications.length} Developer{project.applications.length !== 1 ? 's' : ''} Applied
+                      </span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                     </button>
-
-                    {expandedProject === project.id && (
-                      <div className="space-y-3">
-                        {project.applications.map((application) => (
-                          <div
-                            key={application.id}
-                            className="bg-white/5 rounded-lg p-4 border border-white/10"
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-start space-x-3 flex-1">
-                                {/* Developer Avatar */}
-                                <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                                  {application.talent.image ? (
-                                    <img
-                                      src={application.talent.image}
-                                      alt={application.talent.name ?? 'Developer'}
-                                      className="w-12 h-12 rounded-full object-cover"
-                                    />
-                                  ) : (
-                                    <span>
-                                      {application.talent.talentProfile
-                                        ? `${application.talent.talentProfile.firstName[0]}${application.talent.talentProfile.lastName[0]}`
-                                        : application.talent.name?.[0] ?? 'D'}
-                                    </span>
-                                  )}
-                                </div>
-
-                                {/* Developer Info */}
-                                <div className="flex-1">
-                                  <div className="flex items-center space-x-2 mb-1">
-                                    <h4 className="text-white font-semibold">
-                                      {application.talent.talentProfile
-                                        ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
-                                        : application.talent.name ?? 'Developer'}
-                                    </h4>
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                      application.status === 'pending'
-                                        ? 'bg-yellow-500/20 text-yellow-300'
-                                        : application.status === 'accepted'
-                                        ? 'bg-green-500/20 text-green-300'
-                                        : 'bg-red-500/20 text-red-300'
-                                    }`}>
-                                      {application.status.toUpperCase()}
-                                    </span>
-                                  </div>
-                                  
-                                  {application.talent.talentProfile && (
-                                    <>
-                                      <p className="text-gray-400 text-sm mb-2">
-                                        {application.talent.talentProfile.title}
-                                      </p>
-                                      
-                                      {/* Skills */}
-                                      <div className="flex flex-wrap gap-1 mb-2">
-                                        {application.talent.talentProfile.skills.slice(0, 4).map((skill, idx) => (
-                                          <span
-                                            key={idx}
-                                            className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded"
-                                          >
-                                            {skill}
-                                          </span>
-                                        ))}
-                                        {application.talent.talentProfile.skills.length > 4 && (
-                                          <span className="px-2 py-0.5 bg-gray-500/20 text-gray-300 text-xs rounded">
-                                            +{application.talent.talentProfile.skills.length - 4}
-                                          </span>
-                                        )}
-                                      </div>
-
-                                      {/* Experience and Rate */}
-                                      <div className="flex items-center space-x-4 text-xs text-gray-400 mb-2">
-                                        <span className="capitalize">
-                                          {application.talent.talentProfile.experience} Level
-                                        </span>
-                                        {application.talent.talentProfile.hourlyRate && (
-                                          <span>${application.talent.talentProfile.hourlyRate}/hr</span>
-                                        )}
-                                        {application.proposedRate && (
-                                          <span className="text-purple-400 font-medium">
-                                            Proposed: ${application.proposedRate.toLocaleString()}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </>
-                                  )}
-
-                                  {/* Cover Letter */}
-                                  {application.coverLetter && (
-                                    <div className="mt-2 p-2 bg-white/5 rounded text-sm text-gray-300">
-                                      <p className="line-clamp-2">{application.coverLetter}</p>
-                                    </div>
-                                  )}
-
-                                  {/* Applied Date */}
-                                  <p className="text-xs text-gray-500 mt-2">
-                                    Applied {formatDate(application.createdAt)}
-                                  </p>
-                                </div>
-                              </div>
-
-                              {/* Action Buttons */}
-                              <div className="flex flex-col space-y-2 ml-4">
-                                {application.status === 'pending' && (
-                                  <button
-                                    onClick={() => handleAcceptApplication(application.id)}
-                                    disabled={loadingAccept === application.id}
-                                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-600/50 text-white text-sm rounded-lg transition flex items-center justify-center space-x-2"
-                                  >
-                                    {loadingAccept === application.id ? (
-                                      <>
-                                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        <span>Accepting...</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span>Accept</span>
-                                      </>
-                                    )}
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => handleMessageDeveloper(application.talent.id, project.id)}
-                                  disabled={loadingMessage === application.talent.id}
-                                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white text-sm rounded-lg transition flex items-center space-x-2"
-                                >
-                                  {loadingMessage === application.talent.id ? (
-                                    <>
-                                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                      </svg>
-                                      <span>Loading...</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                      </svg>
-                                      <span>Message</span>
-                                    </>
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => setSelectedDeveloper(application)}
-                                  className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm rounded-lg transition text-center border border-white/10"
-                                >
-                                  View Profile
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -545,6 +382,199 @@ export default function MyProjectsPage() {
           </div>
         )}
       </div>
+
+      {/* Applications Modal */}
+      {selectedProjectApplications && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedProjectApplications(null)}
+        >
+          <div 
+            className="bg-slate-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-slate-900/95 backdrop-blur-sm border-b border-white/10 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-1">Applications</h2>
+                  <p className="text-gray-400">{selectedProjectApplications.project.title}</p>
+                </div>
+                <button
+                  onClick={() => setSelectedProjectApplications(null)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition"
+                >
+                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              {selectedProjectApplications.applications.length === 0 ? (
+                <div className="text-center py-12">
+                  <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className="text-gray-400">No applications yet</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {selectedProjectApplications.applications.map((application) => (
+                    <div
+                      key={application.id}
+                      className="bg-white/5 rounded-lg p-5 border border-white/10 hover:border-purple-500/30 transition"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4 flex-1">
+                          {/* Developer Avatar */}
+                          <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                            {application.talent.image ? (
+                              <img
+                                src={application.talent.image}
+                                alt={application.talent.name ?? 'Developer'}
+                                className="w-14 h-14 rounded-full object-cover"
+                              />
+                            ) : (
+                              <span className="text-lg">
+                                {application.talent.talentProfile
+                                  ? `${application.talent.talentProfile.firstName[0]}${application.talent.talentProfile.lastName[0]}`
+                                  : application.talent.name?.[0] ?? 'D'}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Developer Info */}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h4 className="text-lg font-semibold text-white">
+                                {application.talent.talentProfile
+                                  ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
+                                  : application.talent.name ?? 'Developer'}
+                              </h4>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                application.status === 'pending'
+                                  ? 'bg-yellow-500/20 text-yellow-300'
+                                  : application.status === 'accepted'
+                                  ? 'bg-green-500/20 text-green-300'
+                                  : 'bg-red-500/20 text-red-300'
+                              }`}>
+                                {application.status.toUpperCase()}
+                              </span>
+                            </div>
+                            
+                            {application.talent.talentProfile && (
+                              <>
+                                <p className="text-gray-400 text-sm mb-3">
+                                  {application.talent.talentProfile.title}
+                                </p>
+                                
+                                {/* Skills */}
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                  {application.talent.talentProfile.skills.slice(0, 5).map((skill, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded"
+                                    >
+                                      {skill}
+                                    </span>
+                                  ))}
+                                  {application.talent.talentProfile.skills.length > 5 && (
+                                    <span className="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs rounded">
+                                      +{application.talent.talentProfile.skills.length - 5}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Experience and Rate */}
+                                <div className="flex items-center space-x-4 text-xs text-gray-400 mb-3">
+                                  <span className="capitalize">
+                                    {application.talent.talentProfile.experience} Level
+                                  </span>
+                                  {application.talent.talentProfile.hourlyRate && (
+                                    <span>${application.talent.talentProfile.hourlyRate}/hr</span>
+                                  )}
+                                  {application.proposedRate && (
+                                    <span className="text-purple-400 font-medium">
+                                      Proposed: ${application.proposedRate.toLocaleString()}
+                                    </span>
+                                  )}
+                                </div>
+                              </>
+                            )}
+
+                            {/* Cover Letter Preview */}
+                            {application.coverLetter && (
+                              <div className="mt-3 p-3 bg-white/5 rounded text-sm text-gray-300">
+                                <p className="line-clamp-2">{application.coverLetter}</p>
+                              </div>
+                            )}
+
+                            {/* Applied Date */}
+                            <p className="text-xs text-gray-500 mt-3">
+                              Applied {formatDate(application.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex flex-col space-y-2 ml-4">
+                          <button
+                            onClick={() => setSelectedDeveloper(application)}
+                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition whitespace-nowrap"
+                          >
+                            View Profile
+                          </button>
+                          {application.status === 'pending' && (
+                            <button
+                              onClick={() => handleAcceptApplication(application.id)}
+                              disabled={loadingAccept === application.id}
+                              className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-600/50 text-white text-sm rounded-lg transition flex items-center justify-center space-x-1"
+                            >
+                              {loadingAccept === application.id ? (
+                                <>
+                                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                  </svg>
+                                  <span>...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  <span>Accept</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleMessageDeveloper(application.talent.id, selectedProjectApplications.project.id)}
+                            disabled={loadingMessage === application.talent.id}
+                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white text-sm rounded-lg transition border border-white/10"
+                          >
+                            {loadingMessage === application.talent.id ? (
+                              <svg className="animate-spin h-4 w-4 mx-auto" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                            ) : (
+                              'Message'
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Developer Profile Modal */}
       {selectedDeveloper && (

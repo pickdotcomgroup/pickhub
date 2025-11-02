@@ -21,9 +21,7 @@ export default function AccountInfo({ session }: AccountInfoProps) {
       </div>
 
       {/* Session Information Card */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 mb-6">
-        <h2 className="text-2xl font-semibold text-white mb-6">Session Information</h2>
-        
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 mb-6">   
         <div className="grid md:grid-cols-2 gap-8">
           {/* User Details */}
           <div>

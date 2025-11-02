@@ -16,9 +16,16 @@ export async function withAuth(
   // Get user role data
   const roleData = await getUserRole(token.sub!);
 
+  // Determine role-specific dashboard
+  const dashboardUrl = roleData.role === "client" 
+    ? "/client/dashboard" 
+    : roleData.role === "talent" 
+    ? "/talent/dashboard" 
+    : "/dashboard";
+
   // Check if user has required role
   if (allowedRoles.length > 0 && roleData.role && !allowedRoles.includes(roleData.role)) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL(dashboardUrl, request.url));
   }
 
   // Check if user has required permissions
@@ -28,7 +35,7 @@ export async function withAuth(
     );
 
     if (!hasAllPermissions) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL(dashboardUrl, request.url));
     }
   }
 
