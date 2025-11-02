@@ -37,7 +37,7 @@ export default function TalentProjectsPage() {
 
   const fetchApplications = useCallback(async () => {
     if (!session?.user.id) return;
-    
+
     try {
       setIsLoading(true);
       const response = await fetch(`/api/applications?talentId=${session.user.id}`);
@@ -58,7 +58,7 @@ export default function TalentProjectsPage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    
+
     if (!session) {
       router.push("/auth");
       return;
@@ -74,8 +74,11 @@ export default function TalentProjectsPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
+      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="text-lg text-white">Loading projects...</div>
+        </div>
       </main>
     );
   }
@@ -84,8 +87,8 @@ export default function TalentProjectsPage() {
     return null;
   }
 
-  const filteredApplications = filter === "all" 
-    ? applications 
+  const filteredApplications = filter === "all"
+    ? applications
     : applications.filter(app => app.status === filter);
 
   const formatDate = (dateString: string) => {
@@ -130,41 +133,37 @@ export default function TalentProjectsPage() {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                filter === "all"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "all"
                   ? "bg-purple-600 text-white"
                   : "bg-white/5 text-gray-300 hover:bg-white/10"
-              }`}
+                }`}
             >
               All ({applications.length})
             </button>
             <button
               onClick={() => setFilter("pending")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                filter === "pending"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "pending"
                   ? "bg-purple-600 text-white"
                   : "bg-white/5 text-gray-300 hover:bg-white/10"
-              }`}
+                }`}
             >
               Pending ({applications.filter(a => a.status === "pending").length})
             </button>
             <button
               onClick={() => setFilter("accepted")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                filter === "accepted"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "accepted"
                   ? "bg-purple-600 text-white"
                   : "bg-white/5 text-gray-300 hover:bg-white/10"
-              }`}
+                }`}
             >
               Accepted ({applications.filter(a => a.status === "accepted").length})
             </button>
             <button
               onClick={() => setFilter("rejected")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                filter === "rejected"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "rejected"
                   ? "bg-purple-600 text-white"
                   : "bg-white/5 text-gray-300 hover:bg-white/10"
-              }`}
+                }`}
             >
               Rejected ({applications.filter(a => a.status === "rejected").length})
             </button>
@@ -186,7 +185,7 @@ export default function TalentProjectsPage() {
             </svg>
             <h3 className="text-xl font-semibold text-white mb-2">No projects yet</h3>
             <p className="text-gray-400 mb-6">
-              {filter === "all" 
+              {filter === "all"
                 ? "You haven't applied to any projects yet. Start browsing available opportunities!"
                 : `No ${filter} applications found.`}
             </p>
