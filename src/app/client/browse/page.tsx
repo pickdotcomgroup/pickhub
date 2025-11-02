@@ -37,7 +37,7 @@ export default function ClientBrowsePage() {
 
   useEffect(() => {
     if (status === "loading") return;
-    
+
     if (!session) {
       router.push("/auth");
       return;
@@ -60,7 +60,7 @@ export default function ClientBrowsePage() {
       if (selectedSkills.length > 0) params.append("skills", selectedSkills.join(","));
 
       const response = await fetch(`/api/talents?${params.toString()}`);
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch talents");
       }
@@ -83,9 +83,10 @@ export default function ClientBrowsePage() {
 
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
-      </main>
+      <div className="flex items-center justify-center gap-3 m-10">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+        <div className="text-lg text-white">Loading Developers...</div>
+      </div>
     );
   }
 
@@ -107,7 +108,7 @@ export default function ClientBrowsePage() {
     }
     if (talent.name) {
       const names = talent.name.split(" ");
-      return names.length > 1 
+      return names.length > 1
         ? `${names[0]?.[0] ?? ""}${names[1]?.[0] ?? ""}`.toUpperCase()
         : (names[0]?.[0] ?? "T").toUpperCase();
     }
@@ -176,7 +177,7 @@ export default function ClientBrowsePage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Experience Level</label>
-              <select 
+              <select
                 value={experienceLevel}
                 onChange={(e) => setExperienceLevel(e.target.value)}
                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -197,11 +198,10 @@ export default function ClientBrowsePage() {
                 <button
                   key={skill}
                   onClick={() => toggleSkill(skill)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                    selectedSkills.includes(skill)
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/5 text-gray-300 hover:bg-white/10"
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition ${selectedSkills.includes(skill)
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300 hover:bg-white/10"
+                    }`}
                 >
                   {skill}
                 </button>
@@ -212,8 +212,9 @@ export default function ClientBrowsePage() {
 
         {/* Loading State */}
         {loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-white text-lg">Loading talents...</div>
+          <div className="flex items-center justify-center gap-3 m-10">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+            <div className="text-lg text-white">Loading Developers...</div>
           </div>
         )}
 
@@ -243,8 +244,8 @@ export default function ClientBrowsePage() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     {talent.image ? (
-                      <Image 
-                        src={talent.image} 
+                      <Image
+                        src={talent.image}
                         alt={getDisplayName(talent)}
                         width={48}
                         height={48}

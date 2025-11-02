@@ -160,9 +160,12 @@ export default function MyProjectsPage() {
   }, [session, status, router, fetchProjects]);
 
   if (status === "loading" || isLoading) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
+     return (
+      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="text-lg text-white">Loading projects...</div>
+        </div>
       </main>
     );
   }
