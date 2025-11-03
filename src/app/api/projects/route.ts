@@ -98,19 +98,27 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const session = await auth();
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
     const { searchParams } = new URL(req.url);
     const clientId = searchParams.get("clientId");
 
-    // If clientId is provided, filter by client
-    const where = clientId ? { clientId } : {};
+    // Build where clause with proper typing
+    interface WhereClause {
+      status?: string;
+      clientId?: string;
+    }
+
+    const where: WhereClause = {
+      status: "open", // Only show open projects for public browsing
+    };
+
+    // If clientId is provided and user is authenticated, filter by client
+    if (clientId && session?.user) {
+      where.clientId = clientId;
+      // Remove status filter if user is viewing their own projects
+      if (session.user.id === clientId) {
+        delete where.status;
+      }
+    }
 
     const projects = await db.project.findMany({
       where,
@@ -120,12 +128,14 @@ export async function GET(req: Request) {
             id: true,
             name: true,
             email: true,
+            image: true,
           },
         },
       },
       orderBy: {
         createdAt: "desc",
       },
+      take: 50, // Limit results for public browsing
     });
 
     return NextResponse.json({ projects }, { status: 200 });

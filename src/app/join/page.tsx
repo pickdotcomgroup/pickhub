@@ -18,7 +18,7 @@ export default function JoinPage() {
           {/* Back to Browse */}
           <div className="text-center mt-8">
             <Link
-              href="/browse"
+              href="/"
               className="text-purple-400 hover:text-purple-300 transition"
             >
               ← Back to Browse

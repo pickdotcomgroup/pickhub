@@ -345,7 +345,7 @@ function AuthContent() {
         {/* Back to Browse Link */}
         <div className="mb-6">
           <Link
-            href="/browse"
+            href="/"
             className="inline-flex items-center text-purple-400 hover:text-purple-300 transition"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

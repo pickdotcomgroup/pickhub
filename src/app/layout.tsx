@@ -8,8 +8,8 @@ import { TRPCReactProvider } from "~/trpc/react";
 import LayoutWrapper from "./_components/layout-wrapper";
 
 export const metadata: Metadata = {
-  title: "PickHub - Freelance Project Management",
-  description: "Professional freelance project management platform",
+  title: "TechPickHub - Browse Tech Projects, Developers, and Top Agencies",
+  description: "A platform to explore tech projects, connect with developers, and find top agencies.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 

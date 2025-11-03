@@ -6,13 +6,10 @@ import type { Prisma } from "@prisma/client";
 export async function GET(request: Request) {
   try {
     const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // If talent is requesting their own profile
-    if (session.user.role === "talent") {
+    const { searchParams } = new URL(request.url);
+    
+    // If talent is requesting their own profile (authenticated)
+    if (session?.user.role === "talent") {
       const talentProfile = await db.talentProfile.findUnique({
         where: { userId: session.user.id },
       });
@@ -35,12 +32,7 @@ export async function GET(request: Request) {
       });
     }
 
-    // Only clients can browse talents
-    if (session.user.role !== "client") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const { searchParams } = new URL(request.url);
+    // Public browsing of talents (no authentication required)
     const searchQuery = searchParams.get("search") ?? "";
     const experienceLevel = searchParams.get("experience") ?? "";
     const skills = searchParams.get("skills")?.split(",").filter(Boolean) ?? [];
@@ -50,6 +42,17 @@ export async function GET(request: Request) {
       {
         talentProfile: {
           isNot: null,
+        },
+      },
+      {
+        talentProfile: {
+          // Only show verified talents for public browsing
+          verificationStatus: "verified",
+        },
+      },
+      {
+        talentProfile: {
+          platformAccess: true,
         },
       },
     ];
@@ -124,6 +127,7 @@ export async function GET(request: Request) {
       orderBy: {
         createdAt: "desc",
       },
+      take: 50, // Limit results for public browsing
     });
 
     // Transform the data to a cleaner format
