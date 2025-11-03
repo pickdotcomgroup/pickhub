@@ -61,6 +61,7 @@ model User {
     emailVerified DateTime?
     image         String?
     password      String?       // For credentials authentication
+    role          String        @default("user") // user, admin
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
@@ -71,6 +72,7 @@ model User {
     clientProfile ClientProfile?
     talentProfile TalentProfile?
     agencyProfile AgencyProfile?
+    adminProfile  AdminProfile?
     
     // Messaging relations
     clientConversations Conversation[] @relation("ClientConversations")
@@ -110,6 +112,24 @@ model TalentProfile {
     hourlyRate String?
     portfolio  String?
     
+    // Tier system fields
+    tier                String   @default("bronze") // bronze, silver, gold
+    activePicks         Int      @default(0) // Current number of active project picks
+    completedProjects   Int      @default(0) // Total completed projects
+    successRate         Float    @default(0.0) // Success rate (0-100)
+    totalEarnings       Float    @default(0.0) // Total earnings for tier progression
+    
+    // Portfolio showcase
+    portfolioUrl        String?  // External portfolio URL
+    portfolioProjects   Json?    // JSON array of portfolio projects
+    certifications      String[] @default([]) // Array of certifications
+    bio                 String?  @db.Text // Professional bio
+    
+    // Quality Assurance & Verification
+    verificationStatus  String   @default("pending") // pending, in_review, verified, rejected
+    platformAccess      Boolean  @default(false) // Access granted after verification
+    verification        TalentVerification? @relation("TalentVerification")
+    
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
 }
@@ -130,16 +150,102 @@ model AgencyProfile {
     updatedAt   DateTime @updatedAt
 }
 
+model AdminProfile {
+    id          String   @id @default(cuid())
+    userId      String   @unique
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    firstName   String
+    lastName    String
+    role        String   @default("master") // master, moderator
+    permissions Json?    // JSON object for granular permissions
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+// Quality Assurance Framework Models
+model TalentVerification {
+    id                    String   @id @default(cuid())
+    talentProfileId       String   @unique
+    talentProfile         TalentProfile @relation("TalentVerification", fields: [talentProfileId], references: [id], onDelete: Cascade)
+    
+    // Portfolio Review
+    portfolioReviewed     Boolean  @default(false)
+    portfolioScore        Float?   // 0-100 score
+    portfolioNotes        String?  @db.Text
+    
+    // Code Sample Analysis
+    githubUsername        String?
+    gitlabUsername        String?
+    codeRepositoryUrl     String?
+    codeSampleReviewed    Boolean  @default(false)
+    codeSampleScore       Float?   // 0-100 score
+    codeSampleNotes       String?  @db.Text
+    
+    // Skill Verification Tests
+    skillTestsTaken       Json?    // Array of test results
+    skillTestsScore       Float?   // Average score
+    
+    // Identity Verification
+    linkedInUrl           String?
+    linkedInVerified      Boolean  @default(false)
+    identityVerified      Boolean  @default(false)
+    identityDocumentType  String?  // passport, drivers_license, national_id
+    identityVerifiedAt    DateTime?
+    
+    // Overall Verification
+    overallScore          Float?   // Weighted average of all scores
+    verificationDecision  String   @default("pending") // pending, approved, rejected, needs_revision
+    reviewedBy            String?  // Admin user ID who reviewed
+    reviewedAt            DateTime?
+    rejectionReason       String?  @db.Text
+    
+    createdAt             DateTime @default(now())
+    updatedAt             DateTime @updatedAt
+    
+    @@index([verificationDecision])
+}
+
+model SkillTest {
+    id                String   @id @default(cuid())
+    title             String
+    description       String   @db.Text
+    technology        String   // React, Node.js, Python, etc.
+    difficulty        String   // beginner, intermediate, advanced
+    duration          Int      // Duration in minutes
+    passingScore      Float    // Minimum score to pass (0-100)
+    
+    questions         Json     // Array of questions with answers
+    isActive          Boolean  @default(true)
+    
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    
+    @@index([technology])
+    @@index([difficulty])
+}
+
 model Project {
-    id           String        @id @default(cuid())
-    title        String
-    description  String        @db.Text
-    budget       Float
-    deadline     DateTime
-    category     String
-    skills       String[]      // Array of required skills
-    projectType  String        @default("fixed") // fixed or hourly
-    status       String        @default("open") // open, in_progress, completed, cancelled
+    id                 String        @id @default(cuid())
+    title              String
+    description        String        @db.Text
+    budget             Float
+    deadline           DateTime
+    category           String
+    skills             String[]      // Array of required skills
+    projectType        String        @default("fixed") // fixed or hourly
+    status             String        @default("open") // open, in_progress, completed, cancelled
+    
+    // New enhanced fields
+    complexity         String?       // simple, moderate, complex
+    estimatedDuration  Int?          // in days
+    projectTemplate    String?       // web_app, mobile_app, api_development, etc.
+    techStack          String[]      @default([]) // Technology stack
+    visibility         String        @default("public") // public or invite_only
+    
+    // Tier-based access
+    minimumTier        String        @default("bronze") // bronze, silver, gold - minimum tier required
     
     clientId     String
     client       User          @relation(fields: [clientId], references: [id], onDelete: Cascade)
@@ -151,13 +257,23 @@ model Project {
     @@index([clientId])
     @@index([status])
     @@index([category])
+    @@index([minimumTier])
 }
 
 model Application {
     id          String   @id @default(cuid())
-    status      String   @default("pending") // pending, accepted, rejected
+    status      String   @default("pending") // pending, accepted, rejected, withdrawn
     coverLetter String?  @db.Text
     proposedRate Float?
+    
+    // Pick tracking
+    isPicked    Boolean  @default(false) // Whether talent has picked this project
+    pickedAt    DateTime? // When the project was picked
+    
+    // Completion tracking
+    completedAt DateTime? // When the project was completed
+    clientRating Float?   // Client rating (1-5)
+    clientFeedback String? @db.Text
     
     projectId   String
     project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -172,6 +288,7 @@ model Application {
     @@index([talentId])
     @@index([projectId])
     @@index([status])
+    @@index([isPicked])
 }
 
 model Conversation {
@@ -186,6 +303,9 @@ model Conversation {
     
     // Optional: Link to a specific project
     projectId    String?
+    
+    // Mutual interest tracking
+    mutualInterest Boolean  @default(false) // True when both parties have shown interest
     
     messages     Message[]
     

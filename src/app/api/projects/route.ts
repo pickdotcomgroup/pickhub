@@ -10,6 +10,11 @@ interface ProjectRequestBody {
   category?: string;
   skills?: string[];
   projectType?: string;
+  complexity?: string;
+  estimatedDuration?: number;
+  projectTemplate?: string;
+  techStack?: string[];
+  visibility?: string;
 }
 
 export async function POST(req: Request) {
@@ -31,7 +36,20 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json() as ProjectRequestBody;
-    const { title, description, budget, deadline, category, skills, projectType } = body;
+    const { 
+      title, 
+      description, 
+      budget, 
+      deadline, 
+      category, 
+      skills, 
+      projectType,
+      complexity,
+      estimatedDuration,
+      projectTemplate,
+      techStack,
+      visibility
+    } = body;
 
     // Validation
     if (!title || !description || !budget || !deadline || !category || !skills || skills.length === 0) {
@@ -53,6 +71,11 @@ export async function POST(req: Request) {
         projectType: projectType ?? "fixed",
         status: "open",
         clientId: session.user.id,
+        complexity: complexity,
+        estimatedDuration: estimatedDuration,
+        projectTemplate: projectTemplate,
+        techStack: techStack ?? [],
+        visibility: visibility ?? "public",
       },
     });
 

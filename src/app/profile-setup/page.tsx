@@ -15,6 +15,12 @@ interface OnboardingData {
   projectTypes?: string[];
   budget?: string;
   teamSize?: string;
+  // Verification fields for developers
+  portfolioUrl?: string;
+  githubUsername?: string;
+  gitlabUsername?: string;
+  codeRepositoryUrl?: string;
+  linkedInUrl?: string;
 }
 
 const skillOptions = [
@@ -70,7 +76,7 @@ export default function ProfileSetupPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Redirect to dashboard based on role
-    router.push("/dashboard");
+    void router.push("/dashboard");
   };
 
   const getRoleDescription = (role: UserRole) => {
@@ -140,10 +146,23 @@ export default function ProfileSetupPage() {
             }`}>
               2
             </div>
+            {data.role === "developer" && (
+              <>
+                <div className={`w-16 h-1 ${step >= 3 ? "bg-purple-600" : "bg-gray-600"}`}></div>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                  step >= 3 ? "bg-purple-600 text-white" : "bg-gray-600 text-gray-300"
+                }`}>
+                  3
+                </div>
+              </>
+            )}
           </div>
           <div className="flex justify-center mt-2 space-x-8">
             <span className="text-sm text-gray-300">Choose Role</span>
             <span className="text-sm text-gray-300">Setup Profile</span>
+            {data.role === "developer" && (
+              <span className="text-sm text-gray-300">Verification</span>
+            )}
           </div>
         </div>
 
@@ -360,27 +379,163 @@ export default function ProfileSetupPage() {
                 Back
               </button>
               <div className="flex gap-4">
-                <Link
-                  href="/dashboard"
-                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition"
-                >
-                  Skip for Now
-                </Link>
+                {data.role !== "developer" && (
+                  <Link
+                    href="/dashboard"
+                    className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition"
+                  >
+                    Skip for Now
+                  </Link>
+                )}
                 <button
-                  onClick={handleComplete}
+                  onClick={() => {
+                    if (data.role === "developer") {
+                      setStep(3);
+                    } else {
+                      void handleComplete();
+                    }
+                  }}
                   disabled={isLoading}
                   className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition flex items-center"
                 >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Setting up...
-                    </>
-                  ) : (
-                    "Complete Setup"
-                  )}
+                  {data.role === "developer" ? "Next: Verification" : "Complete Setup"}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Developer Verification */}
+        {step === 3 && data.role === "developer" && (
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-2">🔐</div>
+              <h2 className="text-2xl font-bold text-white">
+                Developer Verification
+              </h2>
+              <p className="text-gray-300">
+                Help us verify your skills to access the platform
+              </p>
+            </div>
+
+            <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+              <p className="text-sm text-blue-300">
+                <strong>Why verification?</strong> We ensure quality by verifying all developers before granting platform access. This protects clients and maintains our high standards.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Portfolio URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Portfolio URL <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="url"
+                  value={data.portfolioUrl ?? ""}
+                  onChange={(e) => setData(prev => ({ ...prev, portfolioUrl: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="https://yourportfolio.com"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Your portfolio website showcasing your work
+                </p>
+              </div>
+
+              {/* GitHub Username */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  GitHub Username <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={data.githubUsername ?? ""}
+                  onChange={(e) => setData(prev => ({ ...prev, githubUsername: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="yourusername"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  We&apos;ll review your code samples and contributions
+                </p>
+              </div>
+
+              {/* GitLab Username (Optional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  GitLab Username <span className="text-gray-500">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={data.gitlabUsername ?? ""}
+                  onChange={(e) => setData(prev => ({ ...prev, gitlabUsername: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="yourusername"
+                />
+              </div>
+
+              {/* Code Repository URL (Optional) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Code Repository URL <span className="text-gray-500">(Optional)</span>
+                </label>
+                <input
+                  type="url"
+                  value={data.codeRepositoryUrl ?? ""}
+                  onChange={(e) => setData(prev => ({ ...prev, codeRepositoryUrl: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="https://github.com/username/repo"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Link to a specific repository you&apos;d like us to review
+                </p>
+              </div>
+
+              {/* LinkedIn URL */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  LinkedIn Profile URL <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="url"
+                  value={data.linkedInUrl ?? ""}
+                  onChange={(e) => setData(prev => ({ ...prev, linkedInUrl: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="https://linkedin.com/in/yourprofile"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  For professional identity verification
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+              <p className="text-sm text-yellow-300">
+                <strong>What happens next?</strong> Our team will review your submission within 1-2 business days. You&apos;ll receive an email once your verification is complete.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-between mt-8">
+              <button
+                onClick={() => setStep(2)}
+                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => void handleComplete()}
+                disabled={isLoading || !data.portfolioUrl || !data.githubUsername || !data.linkedInUrl}
+                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition flex items-center"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  "Submit for Verification"
+                )}
+              </button>
             </div>
           </div>
         )}

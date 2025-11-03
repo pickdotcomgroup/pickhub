@@ -11,6 +11,30 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // If talent is requesting their own profile
+    if (session.user.role === "talent") {
+      const talentProfile = await db.talentProfile.findUnique({
+        where: { userId: session.user.id },
+      });
+
+      if (!talentProfile) {
+        return NextResponse.json(
+          { error: "Talent profile not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({
+        profile: {
+          tier: talentProfile.tier,
+          activePicks: talentProfile.activePicks,
+          completedProjects: talentProfile.completedProjects,
+          successRate: talentProfile.successRate,
+          totalEarnings: talentProfile.totalEarnings,
+        },
+      });
+    }
+
     // Only clients can browse talents
     if (session.user.role !== "client") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -118,6 +142,9 @@ export async function GET(request: Request) {
             experience: talent.talentProfile.experience,
             hourlyRate: talent.talentProfile.hourlyRate,
             portfolio: talent.talentProfile.portfolio,
+            tier: talent.talentProfile.tier,
+            completedProjects: talent.talentProfile.completedProjects,
+            successRate: talent.talentProfile.successRate,
           }
         : null,
     }));

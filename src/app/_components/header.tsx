@@ -184,6 +184,15 @@ export default function Header() {
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
+              ) : session.user.role === "admin" ? (
+                <>
+                  <Link
+                    href="/admin/dashboard"
+                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                  >
+                      Dashboard
+                  </Link>
+                </>
               ) : null}
             </nav>
           )}
@@ -234,50 +243,126 @@ export default function Header() {
                       )}
                     </div>
 
-                    {/* Menu Items */}
+                    {/* Menu Items - Filtered by Role */}
                     <div className="py-1">
-                      <Link
-                        href="/client/dashboard"
-                        className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <svg
-                          className="w-4 h-4 mr-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {/* Dashboard Link - Role-specific */}
+                      {session.user.role === "client" && (
+                        <Link
+                          href="/client/dashboard"
+                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          onClick={() => setIsDropdownOpen(false)}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                          />
-                        </svg>
-                        Dashboard
-                      </Link>
+                          <svg
+                            className="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
+                          </svg>
+                          Dashboard
+                        </Link>
+                      )}
 
-                      <Link
-                        href="/client/account"
-                        className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <svg
-                          className="w-4 h-4 mr-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {session.user.role === "talent" && (
+                        <Link
+                          href="/talent/dashboard"
+                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          onClick={() => setIsDropdownOpen(false)}
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          />
-                        </svg>
-                        Account
-                      </Link>
+                          <svg
+                            className="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
+                          </svg>
+                          Dashboard
+                        </Link>
+                      )}
 
+                      {session.user.role === "admin" && (
+                        <Link
+                          href="/admin/dashboard"
+                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <svg
+                            className="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                            />
+                          </svg>
+                          Dashboard
+                        </Link>
+                      )}
+
+                      {/* Account Link - Role-specific */}
+                      {session.user.role === "client" && (
+                        <Link
+                          href="/client/account"
+                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <svg
+                            className="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                          Account
+                        </Link>
+                      )}
+
+                      {session.user.role === "talent" && (
+                        <Link
+                          href="/talent/account"
+                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          <svg
+                            className="w-4 h-4 mr-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                          Account
+                        </Link>
+                      )}
+
+                      {/* Settings Link - Available for all roles */}
                       <Link
                         href="/settings"
                         className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
@@ -305,6 +390,7 @@ export default function Header() {
                         Settings
                       </Link>
 
+                      {/* Logout Button - Available for all roles */}
                       <button
                         onClick={handleLogout}
                         className="flex items-center w-full px-4 py-2 text-sm text-red-400 hover:bg-white/10 transition"

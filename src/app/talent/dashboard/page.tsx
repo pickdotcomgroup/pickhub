@@ -22,12 +22,29 @@ export default function TalentDashboardPage() {
       return;
     }
 
-    // Simulate loading dashboard data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    // Check verification status
+    const checkVerification = async () => {
+      try {
+        const response = await fetch("/api/verification/status");
+        if (response.ok) {
+          const data = await response.json() as {
+            platformAccess?: boolean;
+          };
+          
+          // Redirect to verification page if not verified
+          if (!data.platformAccess) {
+            router.push("/talent/verification");
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Error checking verification:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    void checkVerification();
   }, [session, status, router]);
 
   if (status === "loading" || isLoading) {

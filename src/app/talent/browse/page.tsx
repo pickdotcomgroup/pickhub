@@ -14,6 +14,7 @@ interface Project {
   skills: string[];
   projectType: string;
   status: string;
+  minimumTier: string;
   createdAt: string;
   client: {
     id: string;
@@ -22,16 +23,37 @@ interface Project {
   };
 }
 
+interface TalentProfile {
+  tier: string;
+  activePicks: number;
+  completedProjects: number;
+  successRate: number;
+}
+
 export default function TalentBrowsePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [talentProfile, setTalentProfile] = useState<TalentProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [applyingProjectId, setApplyingProjectId] = useState<string | null>(null);
+
+  const fetchTalentProfile = useCallback(async () => {
+    try {
+      const response = await fetch("/api/talents");
+      const data = await response.json() as { error?: string; profile?: TalentProfile };
+
+      if (response.ok && data.profile) {
+        setTalentProfile(data.profile);
+      }
+    } catch (error) {
+      console.error("Failed to fetch talent profile:", error);
+    }
+  }, []);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -66,8 +88,32 @@ export default function TalentBrowsePage() {
       return;
     }
 
-    void fetchProjects();
-  }, [session, status, router, fetchProjects]);
+    // Check verification status before allowing access
+    const checkVerification = async () => {
+      try {
+        const response = await fetch("/api/verification/status");
+        if (response.ok) {
+          const data = await response.json() as {
+            platformAccess?: boolean;
+          };
+          
+          // Redirect to verification page if not verified
+          if (!data.platformAccess) {
+            router.push("/talent/verification");
+            return;
+          }
+          
+          // Only fetch data if verified
+          void fetchTalentProfile();
+          void fetchProjects();
+        }
+      } catch (error) {
+        console.error("Error checking verification:", error);
+      }
+    };
+
+    void checkVerification();
+  }, [session, status, router, fetchProjects, fetchTalentProfile]);
 
   if (status === "loading" || isLoading) {
     return (
@@ -84,7 +130,19 @@ export default function TalentBrowsePage() {
     return null;
   }
 
-  const skills = ["React", "Next.js", "Vue.js", "Angular", "TypeScript", "JavaScript", "Python", "Node.js"];
+  const skills = [
+    "React",
+    "Next.js",
+    "TypeScript",
+    "JavaScript",
+    "Laravel",
+    "Machine Learning",
+    "Data Science",
+    "PHP",
+    "Angular",
+    "Docker",
+    "AWS"
+  ];
   const categories = [
     "Web Development",
     "Mobile App Development",
@@ -97,6 +155,50 @@ export default function TalentBrowsePage() {
     setSelectedSkills(prev =>
       prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]
     );
+  };
+
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case "gold":
+        return "text-yellow-400";
+      case "silver":
+        return "text-gray-300";
+      case "bronze":
+      default:
+        return "text-orange-400";
+    }
+  };
+
+  const getTierBadgeColor = (tier: string) => {
+    switch (tier) {
+      case "gold":
+        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+      case "silver":
+        return "bg-gray-400/20 text-gray-300 border-gray-400/30";
+      case "bronze":
+      default:
+        return "bg-orange-500/20 text-orange-300 border-orange-500/30";
+    }
+  };
+
+  const canAccessProject = (projectMinTier: string) => {
+    if (!talentProfile) return false;
+    const tierOrder = ["bronze", "silver", "gold"];
+    const talentTierIndex = tierOrder.indexOf(talentProfile.tier);
+    const projectTierIndex = tierOrder.indexOf(projectMinTier);
+    return talentTierIndex >= projectTierIndex;
+  };
+
+  const getMaxPicks = (tier: string) => {
+    switch (tier) {
+      case "gold":
+        return 5;
+      case "silver":
+        return 4;
+      case "bronze":
+      default:
+        return 3;
+    }
   };
 
   const filteredProjects = projects.filter(project => {
@@ -118,6 +220,21 @@ export default function TalentBrowsePage() {
   };
 
   const handleApply = async (project: Project) => {
+    if (!talentProfile) return;
+
+    // Check tier access
+    if (!canAccessProject(project.minimumTier)) {
+      setError(`This project requires ${project.minimumTier} tier or higher`);
+      return;
+    }
+
+    // Check concurrent picks limit
+    const maxPicks = getMaxPicks(talentProfile.tier);
+    if (talentProfile.activePicks >= maxPicks) {
+      setError(`You have reached your maximum concurrent picks (${maxPicks}) for ${talentProfile.tier} tier`);
+      return;
+    }
+
     setApplyingProjectId(project.id);
 
     try {
@@ -150,10 +267,47 @@ export default function TalentBrowsePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        {/* Header with Tier Info */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Pick Projects</h1>
-          <p className="text-gray-400">Find and apply to projects that match your skills</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Pick Projects</h1>
+              <p className="text-gray-400">Find and apply to projects that match your skills</p>
+            </div>
+            {talentProfile && (
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Your Tier</div>
+                    <div className={`text-lg font-bold capitalize ${getTierColor(talentProfile.tier)}`}>
+                      {talentProfile.tier}
+                    </div>
+                  </div>
+                  <div className="h-10 w-px bg-white/10"></div>
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Active Picks</div>
+                    <div className="text-lg font-bold text-white">
+                      {talentProfile.activePicks} / {getMaxPicks(talentProfile.tier)}
+                    </div>
+                  </div>
+                  <div className="h-10 w-px bg-white/10"></div>
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Completed</div>
+                    <div className="text-lg font-bold text-white">
+                      {talentProfile.completedProjects}
+                    </div>
+                  </div>
+                  <div className="h-10 w-px bg-white/10"></div>
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Success Rate</div>
+                    <div className="text-lg font-bold text-green-400">
+                      {talentProfile.successRate?.toFixed(0) ?? 0}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Two Column Layout: Filters Left, Projects Right */}
@@ -197,16 +351,17 @@ export default function TalentBrowsePage() {
 
               {/* Skills Filter */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Skills</label>
-                <div className="flex flex-col gap-2">
+                <label className="block text-xl font-semibold text-white mb-4">Skills</label>
+                <div className="flex flex-wrap gap-2">
                   {skills.map((skill) => (
                     <button
                       key={skill}
                       onClick={() => toggleSkill(skill)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition text-left ${selectedSkills.includes(skill)
-                          ? "bg-purple-600 text-white"
-                          : "bg-white/5 text-gray-300 hover:bg-white/10"
-                        }`}
+                      className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        selectedSkills.includes(skill)
+                          ? "bg-purple-600 text-white ring-2 ring-purple-400"
+                          : "bg-purple-600/80 text-white hover:bg-purple-600"
+                      }`}
                     >
                       {skill}
                     </button>
@@ -235,7 +390,17 @@ export default function TalentBrowsePage() {
             {/* Error Message */}
             {error && (
               <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-400">{error}</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-red-400">{error}</p>
+                  <button
+                    onClick={() => setError("")}
+                    className="text-red-400 hover:text-red-300"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -252,67 +417,88 @@ export default function TalentBrowsePage() {
               </div>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {filteredProjects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all flex flex-col"
-                  >
-                    <div className="flex flex-col flex-1">
-                      <div className="mb-4">
-                        <h3 className="text-lg font-semibold text-white mb-2">{project.title}</h3>
-                        <p className="text-gray-400 text-sm mb-3 line-clamp-3">{project.description}</p>
-                        <div className="flex items-center flex-wrap gap-3 text-xs text-gray-400 mb-3">
-                          <span className="flex items-center space-x-1">
+                {filteredProjects.map((project) => {
+                  const hasAccess = canAccessProject(project.minimumTier);
+                  
+                  return (
+                    <div
+                      key={project.id}
+                      className={`bg-white/5 backdrop-blur-sm rounded-xl p-6 border transition-all flex flex-col ${
+                        hasAccess
+                          ? "border-white/10 hover:border-purple-500/50"
+                          : "border-red-500/30 opacity-75"
+                      }`}
+                    >
+                      <div className="flex flex-col flex-1">
+                        <div className="mb-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="text-lg font-semibold text-white flex-1">{project.title}</h3>
+                            <span className={`px-2 py-1 text-xs rounded-full border capitalize ${getTierBadgeColor(project.minimumTier)}`}>
+                              {project.minimumTier}
+                            </span>
+                          </div>
+                          <p className="text-gray-400 text-sm mb-3 line-clamp-3">{project.description}</p>
+                          <div className="flex items-center flex-wrap gap-3 text-xs text-gray-400 mb-3">
+                            <span className="flex items-center space-x-1">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                              </svg>
+                              <span>{project.category}</span>
+                            </span>
+                            <span className="flex items-center space-x-1">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <span>${project.budget.toLocaleString()}</span>
+                            </span>
+                            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
+                              {project.projectType === "fixed" ? "Fixed" : "Hourly"}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-1 text-xs text-gray-400 mb-3">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span>{project.category}</span>
-                          </span>
-                          <span className="flex items-center space-x-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>${project.budget.toLocaleString()}</span>
-                          </span>
-                          <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
-                            {project.projectType === "fixed" ? "Fixed" : "Hourly"}
-                          </span>
+                            <span>{formatDate(project.deadline)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-1 text-xs text-gray-400 mb-3">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span>{formatDate(project.deadline)}</span>
-                        </div>
-                      </div>
 
-                      {/* Skills */}
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.skills.slice(0, 3).map((skill, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                        {project.skills.length > 3 && (
-                          <span className="px-2 py-1 bg-white/5 text-gray-400 text-xs rounded-full">
-                            +{project.skills.length - 3} more
-                          </span>
+                        {/* Skills */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {project.skills.slice(0, 3).map((skill, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                          {project.skills.length > 3 && (
+                            <span className="px-2 py-1 bg-white/5 text-gray-400 text-xs rounded-full">
+                              +{project.skills.length - 3} more
+                            </span>
+                          )}
+                        </div>
+
+                        {!hasAccess && (
+                          <div className="mb-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg">
+                            <p className="text-xs text-red-400 text-center">
+                              Requires {project.minimumTier} tier or higher
+                            </p>
+                          </div>
                         )}
-                      </div>
 
-                      <button
-                        onClick={() => handleApply(project)}
-                        disabled={applyingProjectId !== null}
-                        className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
-                      >
-                        {applyingProjectId === project.id ? "Picking..." : "Pick Project"}
-                      </button>
+                        <button
+                          onClick={() => handleApply(project)}
+                          disabled={applyingProjectId !== null || !hasAccess}
+                          className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
+                        >
+                          {applyingProjectId === project.id ? "Picking..." : "Pick Project"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

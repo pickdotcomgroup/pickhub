@@ -100,7 +100,10 @@ function AuthContent() {
         router.push("/talent/dashboard");
       } else if (session.user.role === "agency") {
         router.push("/agency");
-      } else {
+      } else if (session.user.role === "admin") {
+        router.push("/admin/dashboard");
+      }
+      else {
         // Users without a role go to general dashboard or onboarding
         router.push("/dashboard");
       }

@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 
-export type UserRole = "client" | "talent" | "agency" | null;
+export type UserRole = "client" | "talent" | "agency" | "admin" | null;
 
 export interface UserRoleData {
   role: UserRole;
@@ -16,11 +16,31 @@ export async function getUserRole(userId: string): Promise<UserRoleData> {
         clientProfile: true,
         talentProfile: true,
         agencyProfile: true,
+        adminProfile: true,
       },
     });
 
     if (!user) {
       return { role: null, profile: null, permissions: [] };
+    }
+
+    // Check if user is admin first
+    if (user.role === "admin" && user.adminProfile) {
+      return {
+        role: "admin",
+        profile: user.adminProfile,
+        permissions: [
+          "verify_talents",
+          "view_all_users",
+          "manage_users",
+          "view_analytics",
+          "manage_projects",
+          "manage_verifications",
+          "access_admin_dashboard",
+          "review_talent_applications",
+          "approve_reject_talents",
+        ],
+      };
     }
 
     // Determine role based on which profile exists
@@ -93,6 +113,8 @@ export function getRoleDisplayName(role: UserRole): string {
       return "Talent Developer";
     case "agency":
       return "Agency";
+    case "admin":
+      return "Administrator";
     default:
       return "User";
   }
@@ -106,6 +128,8 @@ export function getRoleColor(role: UserRole): string {
       return "green";
     case "agency":
       return "indigo";
+    case "admin":
+      return "red";
     default:
       return "gray";
   }
