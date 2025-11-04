@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
@@ -83,8 +84,17 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-white">
-            <span className="text-purple-400">TechPick</span>Hub
+          <Link href="/" className="flex items-center space-x-2 text-2xl font-bold text-white">
+            <Image 
+              src="/image/TechLogo.png" 
+              alt="TechPickHub Logo" 
+              width={30} 
+              height={30}
+              className="object-contain"
+            />
+            <span>
+              <span className="text-purple-400">TechPick</span>Hub
+            </span>
           </Link>
           
           {/* Quick Actions Navigation */}
