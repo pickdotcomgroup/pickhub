@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface TalentProfileData {
   id: string;
@@ -147,9 +148,11 @@ export default function TalentAccountPage() {
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
               {profile.user.image ? (
-                <img
+                <Image
                   src={profile.user.image}
                   alt={`${profile.firstName} ${profile.lastName}`}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full border-2 border-purple-500"
                 />
               ) : (

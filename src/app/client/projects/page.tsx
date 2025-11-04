@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface TalentProfile {
   id: string;
@@ -432,9 +433,11 @@ export default function MyProjectsPage() {
                           {/* Developer Avatar */}
                           <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
                             {application.talent.image ? (
-                              <img
+                              <Image
                                 src={application.talent.image}
                                 alt={application.talent.name ?? 'Developer'}
+                                width={56}
+                                height={56}
                                 className="w-14 h-14 rounded-full object-cover"
                               />
                             ) : (
@@ -605,9 +608,11 @@ export default function MyProjectsPage() {
               <div className="flex items-start space-x-4">
                 <div className="w-20 h-20 rounded-full bg-purple-600 flex items-center justify-center text-white text-2xl font-semibold flex-shrink-0">
                   {selectedDeveloper.talent.image ? (
-                    <img
+                    <Image
                       src={selectedDeveloper.talent.image}
                       alt={selectedDeveloper.talent.name ?? 'Developer'}
+                      width={80}
+                      height={80}
                       className="w-20 h-20 rounded-full object-cover"
                     />
                   ) : (

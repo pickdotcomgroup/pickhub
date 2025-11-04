@@ -809,7 +809,7 @@ function AuthContent() {
               <p className="text-sm text-gray-300">
                 {authMode === "signin" ? (
                   <>
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <Link
                       href="/join"
                       className="text-purple-400 hover:text-purple-300 font-semibold transition"
