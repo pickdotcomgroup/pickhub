@@ -417,7 +417,7 @@ export default function Header() {
             ) : (
               <div className="flex items-center space-x-3">
                 <Link
-                  href="/auth"
+                  href="/signin"
                   className="text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg hover:bg-white/10 transition"
                 >
                   Sign In
