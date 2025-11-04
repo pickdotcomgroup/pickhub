@@ -12,7 +12,7 @@ export default function JoinPage() {
             Join TechPickHub
           </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Connect, collaborate, and grow—whether you're a client seeking talent, a developer looking for projects, or an agency ready to scale.
+              Connect, collaborate, and grow—whether you&apos;re a client seeking talent, a developer looking for projects, or an agency ready to scale.
             </p>
         </div>
 
@@ -35,7 +35,7 @@ export default function JoinPage() {
                 <li>• Secure payment system</li>
               </ul>
               <Link
-                href="/auth?type=client"
+                href="/signup?type=client"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
               >
                 Sign Up as Client
@@ -58,7 +58,7 @@ export default function JoinPage() {
                 <li>• Secure payment guarantee</li>
               </ul>
               <Link
-                href="/auth?type=talent"
+                href="/signup?type=talent"
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
               >
                 Sign Up as Developer
@@ -81,7 +81,7 @@ export default function JoinPage() {
                 <li>• Advanced analytics</li>
               </ul>
               <Link
-                href="/auth?type=agency"
+                href="/signup?type=agency"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
               >
                 Sign Up as Agency
