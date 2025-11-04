@@ -453,7 +453,7 @@ export default function Home() {
             The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies
           </h1>
           <p className="text-base sm:text-md md:text-lg text-gray-300 mb-6 sm:mb-8">
-            Whether you're a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
+            Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
           </p>
 
           {/* Toggle Button for Browse Categories */}

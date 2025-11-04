@@ -10,17 +10,19 @@ export async function withAuth(
   const token = await getToken({ req: request });
 
   if (!token) {
-    return NextResponse.redirect(new URL("/auth", request.url));
+    return NextResponse.redirect(new URL("/signin", request.url));
   }
 
   // Get user role data
   const roleData = await getUserRole(token.sub!);
 
   // Determine role-specific dashboard
-  const dashboardUrl = roleData.role === "client" 
-    ? "/client/dashboard" 
-    : roleData.role === "talent" 
-    ? "/talent/dashboard" 
+  const dashboardUrl = roleData.role === "client"
+    ? "/client/dashboard"
+    : roleData.role === "talent"
+    ? "/talent/dashboard"
+    : roleData.role === "admin"
+    ? "/admin/dashboard"
     : "/dashboard";
 
   // Check if user has required role

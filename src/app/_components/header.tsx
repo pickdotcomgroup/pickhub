@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 // Notification Badge Component
@@ -19,6 +20,7 @@ function NotificationBadge({ count }: { count: number }) {
 
 export default function Header() {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,6 +28,29 @@ export default function Header() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  // Helper function to check if a path is active
+  const isActivePath = (path: string) => {
+    return pathname === path;
+  };
+
+  // Helper function to get navigation link classes
+  const getNavLinkClasses = (path: string) => {
+    const baseClasses = "px-4 py-2 text-sm rounded-lg transition";
+    const activeClasses = "bg-purple-600 text-white font-semibold";
+    const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
+    
+    return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
+  };
+
+  // Helper function for mobile nav link classes
+  const getMobileNavLinkClasses = (path: string) => {
+    const baseClasses = "px-4 py-3 text-sm rounded-lg transition";
+    const activeClasses = "bg-purple-600 text-white font-semibold";
+    const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
+    
+    return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
+  };
 
   // Fetch unread message count
   useEffect(() => {
@@ -141,13 +166,13 @@ export default function Header() {
                 <>
                   <Link
                     href="/client/dashboard"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/client/dashboard")}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/client/browse"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/client/browse")}
                   >
                     Browse Developers
                   </Link>
@@ -197,7 +222,7 @@ export default function Header() {
 
                   <Link
                     href="/client/messages"
-                    className="relative px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={`relative ${getNavLinkClasses("/client/messages")}`}
                   >
                     Messages
                     <NotificationBadge count={unreadCount} />
@@ -207,25 +232,25 @@ export default function Header() {
                 <>
                   <Link
                     href="/talent/dashboard"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/talent/dashboard")}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/talent/browse"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/talent/browse")}
                   >
                     Browse Projects
                   </Link>
                   <Link
                     href="/talent/projects"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/talent/projects")}
                   >
-                    My Projects
+                    Pick Projects
                   </Link>
                   <Link
                     href="/talent/messages"
-                    className="relative px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={`relative ${getNavLinkClasses("/talent/messages")}`}
                   >
                     Messages
                     <NotificationBadge count={unreadCount} />
@@ -235,7 +260,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/admin/dashboard"
-                    className="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getNavLinkClasses("/admin/dashboard")}
                   >
                       Dashboard
                   </Link>
@@ -491,21 +516,21 @@ export default function Header() {
                 <>
                   <Link
                     href="/client/dashboard"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/client/dashboard")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/client/browse"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/client/browse")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Developers
                   </Link>
                   <Link
                     href="/client/projects/new"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition flex items-center"
+                    className={`${getMobileNavLinkClasses("/client/projects/new")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -515,7 +540,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/client/projects"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition flex items-center"
+                    className={`${getMobileNavLinkClasses("/client/projects")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -525,7 +550,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/client/messages"
-                    className="relative px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={`relative ${getMobileNavLinkClasses("/client/messages")}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Messages
@@ -536,28 +561,28 @@ export default function Header() {
                 <>
                   <Link
                     href="/talent/dashboard"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/talent/dashboard")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     href="/talent/browse"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/talent/browse")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Projects
                   </Link>
                   <Link
                     href="/talent/projects"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/talent/projects")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     My Projects
                   </Link>
                   <Link
                     href="/talent/messages"
-                    className="relative px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={`relative ${getMobileNavLinkClasses("/talent/messages")}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Messages
@@ -568,7 +593,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/admin/dashboard"
-                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    className={getMobileNavLinkClasses("/admin/dashboard")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
