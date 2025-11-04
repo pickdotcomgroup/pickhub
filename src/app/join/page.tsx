@@ -11,9 +11,9 @@ export default function JoinPage() {
           <h1 className="text-4xl font-bold text-white mb-4">
             Join TechPickHub
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Choose your professional path and start building your career on PickHub
-          </p>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Connect, collaborate, and grow—whether you're a client seeking talent, a developer looking for projects, or an agency ready to scale.
+            </p>
         </div>
 
         {/* Professional Signup Section */}
