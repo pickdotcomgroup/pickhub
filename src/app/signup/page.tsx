@@ -200,7 +200,7 @@ function SignupContent() {
       case "client":
         return {
           title: "Join as a Client",
-          subtitle: "Post projects and hire top talent",
+          subtitle: "Post projects and hire top Developers",
           icon: "🏢"
         };
       case "talent":

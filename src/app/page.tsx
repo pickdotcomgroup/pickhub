@@ -366,7 +366,7 @@ export default function Home() {
                   <div className="text-4xl mb-3">🏢</div>
                   <h3 className="text-xl font-bold text-white mb-2">Join as Client</h3>
                   <p className="text-gray-300 text-sm mb-4">
-                    Post projects and hire top talent for your business needs
+                    Post projects and hire top Developers for your business needs
                   </p>
                 </div>
                 <ul className="text-sm text-gray-400 space-y-2 mb-6">
