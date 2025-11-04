@@ -21,9 +21,11 @@ export default function Header() {
   const { data: session } = useSession();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   // Fetch unread message count
   useEffect(() => {
@@ -60,6 +62,9 @@ export default function Header() {
       if (projectsDropdownRef.current && !projectsDropdownRef.current.contains(event.target as Node)) {
         setIsProjectsDropdownOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -84,7 +89,39 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 backdrop-blur-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2 text-2xl font-bold text-white">
+          {/* Mobile Menu Button */}
+          {session?.user && (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+              aria-label="Toggle mobile menu"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          )}
+
+          <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-white">
             <Image 
               src="/image/TechLogo.png" 
               alt="TechPickHub Logo" 
@@ -92,7 +129,7 @@ export default function Header() {
               height={30}
               className="object-contain"
             />
-            <span>
+            <span className="hidden sm:inline">
               <span className="text-purple-400">TechPick</span>Hub
             </span>
           </Link>
@@ -207,19 +244,19 @@ export default function Header() {
             </nav>
           )}
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {session?.user ? (
               <div className="relative" ref={dropdownRef}>
                 {/* User Avatar Button */}
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-3 focus:outline-none group"
+                  className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-purple-400 transition">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-purple-400 transition">
                     {getUserInitials(session.user.name)}
                   </div>
                   <svg
-                    className={`w-4 h-4 text-gray-300 transition-transform ${
+                    className={`hidden sm:block w-4 h-4 text-gray-300 transition-transform ${
                       isDropdownOpen ? "rotate-180" : ""
                     }`}
                     fill="none"
@@ -425,16 +462,16 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
                   href="/signin"
-                  className="text-gray-300 hover:text-white font-semibold py-2 px-4 rounded-lg hover:bg-white/10 transition"
+                  className="text-gray-300 hover:text-white font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-white/10 transition"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/join"
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg transition"
                 >
                   Join Us
                 </Link>
@@ -442,6 +479,105 @@ export default function Header() {
             )}
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {session?.user && isMobileMenuOpen && (
+          <div
+            ref={mobileMenuRef}
+            className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4"
+          >
+            <nav className="flex flex-col space-y-2">
+              {session.user.role === "client" ? (
+                <>
+                  <Link
+                    href="/client/dashboard"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/client/browse"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Browse Developers
+                  </Link>
+                  <Link
+                    href="/client/projects/new"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition flex items-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Post a Project
+                  </Link>
+                  <Link
+                    href="/client/projects"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition flex items-center"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    My Projects
+                  </Link>
+                  <Link
+                    href="/client/messages"
+                    className="relative px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Messages
+                    <NotificationBadge count={unreadCount} />
+                  </Link>
+                </>
+              ) : session.user.role === "talent" ? (
+                <>
+                  <Link
+                    href="/talent/dashboard"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/talent/browse"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Browse Projects
+                  </Link>
+                  <Link
+                    href="/talent/projects"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Projects
+                  </Link>
+                  <Link
+                    href="/talent/messages"
+                    className="relative px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Messages
+                    <NotificationBadge count={unreadCount} />
+                  </Link>
+                </>
+              ) : session.user.role === "admin" ? (
+                <>
+                  <Link
+                    href="/admin/dashboard"
+                    className="px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                </>
+              ) : null}
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );
