@@ -79,14 +79,14 @@ export default function Home() {
     const fetchData = async () => {
       try {
         setDataLoading(true);
-        
+
         // Fetch projects
         const projectsRes = await fetch('/api/projects');
         if (projectsRes.ok) {
           const projectsData = await projectsRes.json() as { projects: Project[] };
           setProjects(projectsData.projects ?? []);
         }
-        
+
         // Fetch talents
         const talentsRes = await fetch('/api/talents');
         if (talentsRes.ok) {
@@ -454,46 +454,43 @@ export default function Home() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
             The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8">
-            Looking for a job? browse latest freelance job openings to view & apply!
+          <p className="text-base sm:text-md md:text-lg text-gray-300 mb-6 sm:mb-8">
+            Whether you're a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
           </p>
-          
+
           {/* Toggle Button for Browse Categories */}
           <div className="flex justify-center mb-4 sm:mb-6">
             <div className="inline-flex bg-purple-900/30 backdrop-blur-sm rounded-lg p-1 border border-purple-500/30 w-full sm:w-auto">
               <button
                 onClick={() => handleCategoryChange("clients")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${
-                  activeCategory === "clients"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "clients"
                     ? "bg-purple-600 text-white"
                     : "text-gray-300 hover:text-white"
-                }`}
+                  }`}
               >
                 Client Projects
               </button>
               <button
                 onClick={() => handleCategoryChange("developer")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${
-                  activeCategory === "developer"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "developer"
                     ? "bg-purple-600 text-white"
                     : "text-gray-300 hover:text-white"
-                }`}
+                  }`}
               >
                 Developers
               </button>
               <button
                 onClick={() => handleCategoryChange("agencies")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${
-                  activeCategory === "agencies"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "agencies"
                     ? "bg-purple-600 text-white"
                     : "text-gray-300 hover:text-white"
-                }`}
+                  }`}
               >
                 Agencies
               </button>
             </div>
           </div>
-          
+
           {/* Search Bar */}
           <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
             <div className="flex-1 relative">
@@ -503,8 +500,8 @@ export default function Home() {
                   activeCategory === "clients"
                     ? "Search projects (e.g., Web Designer, UI/UX)"
                     : activeCategory === "developer"
-                    ? "Search developers (e.g., Full Stack, Designer)"
-                    : "Search agencies (e.g., Digital Agency, Development)"
+                      ? "Search developers (e.g., Full Stack, Designer)"
+                      : "Search agencies (e.g., Digital Agency, Development)"
                 }
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
