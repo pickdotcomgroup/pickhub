@@ -353,7 +353,7 @@ function AuthContent() {
           <p className="text-gray-300">
             {authMode === "professional" 
               ? professionalInfo.subtitle
-              : "Web Freelance Platform with Integrated Project Management"
+              : "Web Freelance Platform for Clients, Developer, and Agencies."
             }
           </p>
         </div>

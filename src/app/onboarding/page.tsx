@@ -104,7 +104,7 @@ export default function OnboardingPage() {
               Welcome to <span className="text-purple-400">PickHub</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              The ultimate web freelance platform with integrated project management. 
+              The ultimate web freelance platform for Clients, Developer, and Agencies. 
               Connect, collaborate, and create amazing projects together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -288,7 +288,7 @@ export default function OnboardingPage() {
               <span className="text-purple-400">Pick</span>Hub
             </h3>
             <p className="text-gray-400 mb-6">
-              Web Freelance Platform with Integrated Project Management
+              Web Freelance Platform for Clients, Developer, and Agencies.
             </p>
             <div className="flex justify-center space-x-6 text-sm text-gray-400">
               <Link href="#" className="hover:text-purple-400 transition">
