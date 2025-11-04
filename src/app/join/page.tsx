@@ -14,21 +14,10 @@ export default function JoinPage() {
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Choose your professional path and start building your career on PickHub
           </p>
-
-          {/* Back to Browse */}
-          <div className="text-center mt-8">
-            <Link
-              href="/"
-              className="text-purple-400 hover:text-purple-300 transition"
-            >
-              ← Back to Browse
-            </Link>
-          </div>
-
         </div>
 
         {/* Professional Signup Section */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+        <div className="rounded-2xl p-4">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {/* Client Professional Signup */}
             <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
@@ -107,7 +96,7 @@ export default function JoinPage() {
             </h3>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/auth"
+                href="/signin"
                 className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
               >
                 Sign In

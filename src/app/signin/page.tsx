@@ -807,17 +807,31 @@ function AuthContent() {
             {/* Toggle between Sign In and Sign Up */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-300">
-                {authMode === "signin" ? "Don't have an account? " : "Already have an account? "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMode(authMode === "signin" ? "signup" : "signin");
-                    setErrors({});
-                  }}
-                  className="text-purple-400 hover:text-purple-300 font-semibold transition"
-                >
-                  {authMode === "signin" ? "Sign Up" : "Sign In"}
-                </button>
+                {authMode === "signin" ? (
+                  <>
+                    Don't have an account?{" "}
+                    <Link
+                      href="/join"
+                      className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                    >
+                      Join Us
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode("signin");
+                        setErrors({});
+                      }}
+                      className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                    >
+                      Sign In
+                    </button>
+                  </>
+                )}
               </p>
             </div>
           </>
