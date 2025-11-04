@@ -342,19 +342,6 @@ function AuthContent() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-8">
       <div className={`w-full px-6 ${authMode === "professional" ? "max-w-4xl" : "max-w-md"}`}>
-        {/* Back to Browse Link */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center text-purple-400 hover:text-purple-300 transition"
-          >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Browse
-          </Link>
-        </div>
-
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
           {authMode === "professional" && (

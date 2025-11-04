@@ -57,7 +57,7 @@ export default function JoinPage() {
             <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-green-400/50 transition-all duration-300">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">👨‍💻</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Talent</h3>
+                <h3 className="text-xl font-bold text-white mb-2">Join as Developer</h3>
                 <p className="text-gray-300 text-sm mb-4">
                   Showcase your skills and find exciting freelance opportunities
                 </p>
@@ -72,7 +72,7 @@ export default function JoinPage() {
                 href="/auth?type=talent"
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
               >
-                Sign Up as Talent
+                Sign Up as Developer
               </Link>
             </div>
 
