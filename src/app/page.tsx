@@ -61,7 +61,6 @@ export default function Home() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState<BrowseCategory>("clients");
   const [searchQuery, setSearchQuery] = useState("");
-  const [locationQuery, setLocationQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedExperience, setSelectedExperience] = useState<string[]>([]);
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
@@ -323,12 +322,11 @@ export default function Home() {
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+        <div className="text-center gap-6">
           <h1 className="text-2xl font-bold text-white mb-2">
             <span className="text-purple-400">TechPick</span>Hub
           </h1>
-          <p className="text-gray-300">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
         </div>
       </main>
     );
@@ -464,8 +462,8 @@ export default function Home() {
               <button
                 onClick={() => handleCategoryChange("clients")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "clients"
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-300 hover:text-white"
+                  ? "bg-purple-600 text-white"
+                  : "text-gray-300 hover:text-white"
                   }`}
               >
                 Client Projects
@@ -473,8 +471,8 @@ export default function Home() {
               <button
                 onClick={() => handleCategoryChange("developer")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "developer"
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-300 hover:text-white"
+                  ? "bg-purple-600 text-white"
+                  : "text-gray-300 hover:text-white"
                   }`}
               >
                 Developers
@@ -482,8 +480,8 @@ export default function Home() {
               <button
                 onClick={() => handleCategoryChange("agencies")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "agencies"
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-300 hover:text-white"
+                  ? "bg-purple-600 text-white"
+                  : "text-gray-300 hover:text-white"
                   }`}
               >
                 Agencies
@@ -518,19 +516,6 @@ export default function Home() {
                   ×
                 </button>
               )}
-            </div>
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Country or timezone"
-                value={locationQuery}
-                onChange={(e) => setLocationQuery(e.target.value)}
-                className="w-full px-12 py-4 bg-purple-900/30 backdrop-blur-sm border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
             </div>
             <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold transition text-sm sm:text-base">
               Search
