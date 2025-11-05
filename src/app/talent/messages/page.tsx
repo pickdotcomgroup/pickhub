@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { SendHorizontal } from "lucide-react";
 
 interface User {
   id: string;
@@ -317,11 +318,10 @@ export default function TalentMessagesPage() {
                         <button
                           key={conversation.id}
                           onClick={() => void handleSelectConversation(conversation)}
-                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white/5 ${
-                            selectedConversation?.id === conversation.id
+                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white/5 ${selectedConversation?.id === conversation.id
                               ? "bg-purple-500/10 border-l-4 border-purple-500"
                               : ""
-                          }`}
+                            }`}
                         >
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
@@ -417,19 +417,17 @@ export default function TalentMessagesPage() {
                             >
                               <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
                                 <div
-                                  className={`rounded-2xl px-4 py-2.5 shadow-lg ${
-                                    isOwn
+                                  className={`rounded-2xl px-4 py-2.5 shadow-lg ${isOwn
                                       ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white"
                                       : "bg-white/10 text-white backdrop-blur-sm"
-                                  }`}
+                                    }`}
                                 >
                                   <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                                     {message.content}
                                   </p>
                                   <p
-                                    className={`mt-1.5 text-xs ${
-                                      isOwn ? "text-purple-100" : "text-gray-400"
-                                    }`}
+                                    className={`mt-1.5 text-xs ${isOwn ? "text-purple-100" : "text-gray-400"
+                                      }`}
                                   >
                                     {formatMessageTime(message.createdAt)}
                                   </p>
@@ -469,9 +467,7 @@ export default function TalentMessagesPage() {
                           </>
                         ) : (
                           <>
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
+                            <SendHorizontal className="w-5 h-5" />
                             <span>Send</span>
                           </>
                         )}

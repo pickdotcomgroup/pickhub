@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { SendHorizontal } from "lucide-react";
 
 interface User {
   id: string;
@@ -469,9 +470,7 @@ export default function ClientMessagesPage() {
                           </>
                         ) : (
                           <>
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
+                            <SendHorizontal className="w-5 h-5"/>
                             <span>Send</span>
                           </>
                         )}

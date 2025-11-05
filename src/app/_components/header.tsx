@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from "react";
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
   if (count === 0) return null;
-  
+
   return (
     <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white shadow-lg">
       {count > 99 ? "99+" : count}
@@ -25,6 +25,7 @@ export default function Header() {
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -39,7 +40,7 @@ export default function Header() {
     const baseClasses = "px-4 py-2 text-sm rounded-lg transition";
     const activeClasses = "bg-purple-600 text-white font-semibold";
     const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
-    
+
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
 
@@ -48,7 +49,7 @@ export default function Header() {
     const baseClasses = "px-4 py-3 text-sm rounded-lg transition";
     const activeClasses = "bg-purple-600 text-white font-semibold";
     const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
-    
+
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
 
@@ -69,12 +70,12 @@ export default function Header() {
     };
 
     void fetchUnreadCount();
-    
+
     // Poll for updates every 30 seconds
     const interval = setInterval(() => {
       void fetchUnreadCount();
     }, 30000);
-    
+
     return () => clearInterval(interval);
   }, [session?.user]);
 
@@ -97,7 +98,13 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
+    setIsLoggingOut(true);
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      setIsLoggingOut(false);
+      console.error('Logout failed:', error);
+    }
   };
 
   // Get user initials for avatar
@@ -147,10 +154,10 @@ export default function Header() {
           )}
 
           <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-white">
-            <Image 
-              src="/image/TechLogo.png" 
-              alt="TechPickHub Logo" 
-              width={30} 
+            <Image
+              src="/image/TechLogo.png"
+              alt="TechPickHub Logo"
+              width={30}
               height={30}
               className="object-contain"
             />
@@ -158,7 +165,7 @@ export default function Header() {
               <span className="text-purple-400">TechPick</span>Hub
             </span>
           </Link>
-          
+
           {/* Quick Actions Navigation */}
           {session?.user && (
             <nav className="hidden md:flex items-center space-x-1 flex-1 justify-center">
@@ -176,7 +183,7 @@ export default function Header() {
                   >
                     Browse Developers
                   </Link>
-                  
+
                   {/* Projects Dropdown */}
                   <div className="relative" ref={projectsDropdownRef}>
                     <button
@@ -262,13 +269,13 @@ export default function Header() {
                     href="/admin/dashboard"
                     className={getNavLinkClasses("/admin/dashboard")}
                   >
-                      Dashboard
+                    Dashboard
                   </Link>
                 </>
               ) : null}
             </nav>
           )}
-          
+
           <div className="flex items-center space-x-2 sm:space-x-4">
             {session?.user ? (
               <div className="relative" ref={dropdownRef}>
@@ -281,9 +288,8 @@ export default function Header() {
                     {getUserInitials(session.user.name)}
                   </div>
                   <svg
-                    className={`hidden sm:block w-4 h-4 text-gray-300 transition-transform ${
-                      isDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`hidden sm:block w-4 h-4 text-gray-300 transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
