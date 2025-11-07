@@ -321,12 +321,12 @@ export default function Home() {
   // Show loading state while checking authentication
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-white">
         <div className="text-center gap-6">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            <span className="text-purple-400">TechPick</span>Hub
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <span className="text-blue-600">TechPick</span>Hub
           </h1>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
         </div>
       </main>
     );
@@ -338,13 +338,13 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <main className="min-h-screen bg-white">
       {/* Join Modal */}
       {showJoinModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
+          <div className="bg-white rounded-2xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-3xl font-bold text-white">Join TechPickHub</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Join TechPickHub</h2>
               <button
                 onClick={() => setShowJoinModal(false)}
                 className="text-gray-400 hover:text-white text-2xl"
@@ -353,21 +353,21 @@ export default function Home() {
               </button>
             </div>
 
-            <p className="text-xl text-gray-300 text-center mb-8">
+            <p className="text-xl text-gray-600 text-center mb-8">
               Choose your professional path to get started
             </p>
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {/* Client Professional Signup */}
-              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">🏢</div>
-                  <h3 className="text-xl font-bold text-white mb-2">Join as Client</h3>
-                  <p className="text-gray-300 text-sm mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Client</h3>
+                  <p className="text-gray-600 text-sm mb-4">
                     Post projects and hire top Developers for your business needs
                   </p>
                 </div>
-                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6">
                   <li>• Post unlimited projects</li>
                   <li>• Access to verified professionals</li>
                   <li>• Project management tools</li>
@@ -382,15 +382,15 @@ export default function Home() {
               </div>
 
               {/* Talent Professional Signup */}
-              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-green-400/50 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">👨‍💻</div>
-                  <h3 className="text-xl font-bold text-white mb-2">Join as Developer</h3>
-                  <p className="text-gray-300 text-sm mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Developer</h3>
+                  <p className="text-gray-600 text-sm mb-4">
                     Showcase your skills and find exciting freelance opportunities
                   </p>
                 </div>
-                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6">
                   <li>• Create professional profile</li>
                   <li>• Bid on quality projects</li>
                   <li>• Build your reputation</li>
@@ -405,15 +405,15 @@ export default function Home() {
               </div>
 
               {/* Agency Professional Signup */}
-              <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-400/50 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">🏛️</div>
-                  <h3 className="text-xl font-bold text-white mb-2">Join as Agency</h3>
-                  <p className="text-gray-300 text-sm mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Agency</h3>
+                  <p className="text-gray-600 text-sm mb-4">
                     Scale your business and manage multiple client relationships
                   </p>
                 </div>
-                <ul className="text-sm text-gray-400 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6">
                   <li>• Team collaboration tools</li>
                   <li>• Multi-project management</li>
                   <li>• Client relationship tools</li>
@@ -429,14 +429,14 @@ export default function Home() {
             </div>
 
             {/* General CTA */}
-            <div className="text-center border-t border-white/10 pt-8">
-              <h3 className="text-2xl font-bold text-white mb-4">
+            <div className="text-center border-t border-gray-200 pt-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 Already have an account?
               </h3>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/signin"
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
                 >
                   Sign In
                 </Link>
@@ -447,23 +447,23 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-900/40 via-purple-800/40 to-purple-900/40 py-8 sm:py-12 md:py-16 border-b border-purple-500/30">
+      <div className="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-8 sm:py-12 md:py-16 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies
           </h1>
-          <p className="text-base sm:text-md md:text-lg text-gray-300 mb-6 sm:mb-8">
+          <p className="text-base sm:text-md md:text-lg text-gray-600 mb-6 sm:mb-8">
             Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
           </p>
 
           {/* Toggle Button for Browse Categories */}
           <div className="flex justify-center mb-4 sm:mb-6">
-            <div className="inline-flex bg-purple-900/30 backdrop-blur-sm rounded-lg p-1 border border-purple-500/30 w-full sm:w-auto">
+            <div className="inline-flex bg-gray-100 rounded-lg p-1 border border-gray-300 w-full sm:w-auto">
               <button
                 onClick={() => handleCategoryChange("clients")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "clients"
-                  ? "bg-purple-600 text-white"
-                  : "text-gray-300 hover:text-white"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:text-gray-900"
                   }`}
               >
                 Client Projects
@@ -471,8 +471,8 @@ export default function Home() {
               <button
                 onClick={() => handleCategoryChange("developer")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "developer"
-                  ? "bg-purple-600 text-white"
-                  : "text-gray-300 hover:text-white"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:text-gray-900"
                   }`}
               >
                 Developers
@@ -480,8 +480,8 @@ export default function Home() {
               <button
                 onClick={() => handleCategoryChange("agencies")}
                 className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "agencies"
-                  ? "bg-purple-600 text-white"
-                  : "text-gray-300 hover:text-white"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700 hover:text-gray-900"
                   }`}
               >
                 Agencies
@@ -503,7 +503,7 @@ export default function Home() {
                 }
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full px-12 py-4 bg-purple-900/30 backdrop-blur-sm border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-12 py-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -517,7 +517,7 @@ export default function Home() {
                 </button>
               )}
             </div>
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold transition text-sm sm:text-base">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold transition text-sm sm:text-base">
               Search
             </button>
           </div>
@@ -527,15 +527,15 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Results Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-6">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-300">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-700">
             {dataLoading ? 'Loading...' : `Showing results (${allFilteredData.length})`}
           </h2>
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-white text-sm sm:text-base">Sort:</span>
+            <span className="text-gray-900 text-sm sm:text-base">Sort:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-white/10 text-white px-3 sm:px-4 py-2 rounded-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm sm:text-base flex-1 sm:flex-initial"
+              className="bg-white text-gray-900 px-3 sm:px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base flex-1 sm:flex-initial"
             >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -554,14 +554,14 @@ export default function Home() {
             <div className="space-y-4">
               {dataLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-                  <span className="ml-3 text-white">Loading data...</span>
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                  <span className="ml-3 text-gray-900">Loading data...</span>
                 </div>
               ) : paginatedData.length === 0 ? (
-                <div className="text-center py-12 bg-purple-900/20 backdrop-blur-sm rounded-xl border border-purple-500/30">
+                <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
                   <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-2xl font-semibold text-white mb-2">No results found</h3>
-                  <p className="text-gray-400">Try adjusting your search or filters</p>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">No results found</h3>
+                  <p className="text-gray-600">Try adjusting your search or filters</p>
                 </div>
               ) : paginatedData.map((item) => {
                 if (activeCategory === "clients") {
@@ -569,7 +569,7 @@ export default function Home() {
                   return (
                     <div
                       key={item.id}
-                      className="bg-purple-900/20 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
+                      className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm"
                     >
                       <div className="flex flex-col sm:flex-row items-start gap-4 mb-4">
                         <div className="flex items-start gap-3 sm:gap-4 flex-1 w-full">
@@ -577,10 +577,10 @@ export default function Home() {
                             {project.client.charAt(0).toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-lg sm:text-xl font-semibold text-white mb-2">{project.title}</h3>
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-300 mb-3">
+                            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">{project.title}</h3>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 mb-3">
                               <span className="flex items-center gap-1">
-                                <span className="font-semibold text-white">
+                                <span className="font-semibold text-gray-900">
                                   {project.client}
                                 </span>
                               </span>
@@ -596,22 +596,22 @@ export default function Home() {
                                 </svg>
                                 Remote
                               </span>
-                              <span className="bg-purple-800/40 px-3 py-1 rounded-full text-purple-200">
+                              <span className="bg-blue-100 px-3 py-1 rounded-full text-blue-700">
                                 120 applicants
                               </span>
                             </div>
-                            <p className="text-sm sm:text-base text-gray-300 mb-4">{project.description}</p>
+                            <p className="text-sm sm:text-base text-gray-600 mb-4">{project.description}</p>
                             <div className="flex flex-wrap gap-2 mb-4">
                               {project.skills.map((skill: string) => (
                                 <span
                                   key={skill}
-                                  className="px-3 py-1.5 bg-purple-800/40 text-purple-200 rounded-md text-sm font-medium"
+                                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
                                 >
                                   {skill}
                                 </span>
                               ))}
                             </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-300">
+                            <div className="flex items-center gap-4 text-sm text-gray-600">
                               <span className="flex items-center gap-1">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -629,7 +629,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('project', item)}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition w-full sm:w-auto text-sm sm:text-base"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition w-full sm:w-auto text-sm sm:text-base"
                         >
                           Pick
                         </button>
@@ -641,7 +641,7 @@ export default function Home() {
                   return (
                     <div
                       key={item.id}
-                      className="bg-purple-900/20 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
+                      className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-start gap-4 flex-1">
@@ -649,21 +649,21 @@ export default function Home() {
                             {talent.avatar}
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-white mb-2">{talent.name}</h3>
-                            <p className="text-gray-300 mb-3">{talent.title}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-300 mb-3">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{talent.name}</h3>
+                            <p className="text-gray-600 mb-3">{talent.title}</p>
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                               <span className="flex items-center gap-1">
                                 {renderStars(talent.rating || 4.5)}
-                                <span className="ml-1 font-semibold text-white">{talent.rating || 4.5}</span>
+                                <span className="ml-1 font-semibold text-gray-900">{talent.rating || 4.5}</span>
                               </span>
                               <span>{talent.experience || 'Not specified'} experience</span>
-                              <span className="font-semibold text-white">{talent.hourlyRate || 'Not specified'}</span>
+                              <span className="font-semibold text-gray-900">{talent.hourlyRate || 'Not specified'}</span>
                             </div>
                             <div className="flex flex-wrap gap-2">
                               {(talent.skills || []).map((skill: string) => (
                                 <span
                                   key={skill}
-                                  className="px-3 py-1.5 bg-purple-800/40 text-purple-200 rounded-md text-sm font-medium"
+                                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
                                 >
                                   {skill}
                                 </span>
@@ -673,7 +673,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('talent', item)}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
                         >
                           Pick
                         </button>
@@ -685,7 +685,7 @@ export default function Home() {
                   return (
                     <div
                       key={item.id}
-                      className="bg-purple-900/20 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300"
+                      className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm"
                     >
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-start gap-4 flex-1">
@@ -693,12 +693,12 @@ export default function Home() {
                             {agency.name.charAt(0)}
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-white mb-2">{agency.name}</h3>
-                            <p className="text-gray-300 mb-3">{agency.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-300 mb-3">
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{agency.name}</h3>
+                            <p className="text-gray-600 mb-3">{agency.description}</p>
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                               <span className="flex items-center gap-1">
                                 {renderStars(agency.rating)}
-                                <span className="ml-1 font-semibold text-white">{agency.rating}</span>
+                                <span className="ml-1 font-semibold text-gray-900">{agency.rating}</span>
                               </span>
                               <span>{agency.teamSize}</span>
                               <span>{agency.projectsCompleted} projects completed</span>
@@ -707,7 +707,7 @@ export default function Home() {
                               {agency.skills.map((skill: string) => (
                                 <span
                                   key={skill}
-                                  className="px-3 py-1.5 bg-purple-800/40 text-purple-200 rounded-md text-sm font-medium"
+                                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
                                 >
                                   {skill}
                                 </span>
@@ -717,7 +717,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('agency', item)}
-                          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
                         >
                           Pick
                         </button>
@@ -732,9 +732,9 @@ export default function Home() {
 
           {/* Right Sidebar - Filters */}
           <div className="lg:w-80 flex-shrink-0">
-            <div className="bg-purple-900/20 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 sticky top-8">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 sticky top-8 shadow-sm">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-white">Filter</h3>
+                <h3 className="text-xl font-bold text-gray-900">Filter</h3>
                 <button
                   onClick={() => {
                     setSelectedCategories([]);
@@ -742,7 +742,7 @@ export default function Home() {
                     setSelectedJobTypes([]);
                     setPriceRange("");
                   }}
-                  className="text-purple-400 hover:text-purple-300 font-semibold text-sm"
+                  className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
                 >
                   Reset
                 </button>
@@ -750,9 +750,9 @@ export default function Home() {
 
               {/* Categories Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-white mb-3">Categories</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">Categories</h4>
                 <select
-                  className="w-full px-4 py-2 bg-purple-900/30 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => {
                     if (e.target.value) {
                       handleCategoryToggle(e.target.value);
@@ -760,9 +760,9 @@ export default function Home() {
                   }}
                   value=""
                 >
-                  <option value="" className="bg-slate-800">Select categories</option>
+                  <option value="" className="bg-white">Select categories</option>
                   {categoryOptions.map((category) => (
-                    <option key={category} value={category} className="bg-slate-800">
+                    <option key={category} value={category} className="bg-white">
                       {category}
                     </option>
                   ))}
@@ -772,12 +772,12 @@ export default function Home() {
                     {selectedCategories.map((category) => (
                       <span
                         key={category}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-purple-800/40 text-purple-200 rounded-full text-sm"
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
                       >
                         {category}
                         <button
                           onClick={() => handleCategoryToggle(category)}
-                          className="hover:text-purple-100"
+                          className="hover:text-blue-800"
                         >
                           ×
                         </button>
@@ -789,7 +789,7 @@ export default function Home() {
 
               {/* Experience Level Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-white mb-3">Experience level</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">Experience level</h4>
                 <div className="space-y-2">
                   {experienceOptions.map((option) => (
                     <label key={option.label} className="flex items-center justify-between cursor-pointer">
@@ -798,11 +798,11 @@ export default function Home() {
                           type="checkbox"
                           checked={selectedExperience.includes(option.label)}
                           onChange={() => handleExperienceToggle(option.label)}
-                          className="w-4 h-4 text-purple-600 border-purple-500/30 rounded focus:ring-purple-500"
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span className="text-gray-300">{option.label}</span>
+                        <span className="text-gray-700">{option.label}</span>
                       </div>
-                      <span className="text-gray-400 text-sm">{option.count}</span>
+                      <span className="text-gray-500 text-sm">{option.count}</span>
                     </label>
                   ))}
                 </div>
@@ -810,7 +810,7 @@ export default function Home() {
 
               {/* Job Type Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-white mb-3">Job type</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">Job type</h4>
                 <div className="space-y-2">
                   {jobTypeOptions.map((option) => (
                     <label key={option.label} className="flex items-center justify-between cursor-pointer">
@@ -819,11 +819,11 @@ export default function Home() {
                           type="checkbox"
                           checked={selectedJobTypes.includes(option.label)}
                           onChange={() => handleJobTypeToggle(option.label)}
-                          className="w-4 h-4 text-purple-600 border-purple-500/30 rounded focus:ring-purple-500"
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                         />
-                        <span className="text-gray-300">{option.label}</span>
+                        <span className="text-gray-700">{option.label}</span>
                       </div>
-                      <span className="text-gray-400 text-sm">{option.count}</span>
+                      <span className="text-gray-500 text-sm">{option.count}</span>
                     </label>
                   ))}
                 </div>
@@ -831,13 +831,13 @@ export default function Home() {
 
               {/* Price Range Filter */}
               <div>
-                <h4 className="font-semibold text-white mb-3">Price range</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">Price range</h4>
                 <input
                   type="text"
                   placeholder="Enter fixed price"
                   value={priceRange}
                   onChange={(e) => setPriceRange(e.target.value)}
-                  className="w-full px-4 py-2 bg-purple-900/30 border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>

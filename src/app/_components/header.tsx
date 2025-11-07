@@ -38,8 +38,8 @@ export default function Header() {
   // Helper function to get navigation link classes
   const getNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-2 text-sm rounded-lg transition";
-    const activeClasses = "bg-purple-600 text-white font-semibold";
-    const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
+    const activeClasses = "bg-blue-600 text-white font-semibold";
+    const inactiveClasses = "text-gray-700 hover:text-gray-900 hover:bg-gray-100";
 
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
@@ -47,8 +47,8 @@ export default function Header() {
   // Helper function for mobile nav link classes
   const getMobileNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-3 text-sm rounded-lg transition";
-    const activeClasses = "bg-purple-600 text-white font-semibold";
-    const inactiveClasses = "text-gray-300 hover:text-white hover:bg-white/10";
+    const activeClasses = "bg-blue-600 text-white font-semibold";
+    const inactiveClasses = "text-gray-700 hover:text-gray-900 hover:bg-gray-100";
 
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
@@ -118,14 +118,14 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           {/* Mobile Menu Button */}
           {session?.user && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+              className="md:hidden p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
               aria-label="Toggle mobile menu"
             >
               <svg
@@ -153,7 +153,7 @@ export default function Header() {
             </button>
           )}
 
-          <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-white">
+          <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-900">
             <Image
               src="/image/TechLogo.png"
               alt="TechPickHub Logo"
@@ -162,7 +162,7 @@ export default function Header() {
               className="object-contain"
             />
             <span className="hidden sm:inline">
-              <span className="text-purple-400">TechPick</span>Hub
+              <span className="text-blue-600">TechPick</span>Hub
             </span>
           </Link>
 
@@ -188,7 +188,7 @@ export default function Header() {
                   <div className="relative" ref={projectsDropdownRef}>
                     <button
                       onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
-                      className="flex items-center space-x-1 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition"
+                      className="flex items-center space-x-1 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
                     >
                       <span>Projects</span>
                       <svg
@@ -202,10 +202,10 @@ export default function Header() {
                     </button>
 
                     {isProjectsDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2 z-[100]">
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-[100]">
                         <Link
                           href="/client/projects/new"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsProjectsDropdownOpen(false)}
                         >
                           <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,7 +215,7 @@ export default function Header() {
                         </Link>
                         <Link
                           href="/client/projects"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsProjectsDropdownOpen(false)}
                         >
                           <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,11 +284,11 @@ export default function Header() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group"
                 >
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-purple-400 transition">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-blue-400 transition">
                     {getUserInitials(session.user.name)}
                   </div>
                   <svg
-                    className={`hidden sm:block w-4 h-4 text-gray-300 transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                    className={`hidden sm:block w-4 h-4 text-gray-700 transition-transform ${isDropdownOpen ? "rotate-180" : ""
                       }`}
                     fill="none"
                     stroke="currentColor"
@@ -305,17 +305,17 @@ export default function Header() {
 
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-slate-800 rounded-lg shadow-xl border border-white/10 py-2 z-[100]">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-[100]">
                     {/* User Info */}
-                    <div className="px-4 py-3 border-b border-white/10">
-                      <p className="text-sm font-semibold text-white">
+                    <div className="px-4 py-3 border-b border-gray-200">
+                      <p className="text-sm font-semibold text-gray-900">
                         {session.user.name ?? "User"}
                       </p>
-                      <p className="text-xs text-gray-400 truncate">
+                      <p className="text-xs text-gray-600 truncate">
                         {session.user.email}
                       </p>
                       {session.user.role && (
-                        <p className="text-xs text-purple-400 mt-1 capitalize">
+                        <p className="text-xs text-blue-600 mt-1 capitalize">
                           {session.user.role}
                         </p>
                       )}
@@ -327,7 +327,7 @@ export default function Header() {
                       {session.user.role === "client" && (
                         <Link
                           href="/client/dashboard"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           <svg
@@ -350,7 +350,7 @@ export default function Header() {
                       {session.user.role === "talent" && (
                         <Link
                           href="/talent/dashboard"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           <svg
@@ -373,7 +373,7 @@ export default function Header() {
                       {session.user.role === "admin" && (
                         <Link
                           href="/admin/dashboard"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           <svg
@@ -397,7 +397,7 @@ export default function Header() {
                       {session.user.role === "client" && (
                         <Link
                           href="/client/account"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           <svg
@@ -420,7 +420,7 @@ export default function Header() {
                       {session.user.role === "talent" && (
                         <Link
                           href="/talent/account"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           <svg
@@ -443,7 +443,7 @@ export default function Header() {
                       {/* Settings Link - Available for all roles */}
                       <Link
                         href="/settings"
-                        className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-white/10 transition"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         <svg
@@ -471,7 +471,7 @@ export default function Header() {
                       {/* Logout Button - Available for all roles */}
                       <button
                         onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-red-400 hover:bg-white/10 transition"
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition"
                       >
                         <svg
                           className="w-4 h-4 mr-3"
@@ -496,13 +496,13 @@ export default function Header() {
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
                   href="/signin"
-                  className="text-gray-300 hover:text-white font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-white/10 transition"
+                  className="text-gray-700 hover:text-gray-900 font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-100 transition"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/join"
-                  className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg transition"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg transition"
                 >
                   Join Us
                 </Link>
@@ -515,7 +515,7 @@ export default function Header() {
         {session?.user && isMobileMenuOpen && (
           <div
             ref={mobileMenuRef}
-            className="md:hidden mt-4 pb-4 border-t border-white/10 pt-4"
+            className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4"
           >
             <nav className="flex flex-col space-y-2">
               {session.user.role === "client" ? (
