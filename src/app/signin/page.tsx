@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -340,34 +341,43 @@ function AuthContent() {
   const professionalInfo = getProfessionalInfo();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-8">
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className={`w-full px-6 ${authMode === "professional" ? "max-w-4xl" : "max-w-md"}`}>
         {/* Logo/Brand Section */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 mt-20">
           {authMode === "professional" && (
             <div className="text-6xl mb-4">{professionalInfo.icon}</div>
           )}
-          <h1 className="text-4xl font-bold text-white mb-2">
-            <span className="text-purple-400">TechPick</span>Hub
-          </h1>
-          <p className="text-gray-300">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h1 className="text-4xl font-bold text-gray-900">
+              <span className="text-blue-600">TechPick</span>Hub
+            </h1>
+            <Image
+              src="/image/TechLogo.png"
+              alt="TechPickHub Logo"
+              width={60}
+              height={60}
+              className="object-contain"
+            />
+          </div>
+          <p className="text-gray-600">
             {authMode === "professional" 
               ? professionalInfo.subtitle
-              : "Web Freelance Platform for Clients, Developer, and Agencies."
+              : "Your gateway to freelance tech projects—find pick projects, pick devs, and pick agencies to grow your business."
             }
           </p>
         </div>
 
         {/* Auth Form Card */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
 
           {/* Professional Mode Header */}
           {authMode === "professional" && (
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 {professionalInfo.title}
               </h2>
-              <p className="text-gray-300">{professionalInfo.subtitle}</p>
+              <p className="text-gray-600">{professionalInfo.subtitle}</p>
             </div>
           )}
 
@@ -378,10 +388,10 @@ function AuthContent() {
               <div className="space-y-6">
                 {/* Basic Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-200 mb-1">
+                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                         First Name *
                       </label>
                       <input
@@ -390,8 +400,8 @@ function AuthContent() {
                         name="firstName"
                         value={professionalFormData.firstName}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                          errors.firstName ? "border-red-500" : "border-white/20"
+                        className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                          errors.firstName ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Enter your first name"
                       />
@@ -399,7 +409,7 @@ function AuthContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-200 mb-1">
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                         Last Name *
                       </label>
                       <input
@@ -408,8 +418,8 @@ function AuthContent() {
                         name="lastName"
                         value={professionalFormData.lastName}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                          errors.lastName ? "border-red-500" : "border-white/20"
+                        className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                          errors.lastName ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Enter your last name"
                       />
@@ -418,7 +428,7 @@ function AuthContent() {
                   </div>
 
                   <div className="mt-4">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                       Email Address *
                     </label>
                     <input
@@ -427,8 +437,8 @@ function AuthContent() {
                       name="email"
                       value={professionalFormData.email}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                        errors.email ? "border-red-500" : "border-white/20"
+                      className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                        errors.email ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="Enter your email address"
                     />
@@ -437,7 +447,7 @@ function AuthContent() {
 
                   <div className="grid md:grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-1">
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                         Password *
                       </label>
                       <input
@@ -446,8 +456,8 @@ function AuthContent() {
                         name="password"
                         value={professionalFormData.password}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                          errors.password ? "border-red-500" : "border-white/20"
+                        className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                          errors.password ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Create a password"
                       />
@@ -455,7 +465,7 @@ function AuthContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-1">
+                      <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                         Confirm Password *
                       </label>
                       <input
@@ -464,8 +474,8 @@ function AuthContent() {
                         name="confirmPassword"
                         value={professionalFormData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                          errors.confirmPassword ? "border-red-500" : "border-white/20"
+                        className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                          errors.confirmPassword ? "border-red-500" : "border-gray-300"
                         }`}
                         placeholder="Confirm your password"
                       />
@@ -476,14 +486,14 @@ function AuthContent() {
 
                 {/* Professional Information */}
                 {professionalType !== "client" && (
-                  <div className="border-t border-white/20 pt-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">Professional Information</h3>
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
 
                     {/* Talent Fields */}
                     {professionalType === "talent" && (
                     <div className="space-y-4">
                       <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-200 mb-1">
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
                           Professional Title *
                         </label>
                         <input
@@ -492,8 +502,8 @@ function AuthContent() {
                           name="title"
                           value={professionalFormData.title ?? ""}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                            errors.title ? "border-red-500" : "border-white/20"
+                          className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                            errors.title ? "border-red-500" : "border-gray-300"
                           }`}
                           placeholder="e.g., Full Stack Developer, UI/UX Designer"
                         />
@@ -501,7 +511,7 @@ function AuthContent() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Skills & Technologies *
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -512,8 +522,8 @@ function AuthContent() {
                               onClick={() => handleSkillToggle(skill)}
                               className={`px-3 py-2 rounded-lg text-sm transition ${
                                 professionalFormData.skills?.includes(skill)
-                                  ? "bg-purple-600 text-white"
-                                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                               }`}
                             >
                               {skill}
@@ -525,7 +535,7 @@ function AuthContent() {
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="experience" className="block text-sm font-medium text-gray-200 mb-1">
+                          <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-1">
                             Experience Level *
                           </label>
                           <select
@@ -533,21 +543,21 @@ function AuthContent() {
                             name="experience"
                             value={professionalFormData.experience ?? ""}
                             onChange={handleInputChange}
-                            className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                              errors.experience ? "border-red-500" : "border-white/20"
+                            className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                              errors.experience ? "border-red-500" : "border-gray-300"
                             }`}
                           >
                             <option value="">Select experience level</option>
-                            <option value="entry" className="bg-slate-800">Entry Level (0-2 years)</option>
-                            <option value="intermediate" className="bg-slate-800">Intermediate (2-5 years)</option>
-                            <option value="senior" className="bg-slate-800">Senior (5-10 years)</option>
-                            <option value="expert" className="bg-slate-800">Expert (10+ years)</option>
+                            <option value="entry" className="bg-white">Entry Level (0-2 years)</option>
+                            <option value="intermediate" className="bg-white">Intermediate (2-5 years)</option>
+                            <option value="senior" className="bg-white">Senior (5-10 years)</option>
+                            <option value="expert" className="bg-white">Expert (10+ years)</option>
                           </select>
                           {errors.experience && <p className="mt-1 text-sm text-red-400">{errors.experience}</p>}
                         </div>
 
                         <div>
-                          <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-200 mb-1">
+                          <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">
                             Hourly Rate (USD)
                           </label>
                           <input
@@ -556,14 +566,14 @@ function AuthContent() {
                             name="hourlyRate"
                             value={professionalFormData.hourlyRate ?? ""}
                             onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="e.g., $50/hr"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label htmlFor="portfolio" className="block text-sm font-medium text-gray-200 mb-1">
+                        <label htmlFor="portfolio" className="block text-sm font-medium text-gray-700 mb-1">
                           Portfolio URL
                         </label>
                         <input
@@ -572,7 +582,7 @@ function AuthContent() {
                           name="portfolio"
                           value={professionalFormData.portfolio ?? ""}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="https://your-portfolio.com"
                         />
                       </div>
@@ -583,7 +593,7 @@ function AuthContent() {
                     {professionalType === "agency" && (
                     <div className="space-y-4">
                       <div>
-                        <label htmlFor="agencyName" className="block text-sm font-medium text-gray-200 mb-1">
+                        <label htmlFor="agencyName" className="block text-sm font-medium text-gray-700 mb-1">
                           Agency Name *
                         </label>
                         <input
@@ -592,8 +602,8 @@ function AuthContent() {
                           name="agencyName"
                           value={professionalFormData.agencyName ?? ""}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                            errors.agencyName ? "border-red-500" : "border-white/20"
+                          className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                            errors.agencyName ? "border-red-500" : "border-gray-300"
                           }`}
                           placeholder="Enter your agency name"
                         />
@@ -601,7 +611,7 @@ function AuthContent() {
                       </div>
 
                       <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-200 mb-1">
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                           Agency Description *
                         </label>
                         <textarea
@@ -610,8 +620,8 @@ function AuthContent() {
                           rows={4}
                           value={professionalFormData.description ?? ""}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                            errors.description ? "border-red-500" : "border-white/20"
+                          className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                            errors.description ? "border-red-500" : "border-gray-300"
                           }`}
                           placeholder="Describe your agency's services and expertise"
                         />
@@ -619,7 +629,7 @@ function AuthContent() {
                       </div>
 
                       <div>
-                        <label htmlFor="teamSize" className="block text-sm font-medium text-gray-200 mb-1">
+                        <label htmlFor="teamSize" className="block text-sm font-medium text-gray-700 mb-1">
                           Team Size
                         </label>
                         <select
@@ -627,18 +637,18 @@ function AuthContent() {
                           name="teamSize"
                           value={professionalFormData.teamSize ?? ""}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="">Select team size</option>
-                          <option value="1-5" className="bg-slate-800">1-5 people</option>
-                          <option value="6-15" className="bg-slate-800">6-15 people</option>
-                          <option value="16-50" className="bg-slate-800">16-50 people</option>
-                          <option value="50+" className="bg-slate-800">50+ people</option>
+                          <option value="1-5" className="bg-white">1-5 people</option>
+                          <option value="6-15" className="bg-white">6-15 people</option>
+                          <option value="16-50" className="bg-white">16-50 people</option>
+                          <option value="50+" className="bg-white">50+ people</option>
                         </select>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Agency Skills & Services *
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -649,8 +659,8 @@ function AuthContent() {
                               onClick={() => handleSkillToggle(skill, 'agencySkills')}
                               className={`px-3 py-2 rounded-lg text-sm transition ${
                                 professionalFormData.agencySkills?.includes(skill)
-                                  ? "bg-purple-600 text-white"
-                                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                               }`}
                             >
                               {skill}
@@ -670,7 +680,7 @@ function AuthContent() {
                 {/* Name field (Sign Up only) */}
                 {authMode === "signup" && (
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                       Full Name
                     </label>
                     <input
@@ -679,8 +689,8 @@ function AuthContent() {
                       name="name"
                       value={formData.name ?? ""}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                        errors.name ? "border-red-500" : "border-white/20"
+                      className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                        errors.name ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="Enter your full name"
                     />
@@ -690,7 +700,7 @@ function AuthContent() {
 
                 {/* Email field */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                     Email Address
                   </label>
                   <input
@@ -699,8 +709,8 @@ function AuthContent() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                      errors.email ? "border-red-500" : "border-white/20"
+                    className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                      errors.email ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="Enter your email"
                   />
@@ -709,7 +719,7 @@ function AuthContent() {
 
                 {/* Password field */}
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-1">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                     Password
                   </label>
                   <input
@@ -718,8 +728,8 @@ function AuthContent() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                      errors.password ? "border-red-500" : "border-white/20"
+                    className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                      errors.password ? "border-red-500" : "border-gray-300"
                     }`}
                     placeholder="Enter your password"
                   />
@@ -729,7 +739,7 @@ function AuthContent() {
                 {/* Confirm Password field (Sign Up only) */}
                 {authMode === "signup" && (
                   <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-1">
+                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                       Confirm Password
                     </label>
                     <input
@@ -738,8 +748,8 @@ function AuthContent() {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition ${
-                        errors.confirmPassword ? "border-red-500" : "border-white/20"
+                      className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+                        errors.confirmPassword ? "border-red-500" : "border-gray-300"
                       }`}
                       placeholder="Confirm your password"
                     />
@@ -767,7 +777,7 @@ function AuthContent() {
                     : professionalType === "talent"
                     ? "bg-green-600 hover:bg-green-700 disabled:bg-green-800"
                     : "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
-                  : "bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800"
+                    : "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
               }`}
             >
               {isLoading ? (
@@ -797,7 +807,7 @@ function AuthContent() {
               <div className="mt-4 text-center">
                 <Link
                   href="#"
-                  className="text-sm text-purple-400 hover:text-purple-300 transition"
+                  className="text-sm text-blue-600 hover:text-blue-700 transition"
                 >
                   Forgot your password?
                 </Link>
@@ -806,13 +816,13 @@ function AuthContent() {
             
             {/* Toggle between Sign In and Sign Up */}
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-300">
+              <p className="text-sm text-gray-600">
                 {authMode === "signin" ? (
                   <>
                     Don&apos;t have an account?{" "}
                     <Link
                       href="/join"
-                      className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                      className="text-blue-600 hover:text-blue-700 font-semibold transition"
                     >
                       Join Us
                     </Link>
@@ -826,7 +836,7 @@ function AuthContent() {
                         setAuthMode("signin");
                         setErrors({});
                       }}
-                      className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                      className="text-blue-600 hover:text-blue-700 font-semibold transition"
                     >
                       Sign In
                     </button>
@@ -840,11 +850,11 @@ function AuthContent() {
         {/* Professional mode - link back to join page */}
         {authMode === "professional" && (
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-gray-600">
               Want to choose a different account type?{" "}
               <Link
                 href="/join"
-                className="text-purple-400 hover:text-purple-300 font-semibold transition"
+                className="text-blue-600 hover:text-blue-700 font-semibold transition"
               >
                 Go back
               </Link>
@@ -854,13 +864,13 @@ function AuthContent() {
       </div>
 
         {/* Terms and Privacy */}
-        <div className="mt-6 text-center text-xs text-gray-400">
+        <div className="mt-6 text-center text-xs text-gray-600">
           By {authMode === "professional" ? "creating a professional account" : authMode === "signup" ? "creating an account" : "signing in"}, you agree to our{" "}
-          <Link href="#" className="text-purple-400 hover:text-purple-300">
+          <Link href="#" className="text-blue-600 hover:text-blue-700">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link href="#" className="text-purple-400 hover:text-purple-300">
+          <Link href="#" className="text-blue-600 hover:text-blue-700">
             Privacy Policy
           </Link>
         </div>
@@ -872,8 +882,8 @@ function AuthContent() {
 export default function AuthPage() {
   return (
     <Suspense fallback={
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
+        <div className="text-gray-900 text-xl">Loading...</div>
       </main>
     }>
       <AuthContent />
