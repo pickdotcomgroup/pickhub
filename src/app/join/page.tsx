@@ -11,9 +11,9 @@ export default function JoinPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Join TechPickHub
           </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Connect, collaborate, and grow—whether you&apos;re a client seeking talent, a developer looking for projects, or an agency ready to scale.
-            </p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Connect, collaborate, and grow—whether you&apos;re a client seeking talent, a developer looking for projects, or an agency ready to scale.
+          </p>
         </div>
 
         {/* Professional Signup Section */}
@@ -80,12 +80,15 @@ export default function JoinPage() {
                 <li>• Client relationship tools</li>
                 <li>• Advanced analytics</li>
               </ul>
-              <Link
+              {/* <Link
                 href="/signup?type=agency"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
               >
                 Sign Up as Agency
-              </Link>
+              </Link> */}
+              <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center">
+                Sign Up as Agency (Coming Soon)
+              </button>
             </div>
           </div>
 

@@ -115,23 +115,74 @@ export default function Home() {
     }
   }, [session, router]);
 
-  const categoryOptions = [
-    "Web Designer", "UI/UX Designer", "Framer Designer", "Webflow Designer",
-    "Product Designer", "Design System", "Figma", "Figjam"
-  ];
+  // Dynamic filter options based on active category
+  const getFilterOptions = () => {
+    switch (activeCategory) {
+      case "clients":
+        return {
+          categories: [
+            "Web Development", "Mobile Development", "UI/UX Design", "Backend Development",
+            "Frontend Development", "Full Stack", "DevOps", "Data Science"
+          ],
+          secondary: [
+            { label: "Fixed Price", count: 850 },
+            { label: "Hourly Rate", count: 620 },
+            { label: "Long-term", count: 450 },
+            { label: "Short-term", count: 380 }
+          ],
+          tertiary: [
+            { label: "Budget: $0-$1000", count: 320 },
+            { label: "Budget: $1000-$5000", count: 580 },
+            { label: "Budget: $5000-$10000", count: 420 },
+            { label: "Budget: $10000+", count: 180 }
+          ]
+        };
+      case "developer":
+        return {
+          categories: [
+            "React", "Node.js", "Python", "JavaScript",
+            "TypeScript", "UI/UX Design", "Mobile Development", "DevOps"
+          ],
+          secondary: [
+            { label: "Entry level", count: 1028 },
+            { label: "Intermediate", count: 902 },
+            { label: "Expert", count: 456 }
+          ],
+          tertiary: [
+            { label: "Available Full-time", count: 620 },
+            { label: "Available Part-time", count: 432 },
+            { label: "Remote Only", count: 1872 },
+            { label: "Freelance", count: 1121 }
+          ]
+        };
+      case "agencies":
+        return {
+          categories: [
+            "Web Development", "Mobile Apps", "Digital Marketing", "UI/UX Design",
+            "E-commerce", "Enterprise Solutions", "Consulting", "Branding"
+          ],
+          secondary: [
+            { label: "Small (1-10)", count: 145 },
+            { label: "Medium (11-50)", count: 89 },
+            { label: "Large (51+)", count: 34 }
+          ],
+          tertiary: [
+            { label: "Rating: 4.5+", count: 180 },
+            { label: "Rating: 4.0+", count: 220 },
+            { label: "100+ Projects", count: 95 },
+            { label: "50+ Projects", count: 150 }
+          ]
+        };
+      default:
+        return {
+          categories: [],
+          secondary: [],
+          tertiary: []
+        };
+    }
+  };
 
-  const experienceOptions = [
-    { label: "Entry level", count: 1028 },
-    { label: "Intermediate", count: 902 },
-    { label: "Expert", count: 106 }
-  ];
-
-  const jobTypeOptions = [
-    { label: "Full-time job", count: 620 },
-    { label: "Part-time job", count: 232 },
-    { label: "Remote", count: 1872 },
-    { label: "Freelance", count: 1121 }
-  ];
+  const filterOptions = getFilterOptions();
   const mockAgencies: Agency[] = [
     {
       id: "1",
@@ -447,13 +498,27 @@ export default function Home() {
       )}
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-50 via-white to-blue-50 py-8 sm:py-12 md:py-16 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative bg-gradient-to-r from-blue-50 via-white to-blue-50 py-8 sm:py-12 md:py-16 border-b border-gray-200 overflow-hidden">
+        {/* Honeycomb Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.15]">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="honeycomb" x="0" y="0" width="56" height="100" patternUnits="userSpaceOnUse">
+                <polygon points="28,0 56,17 56,50 28,67 0,50 0,17" fill="none" stroke="#3B82F6" strokeWidth="1"/>
+                <polygon points="28,33 56,50 56,83 28,100 0,83 0,50" fill="none" stroke="#3B82F6" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#honeycomb)" />
+          </svg>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies
+            {/* The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies */}
+            Stop Bidding. Start Picking.
           </h1>
           <p className="text-base sm:text-md md:text-md text-gray-600 mb-6 sm:mb-8">
-            Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
+            {/* Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration! */}
+            The modern freelance platform where developers choose projects and clients choose from interested developers.
           </p>
 
           {/* Toggle Button for Browse Categories */}
@@ -466,7 +531,7 @@ export default function Home() {
                   : "text-gray-700 hover:text-gray-900"
                   }`}
               >
-                Client Projects
+                Projects
               </button>
               <button
                 onClick={() => handleCategoryChange("developer")}
@@ -717,7 +782,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('agency', item)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition"
                         >
                           Pick
                         </button>
@@ -750,7 +815,9 @@ export default function Home() {
 
               {/* Categories Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Categories</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  {activeCategory === "clients" ? "Project Type" : activeCategory === "developer" ? "Skills" : "Services"}
+                </h4>
                 <select
                   className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   onChange={(e) => {
@@ -760,8 +827,8 @@ export default function Home() {
                   }}
                   value=""
                 >
-                  <option value="" className="bg-white">Select categories</option>
-                  {categoryOptions.map((category) => (
+                  <option value="" className="bg-white">Select {activeCategory === "clients" ? "project type" : activeCategory === "developer" ? "skills" : "services"}</option>
+                  {filterOptions.categories.map((category) => (
                     <option key={category} value={category} className="bg-white">
                       {category}
                     </option>
@@ -787,11 +854,13 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Experience Level Filter */}
+              {/* Secondary Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Experience level</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  {activeCategory === "clients" ? "Project Duration" : activeCategory === "developer" ? "Experience Level" : "Team Size"}
+                </h4>
                 <div className="space-y-2">
-                  {experienceOptions.map((option) => (
+                  {filterOptions.secondary.map((option) => (
                     <label key={option.label} className="flex items-center justify-between cursor-pointer">
                       <div className="flex items-center gap-2">
                         <input
@@ -808,11 +877,13 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Job Type Filter */}
+              {/* Tertiary Filter */}
               <div className="mb-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Job type</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  {activeCategory === "clients" ? "Budget Range" : activeCategory === "developer" ? "Availability" : "Rating & Projects"}
+                </h4>
                 <div className="space-y-2">
-                  {jobTypeOptions.map((option) => (
+                  {filterOptions.tertiary.map((option) => (
                     <label key={option.label} className="flex items-center justify-between cursor-pointer">
                       <div className="flex items-center gap-2">
                         <input

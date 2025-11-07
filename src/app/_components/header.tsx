@@ -25,7 +25,6 @@ export default function Header() {
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -98,11 +97,9 @@ export default function Header() {
   }, []);
 
   const handleLogout = async () => {
-    setIsLoggingOut(true);
     try {
       await signOut({ callbackUrl: "/" });
     } catch (error) {
-      setIsLoggingOut(false);
       console.error('Logout failed:', error);
     }
   };
@@ -157,8 +154,8 @@ export default function Header() {
             <Image
               src="/image/TechLogo.png"
               alt="TechPickHub Logo"
-              width={30}
-              height={30}
+              width={40}
+              height={40}
               className="object-contain"
             />
             <span className="hidden sm:inline">
