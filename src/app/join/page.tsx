@@ -4,14 +4,14 @@ import Link from "next/link";
 
 export default function JoinPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Title */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Join TechPickHub
           </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Connect, collaborate, and grow—whether you&apos;re a client seeking talent, a developer looking for projects, or an agency ready to scale.
             </p>
         </div>
@@ -20,15 +20,15 @@ export default function JoinPage() {
         <div className="rounded-2xl p-4">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {/* Client Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-blue-400/50 transition-all duration-300">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">🏢</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Client</h3>
-                <p className="text-gray-300 text-sm mb-4">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Client</h3>
+                <p className="text-gray-600 text-sm mb-4">
                   Post projects and hire top talent for your business needs
                 </p>
               </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
+              <ul className="text-sm text-gray-600 space-y-2 mb-6">
                 <li>• Post unlimited projects</li>
                 <li>• Access to verified professionals</li>
                 <li>• Project management tools</li>
@@ -43,15 +43,15 @@ export default function JoinPage() {
             </div>
 
             {/* Talent Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-green-400/50 transition-all duration-300">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300 shadow-sm">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">👨‍💻</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Developer</h3>
-                <p className="text-gray-300 text-sm mb-4">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Developer</h3>
+                <p className="text-gray-600 text-sm mb-4">
                   Showcase your skills and find exciting freelance opportunities
                 </p>
               </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
+              <ul className="text-sm text-gray-600 space-y-2 mb-6">
                 <li>• Create professional profile</li>
                 <li>• Bid on quality projects</li>
                 <li>• Build your reputation</li>
@@ -66,15 +66,15 @@ export default function JoinPage() {
             </div>
 
             {/* Agency Professional Signup */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-indigo-400/50 transition-all duration-300">
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300 shadow-sm">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">🏛️</div>
-                <h3 className="text-xl font-bold text-white mb-2">Join as Agency</h3>
-                <p className="text-gray-300 text-sm mb-4">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Agency</h3>
+                <p className="text-gray-600 text-sm mb-4">
                   Scale your business and manage multiple client relationships
                 </p>
               </div>
-              <ul className="text-sm text-gray-400 space-y-2 mb-6">
+              <ul className="text-sm text-gray-600 space-y-2 mb-6">
                 <li>• Team collaboration tools</li>
                 <li>• Multi-project management</li>
                 <li>• Client relationship tools</li>
@@ -90,14 +90,14 @@ export default function JoinPage() {
           </div>
 
           {/* General CTA */}
-          <div className="text-center border-t border-white/10 pt-8">
-            <h3 className="text-2xl font-bold text-white mb-4">
+          <div className="text-center border-t border-gray-200 pt-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Already have an account?
             </h3>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/signin"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200"
               >
                 Sign In
               </Link>
