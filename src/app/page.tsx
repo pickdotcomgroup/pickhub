@@ -452,16 +452,16 @@ export default function Home() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies
           </h1>
-          <p className="text-base sm:text-md md:text-lg text-gray-600 mb-6 sm:mb-8">
+          <p className="text-base sm:text-md md:text-md text-gray-600 mb-6 sm:mb-8">
             Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration!
           </p>
 
           {/* Toggle Button for Browse Categories */}
           <div className="flex justify-center mb-4 sm:mb-6">
-            <div className="inline-flex bg-gray-100 rounded-lg p-1 border border-gray-300 w-full sm:w-auto">
+            <div className="inline-flex bg-gray-100 rounded-full p-1 border border-gray-300 w-full sm:w-auto">
               <button
                 onClick={() => handleCategoryChange("clients")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "clients"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "clients"
                   ? "bg-blue-600 text-white"
                   : "text-gray-700 hover:text-gray-900"
                   }`}
@@ -470,7 +470,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => handleCategoryChange("developer")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "developer"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "developer"
                   ? "bg-blue-600 text-white"
                   : "text-gray-700 hover:text-gray-900"
                   }`}
@@ -479,7 +479,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => handleCategoryChange("agencies")}
-                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "agencies"
+                className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-200 text-sm sm:text-base flex-1 sm:flex-initial ${activeCategory === "agencies"
                   ? "bg-blue-600 text-white"
                   : "text-gray-700 hover:text-gray-900"
                   }`}
@@ -503,7 +503,7 @@ export default function Home() {
                 }
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full px-12 py-4 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-12 py-4 bg-white border border-gray-300 rounded-full text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -517,7 +517,7 @@ export default function Home() {
                 </button>
               )}
             </div>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold transition text-sm sm:text-base">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold transition text-sm sm:text-base">
               Search
             </button>
           </div>
@@ -629,7 +629,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('project', item)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition w-full sm:w-auto text-sm sm:text-base"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition w-full sm:w-auto text-sm sm:text-base"
                         >
                           Pick
                         </button>
@@ -673,7 +673,7 @@ export default function Home() {
                         </div>
                         <button
                           onClick={() => handlePick('talent', item)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold transition"
                         >
                           Pick
                         </button>
