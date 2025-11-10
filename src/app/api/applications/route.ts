@@ -67,29 +67,46 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create application
-    const application = await db.application.create({
-      data: {
-        projectId: projectId,
-        talentId: session.user.id,
-        coverLetter: coverLetter ?? null,
-        proposedRate: proposedRate ? parseFloat(String(proposedRate)) : null,
-        status: "pending",
-      },
-      include: {
-        project: {
-          include: {
-            client: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
+    // Get talent profile for developer name
+    const talentProfile = await db.talentProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+
+    // Create application and notification in a transaction
+    const [application] = await db.$transaction([
+      db.application.create({
+        data: {
+          projectId: projectId,
+          talentId: session.user.id,
+          coverLetter: coverLetter ?? null,
+          proposedRate: proposedRate ? parseFloat(String(proposedRate)) : null,
+          status: "pending",
+        },
+        include: {
+          project: {
+            include: {
+              client: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      }),
+      // Create notification for the client
+      db.notification.create({
+        data: {
+          type: "project_picked",
+          title: "Your Project Has Been Picked",
+          message: `${talentProfile?.firstName ?? "A developer"} ${talentProfile?.lastName ?? ""} has picked your project "${project.title}".`,
+          userId: project.clientId,
+          relatedProjectId: projectId,
+        },
+      }),
+    ]);
 
     return NextResponse.json(
       { 

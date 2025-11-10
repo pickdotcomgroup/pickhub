@@ -25,9 +25,22 @@ export default function Header() {
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Array<{
+    id: string;
+    type: string;
+    title: string;
+    message: string;
+    isRead: boolean;
+    createdAt: string;
+    relatedProjectId?: string | null;
+    relatedApplicationId?: string | null;
+  }>>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectsDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
   // Helper function to check if a path is active
   const isActivePath = (path: string) => {
@@ -78,6 +91,67 @@ export default function Header() {
     return () => clearInterval(interval);
   }, [session?.user]);
 
+  // Fetch unread notification count
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const fetchNotificationCount = async () => {
+      try {
+        const response = await fetch("/api/notifications/unread-count");
+        if (response.ok) {
+          const data = (await response.json()) as { count: number };
+          setNotificationCount(data.count ?? 0);
+        }
+      } catch (error) {
+        console.error("Error fetching notification count:", error);
+      }
+    };
+
+    void fetchNotificationCount();
+
+    // Poll for updates every 30 seconds
+    const interval = setInterval(() => {
+      void fetchNotificationCount();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [session?.user]);
+
+  // Fetch notifications when dropdown is opened
+  useEffect(() => {
+    if (!isNotificationDropdownOpen || !session?.user) return;
+
+    const fetchNotifications = async () => {
+      try {
+        console.log("Fetching notifications...");
+        const response = await fetch("/api/notifications?limit=10");
+        console.log("Response status:", response.status);
+        
+        if (response.ok) {
+          const data = (await response.json()) as { notifications: Array<{
+            id: string;
+            type: string;
+            title: string;
+            message: string;
+            isRead: boolean;
+            createdAt: string;
+            relatedProjectId?: string | null;
+            relatedApplicationId?: string | null;
+          }> };
+          console.log("Fetched notifications:", data.notifications);
+          setNotifications(data.notifications ?? []);
+        } else {
+          const errorData = (await response.json()) as { error?: string };
+          console.error("Error response:", errorData);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    void fetchNotifications();
+  }, [isNotificationDropdownOpen, session?.user]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,6 +163,9 @@ export default function Header() {
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
+      }
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target as Node)) {
+        setIsNotificationDropdownOpen(false);
       }
     };
 
@@ -112,6 +189,63 @@ export default function Header() {
       return `${names[0]![0]}${names[1]![0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  };
+
+  // Mark notification as read
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setNotifications(prev =>
+          prev.map(notif =>
+            notif.id === notificationId ? { ...notif, isRead: true } : notif
+          )
+        );
+        setNotificationCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  // Mark all notifications as read
+  const markAllNotificationsAsRead = async () => {
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markAllAsRead: true }),
+      });
+
+      if (response.ok) {
+        setNotifications(prev => prev.map(notif => ({ ...notif, isRead: true })));
+        setNotificationCount(0);
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+    }
+  };
+
+  // Format notification time
+  const formatNotificationTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInMins = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMs / 3600000);
+    const diffInDays = Math.floor(diffInMs / 86400000);
+
+    if (diffInMins < 1) return "Just now";
+    if (diffInMins < 60) return `${diffInMins}m ago`;
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInDays < 7) return `${diffInDays}d ago`;
+    return date.toLocaleDateString();
   };
 
   return (
@@ -275,12 +409,166 @@ export default function Header() {
 
           <div className="flex items-center space-x-2 sm:space-x-4">
             {session?.user ? (
-              <div className="relative" ref={dropdownRef}>
-                {/* User Avatar Button */}
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group"
-                >
+              <>
+                {/* Notification Bell */}
+                <div className="relative" ref={notificationDropdownRef}>
+                  <button
+                    onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
+                    className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                    aria-label="Notifications"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                      />
+                    </svg>
+                    <NotificationBadge count={notificationCount} />
+                  </button>
+
+                  {/* Notification Dropdown */}
+                  {isNotificationDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-[100] max-h-[500px] overflow-hidden flex flex-col">
+                      {/* Header */}
+                      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                        {notificationCount > 0 && (
+                          <button
+                            onClick={markAllNotificationsAsRead}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                          >
+                            Mark all as read
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Notifications List */}
+                      <div className="overflow-y-auto flex-1">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-gray-500">
+                            <svg
+                              className="w-12 h-12 mx-auto mb-2 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                              />
+                            </svg>
+                            <p className="text-sm">No notifications yet</p>
+                          </div>
+                        ) : (
+                          notifications.map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition cursor-pointer ${
+                                !notification.isRead ? "bg-blue-50" : ""
+                              }`}
+                              onClick={() => {
+                                if (!notification.isRead) {
+                                  void markNotificationAsRead(notification.id);
+                                }
+                                // Optionally navigate to related project
+                                if (notification.relatedProjectId) {
+                                  setIsNotificationDropdownOpen(false);
+                                  window.location.href = `/client/projects`;
+                                }
+                              }}
+                            >
+                              <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0">
+                                  {notification.type === "project_picked" ? (
+                                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                      <svg
+                                        className="w-5 h-5 text-green-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                      </svg>
+                                    </div>
+                                  ) : notification.type === "new_application" ? (
+                                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                      <svg
+                                        className="w-5 h-5 text-purple-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        />
+                                      </svg>
+                                    </div>
+                                  ) : (
+                                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                      <svg
+                                        className="w-5 h-5 text-blue-600"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                      </svg>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {notification.title}
+                                  </p>
+                                  <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                    {notification.message}
+                                  </p>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {formatNotificationTime(notification.createdAt)}
+                                  </p>
+                                </div>
+                                {!notification.isRead && (
+                                  <div className="flex-shrink-0">
+                                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative" ref={dropdownRef}>
+                  {/* User Avatar Button */}
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group"
+                  >
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-blue-400 transition">
                     {getUserInitials(session.user.name)}
                   </div>
@@ -488,7 +776,8 @@ export default function Header() {
                     </div>
                   </div>
                 )}
-              </div>
+                </div>
+              </>
             ) : (
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
