@@ -778,7 +778,7 @@ export default function Header() {
                 )}
                 </div>
               </>
-            ) : (
+            ) : pathname !== "/wait-list" ? (
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
                   href="/signin"
@@ -793,7 +793,7 @@ export default function Header() {
                   Join Us
                 </Link>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
