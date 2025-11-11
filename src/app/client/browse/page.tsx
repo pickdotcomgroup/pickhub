@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import { Eye } from "lucide-react";
 
 interface TalentProfile {
   id: string;
@@ -316,26 +317,27 @@ export default function ClientBrowsePage() {
                               LinkedIn
                             </a>
                           )}
+                          {selectedTalentDetails.profile?.portfolioUrl && (
+                            <a
+                              href={selectedTalentDetails.profile.portfolioUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex gap-2 px-2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm rounded-lg transition"
+                            >
+                              <Eye className="w-5 h-5"/>
+                              View Portfolio
+                            </a>
+                          )}
                         </div>
                       )}
 
                       <div className="flex flex-wrap items-center gap-4">
-                        <button
+                        {/* <button
                           onClick={() => handleStartConversation(selectedTalentDetails.id)}
                           className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition"
                         >
                           Message
-                        </button>
-                        {selectedTalentDetails.profile?.portfolioUrl && (
-                          <a
-                            href={selectedTalentDetails.profile.portfolioUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium rounded-lg transition"
-                          >
-                            View Portfolio
-                          </a>
-                        )}
+                        </button> */}
                       </div>
                     </div>
                   </div>

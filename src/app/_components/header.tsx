@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Users, PlusCircle, FolderKanban, Search, Pointer, FolderGit } from "lucide-react";
+import { MessageSquare, Users, PlusCircle, FolderKanban, Search, FolderGit } from "lucide-react";
 
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
@@ -686,7 +686,7 @@ export default function Header() {
                         )}
 
                         {/* Settings Link - Available for all roles */}
-                        <Link
+                        {/* <Link
                           href="/settings"
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                           onClick={() => setIsDropdownOpen(false)}
@@ -711,7 +711,7 @@ export default function Header() {
                             />
                           </svg>
                           Settings
-                        </Link>
+                        </Link> */}
 
                         {/* Logout Button - Available for all roles */}
                         <button
