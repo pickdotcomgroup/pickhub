@@ -314,7 +314,7 @@ ${session?.user.name ?? 'The Team'}`;
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <div className="text-lg text-gray-900">Loading...</div>
         </div>
       </main>
@@ -333,7 +333,7 @@ ${session?.user.name ?? 'The Team'}`;
     switch (status) {
       case "open": return "bg-green-100 text-green-700 border-green-300";
       case "in_progress": return "bg-blue-100 text-blue-700 border-blue-300";
-      case "completed": return "bg-purple-100 text-purple-700 border-purple-300";
+      case "completed": return "bg-gray-100 text-gray-700 border-gray-300";
       case "cancelled": return "bg-red-100 text-red-700 border-red-300";
       default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
@@ -358,7 +358,7 @@ ${session?.user.name ?? 'The Team'}`;
           </div>
           <Link
             href="/client/projects/new"
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition flex items-center space-x-2"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center space-x-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -374,7 +374,7 @@ ${session?.user.name ?? 'The Team'}`;
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "all"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -384,7 +384,7 @@ ${session?.user.name ?? 'The Team'}`;
               onClick={() => setFilter("open")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "open"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -394,7 +394,7 @@ ${session?.user.name ?? 'The Team'}`;
               onClick={() => setFilter("in_progress")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "in_progress"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -404,7 +404,7 @@ ${session?.user.name ?? 'The Team'}`;
               onClick={() => setFilter("completed")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "completed"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -424,7 +424,7 @@ ${session?.user.name ?? 'The Team'}`;
         {isLoading ? (
           <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
               <div className="text-gray-500 text-md">Loading Projects...</div>
             </div>
           </div>
@@ -442,7 +442,7 @@ ${session?.user.name ?? 'The Team'}`;
             {filter === "all" && (
               <Link
                 href="/client/projects/new"
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -456,7 +456,7 @@ ${session?.user.name ?? 'The Team'}`;
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 hover:shadow-lg transition-all"
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -498,7 +498,7 @@ ${session?.user.name ?? 'The Team'}`;
                   {project.skills.slice(0, 5).map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                      className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
                     >
                       {skill}
                     </span>
@@ -515,14 +515,14 @@ ${session?.user.name ?? 'The Team'}`;
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <button
                       onClick={() => openApplicationsModal(project)}
-                      className="flex items-center space-x-3 text-purple-600 hover:text-purple-700 transition group"
+                      className="flex items-center space-x-3 text-blue-600 hover:text-blue-700 transition group"
                     >
                       {/* Stacked Avatars */}
                       <div className="flex -space-x-2">
                         {project.applications.slice(0, 3).map((application, idx) => (
                           <div
                             key={application.id}
-                            className="w-8 h-8 rounded-full bg-purple-600 border-2 border-white flex items-center justify-center text-white text-xs font-semibold relative hover:z-10 transition-transform group-hover:scale-110"
+                            className="w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white text-xs font-semibold relative hover:z-10 transition-transform group-hover:scale-110"
                             style={{ zIndex: 3 - idx }}
                           >
                             {application.talent.image ? (
@@ -608,12 +608,12 @@ ${session?.user.name ?? 'The Team'}`;
                   {selectedProjectApplications.applications.map((application) => (
                     <div
                       key={application.id}
-                      className="bg-gray-50 rounded-lg p-5 border border-gray-200 hover:border-purple-500 transition"
+                      className="bg-gray-50 rounded-lg p-5 border border-gray-200 hover:border-blue-500 transition"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
                           {/* Developer Avatar */}
-                          <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                          <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
                             {application.talent.image ? (
                               <Image
                                 src={application.talent.image}

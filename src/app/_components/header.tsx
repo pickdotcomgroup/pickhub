@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import { MessageSquare, Users, PlusCircle, FolderKanban } from "lucide-react";
 
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
@@ -22,7 +23,6 @@ export default function Header() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
@@ -38,7 +38,6 @@ export default function Header() {
     relatedApplicationId?: string | null;
   }>>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const projectsDropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -157,9 +156,6 @@ export default function Header() {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
-      }
-      if (projectsDropdownRef.current && !projectsDropdownRef.current.contains(event.target as Node)) {
-        setIsProjectsDropdownOpen(false);
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
@@ -303,66 +299,32 @@ export default function Header() {
               {session.user.role === "client" ? (
                 <>
                   <Link
-                    href="/client/dashboard"
-                    className={getNavLinkClasses("/client/dashboard")}
+                    href="/client/browse"
+                    className={`${getNavLinkClasses("/client/browse")} flex items-center gap-2`}
                   >
-                    Dashboard
+                    <Users className="w-4 h-4" />
+                    <span>Browse Developers</span>
                   </Link>
                   <Link
-                    href="/client/browse"
-                    className={getNavLinkClasses("/client/browse")}
+                    href="/client/projects/new"
+                    className={`${getNavLinkClasses("/client/projects/new")} flex items-center gap-2`}
                   >
-                    Browse Developers
+                    <PlusCircle className="w-4 h-4" />
+                    <span>Post a Project</span>
                   </Link>
-
-                  {/* Projects Dropdown */}
-                  <div className="relative" ref={projectsDropdownRef}>
-                    <button
-                      onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
-                      className="flex items-center space-x-1 px-4 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
-                    >
-                      <span>Projects</span>
-                      <svg
-                        className={`w-4 h-4 transition-transform ${isProjectsDropdownOpen ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {isProjectsDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-[100]">
-                        <Link
-                          href="/client/projects/new"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                          onClick={() => setIsProjectsDropdownOpen(false)}
-                        >
-                          <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                          </svg>
-                          Post a Project
-                        </Link>
-                        <Link
-                          href="/client/projects"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
-                          onClick={() => setIsProjectsDropdownOpen(false)}
-                        >
-                          <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
-                          My Projects
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-
+                  <Link
+                    href="/client/projects"
+                    className={`${getNavLinkClasses("/client/projects")} flex items-center gap-2`}
+                  >
+                    <FolderKanban className="w-4 h-4" />
+                    <span>My Projects</span>
+                  </Link>
                   <Link
                     href="/client/messages"
                     className={`relative ${getNavLinkClasses("/client/messages")}`}
+                    aria-label="Messages"
                   >
-                    Messages
+                    <MessageSquare className="w-5 h-5" />
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
@@ -389,8 +351,9 @@ export default function Header() {
                   <Link
                     href="/talent/messages"
                     className={`relative ${getNavLinkClasses("/talent/messages")}`}
+                    aria-label="Messages"
                   >
-                    Messages
+                    <MessageSquare className="w-5 h-5" />
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
@@ -407,7 +370,7 @@ export default function Header() {
             </nav>
           )}
 
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center gap-2">
             {session?.user ? (
               <>
                 {/* Notification Bell */}
@@ -842,9 +805,10 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/client/messages"
-                    className={`relative ${getMobileNavLinkClasses("/client/messages")}`}
+                    className={`relative ${getMobileNavLinkClasses("/client/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <MessageSquare className="w-4 h-4 mr-3" />
                     Messages
                     <NotificationBadge count={unreadCount} />
                   </Link>
@@ -874,9 +838,10 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/talent/messages"
-                    className={`relative ${getMobileNavLinkClasses("/talent/messages")}`}
+                    className={`relative ${getMobileNavLinkClasses("/talent/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <MessageSquare className="w-4 h-4 mr-3" />
                     Messages
                     <NotificationBadge count={unreadCount} />
                   </Link>

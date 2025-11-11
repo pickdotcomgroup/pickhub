@@ -114,7 +114,7 @@ export default function ClientBrowsePage() {
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center gap-3 m-10">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         <div className="text-gray-500 text-md">Loading Developers...</div>
       </div>
     );
@@ -240,7 +240,7 @@ export default function ClientBrowsePage() {
 
               {loadingDetails ? (
                 <div className="flex items-center justify-center p-12">
-                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
                 </div>
               ) : selectedTalentDetails ? (
                 <div className="p-8">
@@ -256,7 +256,7 @@ export default function ClientBrowsePage() {
                           className="w-24 h-24 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-2xl font-semibold">
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-2xl font-semibold">
                           {getInitials(selectedTalentDetails)}
                         </div>
                       )}
@@ -366,7 +366,7 @@ export default function ClientBrowsePage() {
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">Skills</h3>
                       <div className="flex flex-wrap gap-2">
                         {selectedTalentDetails.profile.skills.map((skill, index) => (
-                          <span key={index} className="px-3 py-1.5 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">
+                          <span key={index} className="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
                             {skill}
                           </span>
                         ))}
@@ -422,7 +422,7 @@ export default function ClientBrowsePage() {
                             <div className="flex items-center gap-2">
                               <div className="flex-1 bg-gray-200 rounded-full h-2">
                                 <div
-                                  className="bg-purple-600 h-2 rounded-full transition-all"
+                                  className="bg-blue-600 h-2 rounded-full transition-all"
                                   style={{ width: `${selectedTalentDetails.verification.portfolioScore}%` }}
                                 ></div>
                               </div>
@@ -494,7 +494,7 @@ export default function ClientBrowsePage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by name, skills, or expertise..."
-                    className="w-full px-4 py-3 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-3 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <svg className="absolute left-3 top-3.5 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -507,7 +507,7 @@ export default function ClientBrowsePage() {
                 <select
                   value={experienceLevel}
                   onChange={(e) => setExperienceLevel(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="" className="bg-white">All Levels</option>
                   <option value="entry" className="bg-white">Entry Level</option>
@@ -526,7 +526,7 @@ export default function ClientBrowsePage() {
                     key={skill}
                     onClick={() => toggleSkill(skill)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${selectedSkills.includes(skill)
-                      ? "bg-purple-600 text-white"
+                      ? "bg-blue-600 text-white"
                       : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
                       }`}
                   >
@@ -540,7 +540,7 @@ export default function ClientBrowsePage() {
           {/* Loading State */}
           {loading && (
             <div className="flex flex-col items-center justify-center gap-3 m-10">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
               <div className="text-gray-500 text-md">Loading Developers...</div>
             </div>
           )}
@@ -567,7 +567,7 @@ export default function ClientBrowsePage() {
           {!loading && !error && talents.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {talents.map((talent) => (
-                <div key={talent.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 hover:shadow-lg transition-all group">
+                <div key={talent.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all group">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className="relative">
@@ -580,7 +580,7 @@ export default function ClientBrowsePage() {
                             className="w-12 h-12 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
                             {getInitials(talent)}
                           </div>
                         )}
@@ -626,7 +626,7 @@ export default function ClientBrowsePage() {
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         {talent.profile.skills.slice(0, 3).map((skill, index) => (
-                          <span key={index} className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
+                          <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                             {skill}
                           </span>
                         ))}
@@ -654,7 +654,7 @@ export default function ClientBrowsePage() {
                           </button>
                           <button
                             onClick={() => handleViewProfile(talent.id)}
-                            className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition"
+                            className="px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition"
                           >
                             View Profile
                           </button>
