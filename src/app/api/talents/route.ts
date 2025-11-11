@@ -149,6 +149,8 @@ export async function GET(request: Request) {
             tier: talent.talentProfile.tier,
             completedProjects: talent.talentProfile.completedProjects,
             successRate: talent.talentProfile.successRate,
+            verificationStatus: talent.talentProfile.verificationStatus,
+            platformAccess: talent.talentProfile.platformAccess,
           }
         : null,
     }));

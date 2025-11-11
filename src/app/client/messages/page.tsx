@@ -242,21 +242,21 @@ export default function ClientMessagesPage() {
 
   if (status === "loading" || loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading Messages...</div>
+          <div className="text-lg text-gray-900">Loading Messages...</div>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="min-h-screen bg-white">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Messages</h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
+          <p className="mt-1 text-sm text-gray-600">
             {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -264,12 +264,12 @@ export default function ClientMessagesPage() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-6">
           {/* Conversations Sidebar */}
           <div className="lg:col-span-4 xl:col-span-3">
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-lg">
               {/* Search Bar */}
-              <div className="border-b border-white/10 p-4">
+              <div className="border-b border-gray-200 p-4">
                 <div className="relative">
                   <svg
-                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -286,7 +286,7 @@ export default function ClientMessagesPage() {
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-lg border border-white/20 bg-white/5 py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-500 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                   />
                 </div>
               </div>
@@ -295,12 +295,12 @@ export default function ClientMessagesPage() {
               <div className="max-h-[calc(100vh-280px)] overflow-y-auto">
                 {filteredConversations.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <div className="mb-4 rounded-full bg-purple-500/10 p-4">
-                      <svg className="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mb-4 rounded-full bg-purple-100 p-4">
+                      <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>
-                    <p className="text-gray-400">
+                    <p className="text-gray-700">
                       {searchQuery ? "No conversations found" : "No conversations yet"}
                     </p>
                     <p className="mt-1 text-sm text-gray-500">
@@ -308,7 +308,7 @@ export default function ClientMessagesPage() {
                     </p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y divide-gray-200">
                     {filteredConversations.map((conversation) => {
                       const otherUser = getOtherUser(conversation);
                       const lastMessage = conversation.messages[0];
@@ -318,9 +318,9 @@ export default function ClientMessagesPage() {
                         <button
                           key={conversation.id}
                           onClick={() => void handleSelectConversation(conversation)}
-                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white/5 ${
+                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white ${
                             selectedConversation?.id === conversation.id
-                              ? "bg-purple-500/10 border-l-4 border-purple-500"
+                              ? "bg-purple-50 border-l-4 border-purple-500"
                               : ""
                           }`}
                         >
@@ -334,11 +334,11 @@ export default function ClientMessagesPage() {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0 flex-1">
-                                  <h3 className="truncate font-semibold text-white">
+                                  <h3 className="truncate font-semibold text-gray-900">
                                     {getUserDisplayName(otherUser)}
                                   </h3>
                                   {otherUser.talentProfile && (
-                                    <p className="truncate text-xs text-gray-400">
+                                    <p className="truncate text-xs text-gray-600">
                                       {otherUser.talentProfile.title}
                                     </p>
                                   )}
@@ -352,7 +352,7 @@ export default function ClientMessagesPage() {
 
                               {lastMessage && (
                                 <div className="mt-1 flex items-center justify-between gap-2">
-                                  <p className="truncate text-sm text-gray-400">{lastMessage.content}</p>
+                                  <p className="truncate text-sm text-gray-600">{lastMessage.content}</p>
                                   {unreadCount > 0 && (
                                     <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-purple-500 text-xs font-semibold text-white">
                                       {unreadCount}
@@ -373,21 +373,21 @@ export default function ClientMessagesPage() {
 
           {/* Messages Area */}
           <div className="lg:col-span-8 xl:col-span-9">
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
               {selectedConversation ? (
                 <div className="flex h-[calc(100vh-200px)] flex-col">
                   {/* Chat Header */}
-                  <div className="border-b border-white/10 bg-white/5 p-4">
+                  <div className="border-b border-gray-200 bg-gray-50 p-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold shadow-lg">
                         {getUserInitials(getOtherUser(selectedConversation))}
                       </div>
                       <div>
-                        <h2 className="font-semibold text-white">
+                        <h2 className="font-semibold text-gray-900">
                           {getUserDisplayName(getOtherUser(selectedConversation))}
                         </h2>
                         {getOtherUser(selectedConversation).talentProfile && (
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm text-gray-600">
                             {getOtherUser(selectedConversation).talentProfile!.title}
                           </p>
                         )}
@@ -396,11 +396,11 @@ export default function ClientMessagesPage() {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 space-y-4 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent">
+                  <div className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent">
                     {messages.length === 0 ? (
-                      <div className="flex h-full items-center justify-center text-gray-400">
+                      <div className="flex h-full items-center justify-center text-gray-600">
                         <div className="text-center">
-                          <svg className="mx-auto h-12 w-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
                           <p className="mt-2">No messages yet</p>
@@ -418,10 +418,10 @@ export default function ClientMessagesPage() {
                             >
                               <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
                                 <div
-                                  className={`rounded-2xl px-4 py-2.5 shadow-lg ${
+                                  className={`rounded-2xl px-4 py-2.5 shadow-md ${
                                     isOwn
                                       ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white"
-                                      : "bg-white/10 text-white backdrop-blur-sm"
+                                      : "bg-white text-gray-900 border border-gray-200"
                                   }`}
                                 >
                                   <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
@@ -429,7 +429,7 @@ export default function ClientMessagesPage() {
                                   </p>
                                   <p
                                     className={`mt-1.5 text-xs ${
-                                      isOwn ? "text-purple-100" : "text-gray-400"
+                                      isOwn ? "text-purple-100" : "text-gray-500"
                                     }`}
                                   >
                                     {formatMessageTime(message.createdAt)}
@@ -445,14 +445,14 @@ export default function ClientMessagesPage() {
                   </div>
 
                   {/* Input Area */}
-                  <form onSubmit={handleSendMessage} className="border-t border-white/10 bg-white/5 p-4">
+                  <form onSubmit={handleSendMessage} className="border-t border-gray-200 bg-white p-4">
                     <div className="flex gap-3">
                       <input
                         type="text"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message..."
-                        className="flex-1 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder-gray-400 backdrop-blur-sm transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-500 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
                         disabled={sending}
                       />
                       <button
@@ -481,13 +481,13 @@ export default function ClientMessagesPage() {
               ) : (
                 <div className="flex h-[calc(100vh-200px)] items-center justify-center">
                   <div className="text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10">
-                      <svg className="h-8 w-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+                      <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-white">Select a conversation</h3>
-                    <p className="mt-1 text-sm text-gray-400">Choose a conversation from the list to start messaging</p>
+                    <h3 className="text-lg font-semibold text-gray-900">Select a conversation</h3>
+                    <p className="mt-1 text-sm text-gray-600">Choose a conversation from the list to start messaging</p>
                   </div>
                 </div>
               )}
