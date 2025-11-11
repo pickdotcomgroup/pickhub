@@ -65,6 +65,8 @@ export default function ClientMessagesPage() {
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isTabActive, setIsTabActive] = useState(true);
+  const lastMessageCountRef = useRef<number>(0);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -82,21 +84,37 @@ export default function ClientMessagesPage() {
     scrollToBottom();
   }, [messages]);
 
+  // Track tab visibility to pause polling when tab is not active
   useEffect(() => {
-    if (!selectedConversation) return;
+    const handleVisibilityChange = () => {
+      setIsTabActive(!document.hidden);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  // Smart polling for messages - only when tab is active and conversation is selected
+  useEffect(() => {
+    if (!selectedConversation || !isTabActive) return;
+    
     const interval = setInterval(() => {
       void fetchMessages(selectedConversation.id);
-    }, 3000);
+    }, 1000);
+    
     return () => clearInterval(interval);
-  }, [selectedConversation]);
+  }, [selectedConversation, isTabActive]);
 
+  // Smart polling for conversations - only when tab is active
   useEffect(() => {
-    if (status !== "authenticated") return;
+    if (status !== "authenticated" || !isTabActive) return;
+    
     const interval = setInterval(() => {
       void fetchConversations();
-    }, 5000);
+    }, 2000);
+    
     return () => clearInterval(interval);
-  }, [status]);
+  }, [status, isTabActive]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
