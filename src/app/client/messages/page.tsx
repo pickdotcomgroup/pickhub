@@ -66,8 +66,7 @@ export default function ClientMessagesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const [isTabActive, setIsTabActive] = useState(true);
-  const previousMessagesLengthRef = useRef(0);
+  const shouldAutoScrollRef = useRef(true);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -82,62 +81,38 @@ export default function ClientMessagesPage() {
   }, [status]);
 
   useEffect(() => {
-    // Only auto-scroll if:
-    // 1. A new message was added (length increased)
-    // 2. User is already scrolled near the bottom
-    const isNewMessage = messages.length > previousMessagesLengthRef.current;
-    const isNearBottom = checkIfNearBottom();
-    
-    if (isNewMessage && isNearBottom) {
+    if (shouldAutoScrollRef.current) {
       scrollToBottom();
     }
-    
-    previousMessagesLengthRef.current = messages.length;
   }, [messages]);
 
-  // Track tab visibility to pause polling when tab is not active
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsTabActive(!document.hidden);
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
-
-  // Smart polling for messages - only when tab is active and conversation is selected
-  useEffect(() => {
-    if (!selectedConversation || !isTabActive) return;
-
+    if (!selectedConversation) return;
     const interval = setInterval(() => {
       void fetchMessages(selectedConversation.id);
-    }, 1000);
-
+    }, 3000);
     return () => clearInterval(interval);
-  }, [selectedConversation, isTabActive]);
+  }, [selectedConversation]);
 
-  // Smart polling for conversations - only when tab is active
   useEffect(() => {
-    if (status !== "authenticated" || !isTabActive) return;
-
+    if (status !== "authenticated") return;
     const interval = setInterval(() => {
       void fetchConversations();
-    }, 2000);
-
+    }, 5000);
     return () => clearInterval(interval);
-  }, [status, isTabActive]);
+  }, [status]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const checkIfNearBottom = () => {
-    const container = messagesContainerRef.current;
-    if (!container) return true; // Default to true if container not found
+  const handleScroll = () => {
+    if (!messagesContainerRef.current) return;
     
-    const threshold = 100; // pixels from bottom
-    const position = container.scrollHeight - container.scrollTop - container.clientHeight;
-    return position < threshold;
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+    
+    shouldAutoScrollRef.current = isNearBottom;
   };
 
   const fetchConversations = async () => {
@@ -168,7 +143,7 @@ export default function ClientMessagesPage() {
 
   const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
-    previousMessagesLengthRef.current = 0; // Reset on conversation change
+    shouldAutoScrollRef.current = true; // Scroll to bottom when selecting a new conversation
     await fetchMessages(conversation.id);
 
     try {
@@ -187,6 +162,7 @@ export default function ClientMessagesPage() {
     if (!newMessage.trim() || !selectedConversation || sending) return;
 
     setSending(true);
+    shouldAutoScrollRef.current = true; // Always scroll when sending a message
     try {
       const response = await fetch("/api/messages", {
         method: "POST",
@@ -436,6 +412,7 @@ export default function ClientMessagesPage() {
                   {/* Messages */}
                   <div 
                     ref={messagesContainerRef}
+                    onScroll={handleScroll}
                     className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent"
                   >
                     {messages.length === 0 ? (

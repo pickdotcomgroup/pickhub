@@ -117,10 +117,10 @@ export default function TalentBrowsePage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading projects...</div>
+          <div className="text-lg text-gray-900">Loading projects...</div>
         </div>
       </main>
     );
@@ -265,42 +265,42 @@ export default function TalentBrowsePage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Tier Info */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Pick Projects</h1>
-              <p className="text-gray-400">Find and apply to projects that match your skills</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Pick Projects</h1>
+              <p className="text-gray-600">Find and apply to projects that match your skills</p>
             </div>
             {talentProfile && (
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="flex items-center gap-4">
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Your Tier</div>
+                    <div className="text-xs text-gray-500 mb-1">Your Tier</div>
                     <div className={`text-lg font-bold capitalize ${getTierColor(talentProfile.tier)}`}>
                       {talentProfile.tier}
                     </div>
                   </div>
-                  <div className="h-10 w-px bg-white/10"></div>
+                  <div className="h-10 w-px bg-gray-300"></div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Active Picks</div>
-                    <div className="text-lg font-bold text-white">
+                    <div className="text-xs text-gray-500 mb-1">Active Picks</div>
+                    <div className="text-lg font-bold text-gray-900">
                       {talentProfile.activePicks} / {getMaxPicks(talentProfile.tier)}
                     </div>
                   </div>
-                  <div className="h-10 w-px bg-white/10"></div>
+                  <div className="h-10 w-px bg-gray-300"></div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Completed</div>
-                    <div className="text-lg font-bold text-white">
+                    <div className="text-xs text-gray-500 mb-1">Completed</div>
+                    <div className="text-lg font-bold text-gray-900">
                       {talentProfile.completedProjects}
                     </div>
                   </div>
-                  <div className="h-10 w-px bg-white/10"></div>
+                  <div className="h-10 w-px bg-gray-300"></div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">Success Rate</div>
-                    <div className="text-lg font-bold text-green-400">
+                    <div className="text-xs text-gray-500 mb-1">Success Rate</div>
+                    <div className="text-lg font-bold text-green-600">
                       {talentProfile.successRate?.toFixed(0) ?? 0}%
                     </div>
                   </div>
@@ -314,21 +314,21 @@ export default function TalentBrowsePage() {
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Left Sidebar - Filters */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 sticky top-8">
-              <h2 className="text-lg font-semibold text-white mb-4">Filters</h2>
+            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 sticky top-8">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
 
               {/* Search */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search projects..."
-                    className="w-full px-4 py-2 pl-10 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                    className="w-full px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                   />
-                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
@@ -336,22 +336,22 @@ export default function TalentBrowsePage() {
 
               {/* Category Filter */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                 >
-                  <option value="" className="bg-slate-800">All Categories</option>
+                  <option value="" className="bg-white">All Categories</option>
                   {categories.map((cat) => (
-                    <option key={cat} value={cat} className="bg-slate-800">{cat}</option>
+                    <option key={cat} value={cat} className="bg-white">{cat}</option>
                   ))}
                 </select>
               </div>
 
               {/* Skills Filter */}
               <div>
-                <label className="block text-xl font-semibold text-white mb-4">Skills</label>
+                <label className="block text-xl font-semibold text-gray-900 mb-4">Skills</label>
                 <div className="flex flex-wrap gap-2">
                   {skills.map((skill) => (
                     <button
@@ -377,7 +377,7 @@ export default function TalentBrowsePage() {
                     setSelectedCategory("");
                     setSelectedSkills([]);
                   }}
-                  className="w-full mt-6 px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium rounded-lg transition"
+                  className="w-full mt-6 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition"
                 >
                   Clear All Filters
                 </button>
@@ -406,12 +406,12 @@ export default function TalentBrowsePage() {
 
             {/* Projects List */}
             {filteredProjects.length === 0 ? (
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-12 border border-white/10 text-center">
+              <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
                 <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <h3 className="text-xl font-semibold text-white mb-2">No projects found</h3>
-                <p className="text-gray-400">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No projects found</h3>
+                <p className="text-gray-600">
                   Try adjusting your filters or check back later for new opportunities
                 </p>
               </div>
@@ -423,22 +423,22 @@ export default function TalentBrowsePage() {
                   return (
                     <div
                       key={project.id}
-                      className={`bg-white/5 backdrop-blur-sm rounded-xl p-6 border transition-all flex flex-col ${
+                      className={`bg-white rounded-xl p-6 border transition-all flex flex-col shadow-sm ${
                         hasAccess
-                          ? "border-white/10 hover:border-purple-500/50"
-                          : "border-red-500/30 opacity-75"
+                          ? "border-gray-200 hover:border-purple-500 hover:shadow-md"
+                          : "border-red-300 opacity-75"
                       }`}
                     >
                       <div className="flex flex-col flex-1">
                         <div className="mb-4">
                           <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-lg font-semibold text-white flex-1">{project.title}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 flex-1">{project.title}</h3>
                             <span className={`px-2 py-1 text-xs rounded-full border capitalize ${getTierBadgeColor(project.minimumTier)}`}>
                               {project.minimumTier}
                             </span>
                           </div>
-                          <p className="text-gray-400 text-sm mb-3 line-clamp-3">{project.description}</p>
-                          <div className="flex items-center flex-wrap gap-3 text-xs text-gray-400 mb-3">
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-3">{project.description}</p>
+                          <div className="flex items-center flex-wrap gap-3 text-xs text-gray-500 mb-3">
                             <span className="flex items-center space-x-1">
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -451,11 +451,11 @@ export default function TalentBrowsePage() {
                               </svg>
                               <span>${project.budget.toLocaleString()}</span>
                             </span>
-                            <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">
+                            <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                               {project.projectType === "fixed" ? "Fixed" : "Hourly"}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1 text-xs text-gray-400 mb-3">
+                          <div className="flex items-center space-x-1 text-xs text-gray-500 mb-3">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -468,13 +468,13 @@ export default function TalentBrowsePage() {
                           {project.skills.slice(0, 3).map((skill, index) => (
                             <span
                               key={index}
-                              className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
+                              className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
                             >
                               {skill}
                             </span>
                           ))}
                           {project.skills.length > 3 && (
-                            <span className="px-2 py-1 bg-white/5 text-gray-400 text-xs rounded-full">
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                               +{project.skills.length - 3} more
                             </span>
                           )}

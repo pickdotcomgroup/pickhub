@@ -77,10 +77,10 @@ export default function TalentProjectsPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading projects...</div>
+          <div className="text-lg text-gray-900">Loading projects...</div>
         </div>
       </main>
     );
@@ -104,21 +104,21 @@ export default function TalentProjectsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending": return "bg-yellow-500/20 text-yellow-300 border-yellow-500/50";
-      case "accepted": return "bg-green-500/20 text-green-300 border-green-500/50";
-      case "rejected": return "bg-red-500/20 text-red-300 border-red-500/50";
-      default: return "bg-gray-500/20 text-gray-300 border-gray-500/50";
+      case "pending": return "bg-yellow-100 text-yellow-700 border-yellow-300";
+      case "accepted": return "bg-green-100 text-green-700 border-green-300";
+      case "rejected": return "bg-red-100 text-red-700 border-red-300";
+      default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">My Projects</h1>
-            <p className="text-gray-400">Track your applications and active projects</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Projects</h1>
+            <p className="text-gray-600">Track your applications and active projects</p>
           </div>
           <Link
             href="/talent/browse"
@@ -132,13 +132,13 @@ export default function TalentProjectsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 mb-6">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 mb-6">
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "all"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
               All ({applications.length})
@@ -147,7 +147,7 @@ export default function TalentProjectsPage() {
               onClick={() => setFilter("pending")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "pending"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
               Pending ({applications.filter(a => a.status === "pending").length})
@@ -156,7 +156,7 @@ export default function TalentProjectsPage() {
               onClick={() => setFilter("accepted")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "accepted"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
               Accepted ({applications.filter(a => a.status === "accepted").length})
@@ -165,7 +165,7 @@ export default function TalentProjectsPage() {
               onClick={() => setFilter("rejected")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "rejected"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
               Rejected ({applications.filter(a => a.status === "rejected").length})
@@ -209,12 +209,12 @@ export default function TalentProjectsPage() {
 
         {/* Applications List */}
         {filteredApplications.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-12 border border-white/10 text-center">
+          <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <h3 className="text-xl font-semibold text-white mb-2">No projects yet</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No projects yet</h3>
+            <p className="text-gray-600 mb-6">
               {filter === "all"
                 ? "You haven't applied to any projects yet. Start browsing available opportunities!"
                 : `No ${filter} applications found.`}
@@ -236,23 +236,23 @@ export default function TalentProjectsPage() {
             {filteredApplications.map((application) => (
               <div
                 key={application.id}
-                className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all"
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 transition-all shadow-sm hover:shadow-md"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold text-white">{application.project.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{application.project.title}</h3>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(application.status)}`}>
                         {application.status.toUpperCase()}
                       </span>
                       {application.isPicked && (
-                        <span className="px-3 py-1 rounded-full text-xs font-medium border bg-blue-500/20 text-blue-300 border-blue-500/50">
+                        <span className="px-3 py-1 rounded-full text-xs font-medium border bg-blue-100 text-blue-700 border-blue-300">
                           PICKED
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-400 text-sm mb-3">{application.project.description}</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-400 mb-3">
+                    <p className="text-gray-600 text-sm mb-3">{application.project.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
                       <span className="flex items-center space-x-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -272,7 +272,7 @@ export default function TalentProjectsPage() {
                         <span>${application.project.budget.toLocaleString()}</span>
                       </span>
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-gray-400">
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span className="flex items-center space-x-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -287,17 +287,17 @@ export default function TalentProjectsPage() {
                       </span>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition border border-white/10">
+                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border border-gray-200">
                     View Details
                   </button>
                 </div>
 
                 {/* Skills */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-white/10">
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
                   {application.project.skills.map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
+                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
                     >
                       {skill}
                     </span>
