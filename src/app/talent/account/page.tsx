@@ -79,10 +79,10 @@ export default function TalentAccountPage() {
 
   if (status === "loading" || loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading profile...</div>
+          <div className="text-lg text-gray-900">Loading profile...</div>
         </div>
       </main>
     );
@@ -94,10 +94,10 @@ export default function TalentAccountPage() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-6 text-center">
-            <p className="text-red-300 text-lg">Error: {error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <p className="text-red-600 text-lg">Error: {error}</p>
           </div>
         </div>
       </main>
@@ -106,10 +106,10 @@ export default function TalentAccountPage() {
 
   if (!profile) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="min-h-screen bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-xl p-6 text-center">
-            <p className="text-yellow-300 text-lg">Profile not found</p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
+            <p className="text-yellow-700 text-lg">Profile not found</p>
           </div>
         </div>
       </main>
@@ -119,32 +119,32 @@ export default function TalentAccountPage() {
   const getTierColor = (tier: string) => {
     switch (tier.toLowerCase()) {
       case "gold":
-        return "from-yellow-600/20 to-yellow-700/20 border-yellow-500/30 text-yellow-300";
+        return "from-yellow-50 to-yellow-100 border-yellow-300 text-yellow-700";
       case "silver":
-        return "from-gray-400/20 to-gray-500/20 border-gray-400/30 text-gray-300";
+        return "from-gray-50 to-gray-100 border-gray-300 text-gray-700";
       default:
-        return "from-orange-600/20 to-orange-700/20 border-orange-500/30 text-orange-300";
+        return "from-orange-50 to-orange-100 border-orange-300 text-orange-700";
     }
   };
 
   const getVerificationStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "verified":
-        return "bg-green-500/20 text-green-300 border-green-500/50";
+        return "bg-green-50 text-green-700 border-green-300";
       case "in_review":
-        return "bg-blue-500/20 text-blue-300 border-blue-500/50";
+        return "bg-blue-50 text-blue-700 border-blue-300";
       case "rejected":
-        return "bg-red-500/20 text-red-300 border-red-500/50";
+        return "bg-red-50 text-red-700 border-red-300";
       default:
-        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/50";
+        return "bg-yellow-50 text-yellow-700 border-yellow-300";
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <main className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Overview */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 mb-6">
+        <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 mb-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
               {profile.user.image ? (
@@ -161,11 +161,11 @@ export default function TalentAccountPage() {
                 </div>
               )}
               <div>
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-gray-900">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-lg text-purple-300">{profile.title}</p>
-                <p className="text-sm text-gray-400">{profile.user.email}</p>
+                <p className="text-lg text-purple-600">{profile.title}</p>
+                <p className="text-sm text-gray-600">{profile.user.email}</p>
               </div>
             </div>
             <div className={`px-4 py-2 rounded-lg border ${getVerificationStatusColor(profile.verificationStatus)}`}>
@@ -177,43 +177,43 @@ export default function TalentAccountPage() {
 
           {profile.bio && (
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-purple-300 mb-2">Bio</h3>
-              <p className="text-gray-300">{profile.bio}</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Bio</h3>
+              <p className="text-gray-700">{profile.bio}</p>
             </div>
           )}
 
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="text-lg font-medium text-purple-300 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">
                 Professional Details
               </h3>
               <div className="space-y-3">
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-xs text-gray-400 mb-1">Experience Level</p>
-                  <p className="text-white capitalize">{profile.experience}</p>
+                <div className="bg-white rounded-lg p-3 border border-gray-200">
+                  <p className="text-xs text-gray-600 mb-1">Experience Level</p>
+                  <p className="text-gray-900 capitalize">{profile.experience}</p>
                 </div>
                 {profile.hourlyRate && (
-                  <div className="bg-white/5 rounded-lg p-3">
-                    <p className="text-xs text-gray-400 mb-1">Hourly Rate</p>
-                    <p className="text-white">${profile.hourlyRate}/hr</p>
+                  <div className="bg-white rounded-lg p-3 border border-gray-200">
+                    <p className="text-xs text-gray-600 mb-1">Hourly Rate</p>
+                    <p className="text-gray-900">${profile.hourlyRate}/hr</p>
                   </div>
                 )}
                 {profile.portfolioUrl && (
-                  <div className="bg-white/5 rounded-lg p-3">
-                    <p className="text-xs text-gray-400 mb-1">Portfolio</p>
+                  <div className="bg-white rounded-lg p-3 border border-gray-200">
+                    <p className="text-xs text-gray-600 mb-1">Portfolio</p>
                     <a
                       href={profile.portfolioUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 underline"
+                      className="text-purple-600 hover:text-purple-700 underline"
                     >
                       View Portfolio
                     </a>
                   </div>
                 )}
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-xs text-gray-400 mb-1">Platform Access</p>
-                  <p className={`font-medium ${profile.platformAccess ? "text-green-400" : "text-red-400"}`}>
+                <div className="bg-white rounded-lg p-3 border border-gray-200">
+                  <p className="text-xs text-gray-600 mb-1">Platform Access</p>
+                  <p className={`font-medium ${profile.platformAccess ? "text-green-600" : "text-red-600"}`}>
                     {profile.platformAccess ? "Granted" : "Pending"}
                   </p>
                 </div>
@@ -221,14 +221,14 @@ export default function TalentAccountPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-medium text-purple-300 mb-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">
                 Skills
               </h3>
               <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-purple-600/30 border border-purple-500/50 rounded-full text-sm text-purple-200"
+                    className="px-3 py-1 bg-purple-100 border border-purple-300 rounded-full text-sm text-purple-700"
                   >
                     {skill}
                   </span>
@@ -237,13 +237,13 @@ export default function TalentAccountPage() {
 
               {profile.certifications.length > 0 && (
                 <div className="mt-4">
-                  <h3 className="text-lg font-medium text-purple-300 mb-3">
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">
                     Certifications
                   </h3>
                   <div className="space-y-2">
                     {profile.certifications.map((cert, index) => (
-                      <div key={index} className="bg-white/5 rounded-lg p-2">
-                        <p className="text-sm text-gray-300">{cert}</p>
+                      <div key={index} className="bg-white rounded-lg p-2 border border-gray-200">
+                        <p className="text-sm text-gray-700">{cert}</p>
                       </div>
                     ))}
                   </div>
@@ -275,11 +275,11 @@ export default function TalentAccountPage() {
             <p className="text-3xl font-bold capitalize">{profile.tier}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-600/20 to-blue-700/20 border border-blue-500/30 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-300 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-blue-300 font-medium">Active Picks</h3>
+              <h3 className="text-blue-700 font-medium">Active Picks</h3>
               <svg
-                className="w-6 h-6 text-blue-400"
+                className="w-6 h-6 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -292,14 +292,14 @@ export default function TalentAccountPage() {
                 />
               </svg>
             </div>
-            <p className="text-3xl font-bold text-white">{profile.activePicks}</p>
+            <p className="text-3xl font-bold text-gray-900">{profile.activePicks}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-600/20 to-green-700/20 border border-green-500/30 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-300 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-green-300 font-medium">Completed</h3>
+              <h3 className="text-green-700 font-medium">Completed</h3>
               <svg
-                className="w-6 h-6 text-green-400"
+                className="w-6 h-6 text-green-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -312,14 +312,14 @@ export default function TalentAccountPage() {
                 />
               </svg>
             </div>
-            <p className="text-3xl font-bold text-white">{profile.completedProjects}</p>
+            <p className="text-3xl font-bold text-gray-900">{profile.completedProjects}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-600/20 to-purple-700/20 border border-purple-500/30 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-300 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-purple-300 font-medium">Success Rate</h3>
+              <h3 className="text-purple-700 font-medium">Success Rate</h3>
               <svg
-                className="w-6 h-6 text-purple-400"
+                className="w-6 h-6 text-purple-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -332,16 +332,16 @@ export default function TalentAccountPage() {
                 />
               </svg>
             </div>
-            <p className="text-3xl font-bold text-white">{profile.successRate.toFixed(1)}%</p>
+            <p className="text-3xl font-bold text-gray-900">{profile.successRate.toFixed(1)}%</p>
           </div>
         </div>
 
         {/* Earnings & Account Info */}
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+          <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
               <svg
-                className="w-6 h-6 mr-2 text-green-400"
+                className="w-6 h-6 mr-2 text-green-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -355,18 +355,18 @@ export default function TalentAccountPage() {
               </svg>
               Earnings
             </h3>
-            <div className="bg-white/5 rounded-lg p-4">
-              <p className="text-sm text-gray-400 mb-1">Total Earnings</p>
-              <p className="text-4xl font-bold text-white">
+            <div className="bg-white rounded-lg p-4 border border-gray-200">
+              <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
+              <p className="text-4xl font-bold text-gray-900">
                 ${profile.totalEarnings.toFixed(2)}
               </p>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-            <h3 className="text-xl font-semibold text-white mb-4 flex items-center">
+          <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
               <svg
-                className="w-6 h-6 mr-2 text-blue-400"
+                className="w-6 h-6 mr-2 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -381,13 +381,13 @@ export default function TalentAccountPage() {
               Account Info
             </h3>
             <div className="space-y-3">
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">User ID</p>
-                <p className="text-white font-mono text-sm">{profile.userId}</p>
+              <div className="bg-white rounded-lg p-3 border border-gray-200">
+                <p className="text-xs text-gray-600 mb-1">User ID</p>
+                <p className="text-gray-900 font-mono text-sm">{profile.userId}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">Member Since</p>
-                <p className="text-white">
+              <div className="bg-white rounded-lg p-3 border border-gray-200">
+                <p className="text-xs text-gray-600 mb-1">Member Since</p>
+                <p className="text-gray-900">
                   {new Date(profile.user.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
