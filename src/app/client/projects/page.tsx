@@ -60,6 +60,150 @@ export default function MyProjectsPage() {
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [selectedDeveloper, setSelectedDeveloper] = useState<Application | null>(null);
   const [loadingAccept, setLoadingAccept] = useState<string | null>(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailData, setEmailData] = useState({
+    recipientEmail: "",
+    recipientName: "",
+    subject: "",
+    message: "",
+    projectTitle: "",
+    applicationId: "",
+  });
+  const [sendingEmail, setSendingEmail] = useState(false);
+
+  const generateInterviewEmail = (application: Application, projectTitle: string) => {
+    const developerName = application.talent.talentProfile
+      ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
+      : application.talent.name ?? 'Developer';
+    
+    const subject = `Interview Invitation - ${projectTitle}`;
+    
+    const message = `Dear ${developerName},
+
+Thank you for your application to the "${projectTitle}" project. We were impressed with your profile and would like to invite you for an interview to discuss the project further.
+
+Project Details:
+- Title: ${projectTitle}
+${application.proposedRate ? `- Your Proposed Rate: $${application.proposedRate.toLocaleString()}` : ''}
+
+We would like to schedule a video call or phone interview at your earliest convenience. Please let us know your availability for the coming week, and we'll arrange a suitable time.
+
+During the interview, we'll discuss:
+- Project requirements and scope
+- Your experience and approach
+- Timeline and deliverables
+- Any questions you may have
+
+Please reply to this email with your available time slots, or feel free to reach out if you have any questions.
+
+We look forward to speaking with you!
+
+Best regards,
+${session?.user.name ?? 'The Team'}`;
+
+    return { subject, message };
+  };
+
+  const handleScheduleInterview = (application: Application, projectTitle: string) => {
+    const { subject, message } = generateInterviewEmail(application, projectTitle);
+    
+    setEmailData({
+      recipientEmail: application.talent.email ?? '',
+      recipientName: application.talent.talentProfile
+        ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
+        : application.talent.name ?? 'Developer',
+      subject,
+      message,
+      projectTitle,
+      applicationId: application.id,
+    });
+    
+    setShowEmailModal(true);
+  };
+
+  const handleSendEmail = async () => {
+    setSendingEmail(true);
+    setError("");
+    
+    try {
+      // Get the talent ID from the application
+      const application = selectedProjectApplications?.applications.find(
+        app => app.id === emailData.applicationId
+      );
+      
+      if (!application) {
+        setError("Application not found");
+        setSendingEmail(false);
+        return;
+      }
+
+      // Send email via API
+      const emailResponse = await fetch("/api/interviews/schedule", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(emailData),
+      });
+
+      const emailData_result = await emailResponse.json() as { error?: string; message?: string };
+
+      if (!emailResponse.ok) {
+        setError(emailData_result.error ?? "Failed to send interview invitation");
+        setSendingEmail(false);
+        return;
+      }
+
+      // Create or get conversation
+      const conversationResponse = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          otherUserId: application.talent.id,
+          projectId: selectedProjectApplications?.project.id 
+        }),
+      });
+
+      if (!conversationResponse.ok) {
+        setError("Email sent, but failed to create conversation");
+        setSendingEmail(false);
+        return;
+      }
+
+      const conversationData = await conversationResponse.json() as { id: string };
+
+      // Send message through messaging system
+      const messageResponse = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId: conversationData.id,
+          content: `📅 **Interview Invitation**\n\n${emailData.message}`,
+        }),
+      });
+
+      if (!messageResponse.ok) {
+        setError("Email sent, but failed to send message");
+        setSendingEmail(false);
+        return;
+      }
+
+      // Success - close modal and reset
+      setShowEmailModal(false);
+      setEmailData({
+        recipientEmail: "",
+        recipientName: "",
+        subject: "",
+        message: "",
+        projectTitle: "",
+        applicationId: "",
+      });
+      
+      alert("Interview invitation sent successfully via email and message!");
+    } catch {
+      setError("Failed to send interview invitation");
+    } finally {
+      setSendingEmail(false);
+    }
+  };
 
   const fetchProjects = useCallback(async () => {
     if (!session?.user.id) return;
@@ -166,12 +310,12 @@ export default function MyProjectsPage() {
     void fetchProjects();
   }, [session, status, router, fetchProjects]);
 
-  if (status === "loading" || isLoading) {
-     return (
+  if (status === "loading") {
+    return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-gray-900">Loading projects...</div>
+          <div className="text-lg text-gray-900">Loading...</div>
         </div>
       </main>
     );
@@ -277,7 +421,14 @@ export default function MyProjectsPage() {
         )}
 
         {/* Projects List */}
-        {filteredProjects.length === 0 ? (
+        {isLoading ? (
+          <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+              <div className="text-lg text-gray-900">Loading projects...</div>
+            </div>
+          </div>
+        ) : filteredProjects.length === 0 ? (
           <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -364,17 +515,48 @@ export default function MyProjectsPage() {
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <button
                       onClick={() => openApplicationsModal(project)}
-                      className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition"
+                      className="flex items-center space-x-3 text-purple-600 hover:text-purple-700 transition group"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      <span className="font-medium">
-                        {project.applications.length} Developer{project.applications.length !== 1 ? 's' : ''} Applied
-                      </span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                      {/* Stacked Avatars */}
+                      <div className="flex -space-x-2">
+                        {project.applications.slice(0, 3).map((application, idx) => (
+                          <div
+                            key={application.id}
+                            className="w-8 h-8 rounded-full bg-purple-600 border-2 border-white flex items-center justify-center text-white text-xs font-semibold relative hover:z-10 transition-transform group-hover:scale-110"
+                            style={{ zIndex: 3 - idx }}
+                          >
+                            {application.talent.image ? (
+                              <Image
+                                src={application.talent.image}
+                                alt={application.talent.name ?? 'Developer'}
+                                width={32}
+                                height={32}
+                                className="w-8 h-8 rounded-full object-cover"
+                              />
+                            ) : (
+                              <span>
+                                {application.talent.talentProfile
+                                  ? `${application.talent.talentProfile.firstName[0]}${application.talent.talentProfile.lastName[0]}`
+                                  : application.talent.name?.[0] ?? 'D'}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {project.applications.length > 3 && (
+                          <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-gray-600 text-xs font-semibold">
+                            +{project.applications.length - 3}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">
+                          {project.applications.length} Developer{project.applications.length !== 1 ? 's' : ''} Applied
+                        </span>
+                        <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
                     </button>
                   </div>
                 )}
@@ -554,6 +736,15 @@ export default function MyProjectsPage() {
                               )}
                             </button>
                           )}
+                          <button
+                            onClick={() => handleScheduleInterview(application, selectedProjectApplications.project.title)}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition flex items-center justify-center space-x-1"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>Schedule Interview</span>
+                          </button>
                           <button
                             onClick={() => handleMessageDeveloper(application.talent.id, selectedProjectApplications.project.id)}
                             disabled={loadingMessage === application.talent.id}
@@ -801,6 +992,123 @@ export default function MyProjectsPage() {
                 className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition border border-gray-300"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setShowEmailModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-1">Schedule Interview</h2>
+                  <p className="text-gray-600">Review and send interview invitation</p>
+                </div>
+                <button
+                  onClick={() => setShowEmailModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Recipient Info */}
+              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="font-semibold text-gray-900">Recipient</span>
+                </div>
+                <p className="text-gray-700 font-medium">{emailData.recipientName}</p>
+                <p className="text-gray-600 text-sm">{emailData.recipientEmail}</p>
+              </div>
+
+              {/* Subject Field */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  value={emailData.subject}
+                  onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Email subject"
+                />
+              </div>
+
+              {/* Message Field */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Message
+                </label>
+                <textarea
+                  value={emailData.message}
+                  onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
+                  rows={12}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                  placeholder="Email message"
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  You can edit the message before sending
+                </p>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-6 flex space-x-3">
+              <button
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-semibold rounded-lg transition flex items-center justify-center space-x-2"
+              >
+                {sendingEmail ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>Send Interview Invitation</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => setShowEmailModal(false)}
+                disabled={sendingEmail}
+                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-100 text-gray-900 font-semibold rounded-lg transition border border-gray-300"
+              >
+                Cancel
               </button>
             </div>
           </div>
