@@ -10,7 +10,6 @@ interface ProjectRequestBody {
   category?: string;
   skills?: string[];
   projectType?: string;
-  complexity?: string;
   estimatedDuration?: number;
   projectTemplate?: string;
   techStack?: string[];
@@ -44,7 +43,6 @@ export async function POST(req: Request) {
       category, 
       skills, 
       projectType,
-      complexity,
       estimatedDuration,
       projectTemplate,
       techStack,
@@ -71,7 +69,6 @@ export async function POST(req: Request) {
         projectType: projectType ?? "fixed",
         status: "open",
         clientId: session.user.id,
-        complexity: complexity,
         estimatedDuration: estimatedDuration,
         projectTemplate: projectTemplate,
         techStack: techStack ?? [],

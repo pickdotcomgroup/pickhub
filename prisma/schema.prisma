@@ -241,7 +241,6 @@ model Project {
     status             String        @default("open") // open, in_progress, completed, cancelled
     
     // New enhanced fields
-    complexity         String?       // simple, moderate, complex
     estimatedDuration  Int?          // in days
     projectTemplate    String?       // web_app, mobile_app, api_development, etc.
     techStack          String[]      @default([]) // Technology stack

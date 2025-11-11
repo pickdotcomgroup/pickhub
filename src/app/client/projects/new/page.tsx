@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const PROJECT_TEMPLATES = {
-  web_app: { name: "Web Application", desc: "Build a responsive web application", tech: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL"], complexity: "moderate", duration: 30 },
-  mobile_app: { name: "Mobile Application", desc: "Create a native or cross-platform mobile app", tech: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase"], complexity: "moderate", duration: 45 },
-  api_development: { name: "API Development", desc: "Design and implement RESTful or GraphQL APIs", tech: ["Node.js", "Express.js", "Python", "Django", "PostgreSQL"], complexity: "simple", duration: 20 },
-  ecommerce: { name: "E-commerce Platform", desc: "Build a complete online store", tech: ["Next.js", "Stripe", "PostgreSQL", "Redis", "AWS"], complexity: "complex", duration: 60 },
-  dashboard: { name: "Admin Dashboard", desc: "Create a data visualization dashboard", tech: ["React", "TypeScript", "Chart.js", "Material-UI"], complexity: "moderate", duration: 25 },
-  custom: { name: "Custom Project", desc: "Define your own requirements", tech: [], complexity: "moderate", duration: 30 },
+  web_app: { name: "Web Application", desc: "Build a responsive web application", tech: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL"], duration: 30 },
+  mobile_app: { name: "Mobile Application", desc: "Create a native or cross-platform mobile app", tech: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase"], duration: 45 },
+  api_development: { name: "API Development", desc: "Design and implement RESTful or GraphQL APIs", tech: ["Node.js", "Express.js", "Python", "Django", "PostgreSQL"], duration: 20 },
+  ecommerce: { name: "E-commerce Platform", desc: "Build a complete online store", tech: ["Next.js", "Stripe", "PostgreSQL", "Redis", "AWS"], duration: 60 },
+  dashboard: { name: "Admin Dashboard", desc: "Create a data visualization dashboard", tech: ["React", "TypeScript", "Chart.js", "Material-UI"], duration: 25 },
+  custom: { name: "Custom Project", desc: "Define your own requirements", tech: [], duration: 30 },
 };
 
-const MARKET_RATES = { simple: { min: 30, max: 50, avg: 40 }, moderate: { min: 45, max: 75, avg: 60 }, complex: { min: 70, max: 120, avg: 95 } };
+const MARKET_RATE = { min: 45, max: 75, avg: 60 };
 
 export default function NewProjectPage() {
   const { data: session, status } = useSession();
@@ -26,7 +26,7 @@ export default function NewProjectPage() {
 
   const [form, setForm] = useState({
     projectTemplate: "", title: "", description: "", category: "", techStack: [] as string[], skills: [] as string[],
-    complexity: "moderate", budget: "", projectType: "fixed", deadline: "", estimatedDuration: 30, visibility: "public",
+    budget: "", projectType: "fixed", deadline: "", estimatedDuration: 30, visibility: "public",
   });
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function NewProjectPage() {
 
   const selectTemplate = (key: string) => {
     const t = PROJECT_TEMPLATES[key as keyof typeof PROJECT_TEMPLATES];
-    setForm(p => ({ ...p, projectTemplate: key, techStack: t.tech, complexity: t.complexity, estimatedDuration: t.duration }));
+    setForm(p => ({ ...p, projectTemplate: key, techStack: t.tech, estimatedDuration: t.duration }));
   };
 
   const refineDesc = () => {
@@ -61,20 +61,10 @@ export default function NewProjectPage() {
   };
 
   const calcBudget = () => {
-    const rates = MARKET_RATES[form.complexity as keyof typeof MARKET_RATES];
-    const est = rates.avg * 6 * form.estimatedDuration;
-    return { min: rates.min * 6 * form.estimatedDuration, max: rates.max * 6 * form.estimatedDuration, suggested: est };
+    const est = MARKET_RATE.avg * 6 * form.estimatedDuration;
+    return { min: MARKET_RATE.min * 6 * form.estimatedDuration, max: MARKET_RATE.max * 6 * form.estimatedDuration, suggested: est };
   };
 
-  const estimateTime = () => {
-    let base = 30;
-    if (form.projectTemplate && form.projectTemplate !== "custom") {
-      base = PROJECT_TEMPLATES[form.projectTemplate as keyof typeof PROJECT_TEMPLATES].duration;
-    }
-    const multipliers: Record<string, number> = { simple: 0.7, moderate: 1.0, complex: 1.5 };
-    const mult = multipliers[form.complexity] ?? 1.0;
-    setForm(p => ({ ...p, estimatedDuration: Math.round(base * mult) }));
-  };
 
   const filtered = techOptions.filter(t => t.toLowerCase().includes(techInput.toLowerCase()) && !form.techStack.includes(t));
 
@@ -224,12 +214,6 @@ export default function NewProjectPage() {
                   </div>
                   {errors.skills && <p className="mt-2 text-sm text-red-600">{errors.skills}</p>}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Project Complexity</label>
-                  <div className="grid grid-cols-3 gap-4">
-                    {["simple", "moderate", "complex"].map((level) => (<button key={level} type="button" onClick={() => { setForm(p => ({ ...p, complexity: level })); estimateTime(); }} className={`p-4 rounded-lg border-2 text-center transition ${form.complexity === level ? "border-purple-500 bg-purple-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}><div className="text-gray-900 font-semibold capitalize">{level}</div><div className="text-xs text-gray-600 mt-1">${MARKET_RATES[level as keyof typeof MARKET_RATES].min}-${MARKET_RATES[level as keyof typeof MARKET_RATES].max}/hr</div></button>))}
-                  </div>
-                </div>
               </div>
             </div>
           )}
@@ -260,13 +244,13 @@ export default function NewProjectPage() {
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Deadline *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Target completion Date</label>
                     <input type="date" value={form.deadline} onChange={(e) => setForm(p => ({ ...p, deadline: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.deadline ? "border-red-500" : "border-gray-300"}`} />
                     {errors.deadline && <p className="mt-2 text-sm text-red-600">{errors.deadline}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Estimated Duration</label>
-                    <div className="px-4 py-3 bg-purple-50 border border-purple-200 rounded-lg"><div className="text-2xl font-bold text-purple-700">{form.estimatedDuration} days</div><div className="text-xs text-gray-600 mt-1">Based on complexity</div></div>
+                    <div className="px-4 py-3 bg-purple-50 border border-purple-200 rounded-lg"><div className="text-2xl font-bold text-purple-700">{form.estimatedDuration} days</div><div className="text-xs text-gray-600 mt-1">Based on project template</div></div>
                   </div>
                 </div>
               </div>
