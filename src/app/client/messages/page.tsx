@@ -66,7 +66,6 @@ export default function ClientMessagesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isTabActive, setIsTabActive] = useState(true);
-  const lastMessageCountRef = useRef<number>(0);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -97,22 +96,22 @@ export default function ClientMessagesPage() {
   // Smart polling for messages - only when tab is active and conversation is selected
   useEffect(() => {
     if (!selectedConversation || !isTabActive) return;
-    
+
     const interval = setInterval(() => {
       void fetchMessages(selectedConversation.id);
     }, 1000);
-    
+
     return () => clearInterval(interval);
   }, [selectedConversation, isTabActive]);
 
   // Smart polling for conversations - only when tab is active
   useEffect(() => {
     if (status !== "authenticated" || !isTabActive) return;
-    
+
     const interval = setInterval(() => {
       void fetchConversations();
     }, 2000);
-    
+
     return () => clearInterval(interval);
   }, [status, isTabActive]);
 
@@ -262,8 +261,8 @@ export default function ClientMessagesPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-gray-900">Loading Messages...</div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="text-gray-500 text-md">Loading Messages...</div>
         </div>
       </main>
     );
@@ -336,11 +335,10 @@ export default function ClientMessagesPage() {
                         <button
                           key={conversation.id}
                           onClick={() => void handleSelectConversation(conversation)}
-                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white ${
-                            selectedConversation?.id === conversation.id
+                          className={`w-full p-4 text-left transition-all duration-200 hover:bg-white ${selectedConversation?.id === conversation.id
                               ? "bg-purple-50 border-l-4 border-purple-500"
                               : ""
-                          }`}
+                            }`}
                         >
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
@@ -436,19 +434,17 @@ export default function ClientMessagesPage() {
                             >
                               <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
                                 <div
-                                  className={`rounded-2xl px-4 py-2.5 shadow-md ${
-                                    isOwn
+                                  className={`rounded-2xl px-4 py-2.5 shadow-md ${isOwn
                                       ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white"
                                       : "bg-white text-gray-900 border border-gray-200"
-                                  }`}
+                                    }`}
                                 >
                                   <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
                                     {message.content}
                                   </p>
                                   <p
-                                    className={`mt-1.5 text-xs ${
-                                      isOwn ? "text-purple-100" : "text-gray-500"
-                                    }`}
+                                    className={`mt-1.5 text-xs ${isOwn ? "text-purple-100" : "text-gray-500"
+                                      }`}
                                   >
                                     {formatMessageTime(message.createdAt)}
                                   </p>
@@ -488,7 +484,7 @@ export default function ClientMessagesPage() {
                           </>
                         ) : (
                           <>
-                            <SendHorizontal className="w-5 h-5"/>
+                            <SendHorizontal className="w-5 h-5" />
                             <span>Send</span>
                           </>
                         )}

@@ -424,8 +424,8 @@ ${session?.user.name ?? 'The Team'}`;
         {isLoading ? (
           <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-              <div className="text-lg text-gray-900">Loading projects...</div>
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+              <div className="text-gray-500 text-md">Loading Projects...</div>
             </div>
           </div>
         ) : filteredProjects.length === 0 ? (
@@ -489,7 +489,7 @@ ${session?.user.name ?? 'The Team'}`;
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">
-                    Manage Project
+                    Manage Project Comming Soon
                   </button>
                 </div>
 

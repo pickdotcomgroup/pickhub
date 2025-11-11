@@ -36,8 +36,9 @@ export default function ClientLayout({
   // Show loading state
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <div className="text-white text-xl">Loading...</div>
+      <main className="flex min-h-screen gap-5 flex-col items-center justify-center bg-white">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+        <div className="text-gray-500 text-md">Loading Resource...</div>
       </main>
     );
   }
