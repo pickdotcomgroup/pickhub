@@ -175,7 +175,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      await signOut({ callbackUrl: "/" });
+      await signOut({ callbackUrl: "/signin" });
     } catch (error) {
       console.error('Logout failed:', error);
     }
