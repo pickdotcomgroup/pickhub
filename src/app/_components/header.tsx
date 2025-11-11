@@ -299,7 +299,7 @@ export default function Header() {
 
           {/* Quick Actions Navigation */}
           {session?.user && (
-            <nav className="hidden md:flex items-center space-x-1 flex-1 justify-center">
+            <nav className="hidden md:flex items-center space-x-1 ml-auto mr-4">
               {session.user.role === "client" ? (
                 <>
                   <Link
