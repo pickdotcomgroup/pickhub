@@ -65,7 +65,9 @@ export default function ClientMessagesPage() {
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [isTabActive, setIsTabActive] = useState(true);
+  const previousMessagesLengthRef = useRef(0);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -80,7 +82,17 @@ export default function ClientMessagesPage() {
   }, [status]);
 
   useEffect(() => {
-    scrollToBottom();
+    // Only auto-scroll if:
+    // 1. A new message was added (length increased)
+    // 2. User is already scrolled near the bottom
+    const isNewMessage = messages.length > previousMessagesLengthRef.current;
+    const isNearBottom = checkIfNearBottom();
+    
+    if (isNewMessage && isNearBottom) {
+      scrollToBottom();
+    }
+    
+    previousMessagesLengthRef.current = messages.length;
   }, [messages]);
 
   // Track tab visibility to pause polling when tab is not active
@@ -119,6 +131,15 @@ export default function ClientMessagesPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const checkIfNearBottom = () => {
+    const container = messagesContainerRef.current;
+    if (!container) return true; // Default to true if container not found
+    
+    const threshold = 100; // pixels from bottom
+    const position = container.scrollHeight - container.scrollTop - container.clientHeight;
+    return position < threshold;
+  };
+
   const fetchConversations = async () => {
     try {
       const response = await fetch("/api/conversations");
@@ -147,6 +168,7 @@ export default function ClientMessagesPage() {
 
   const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
+    previousMessagesLengthRef.current = 0; // Reset on conversation change
     await fetchMessages(conversation.id);
 
     try {
@@ -412,7 +434,10 @@ export default function ClientMessagesPage() {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent">
+                  <div 
+                    ref={messagesContainerRef}
+                    className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent"
+                  >
                     {messages.length === 0 ? (
                       <div className="flex h-full items-center justify-center text-gray-600">
                         <div className="text-center">
