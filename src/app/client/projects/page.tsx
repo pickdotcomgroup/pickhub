@@ -168,10 +168,10 @@ export default function MyProjectsPage() {
 
   if (status === "loading" || isLoading) {
      return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading projects...</div>
+          <div className="text-lg text-gray-900">Loading projects...</div>
         </div>
       </main>
     );
@@ -187,11 +187,11 @@ export default function MyProjectsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "bg-green-500/20 text-green-300 border-green-500/50";
-      case "in_progress": return "bg-blue-500/20 text-blue-300 border-blue-500/50";
-      case "completed": return "bg-purple-500/20 text-purple-300 border-purple-500/50";
-      case "cancelled": return "bg-red-500/20 text-red-300 border-red-500/50";
-      default: return "bg-gray-500/20 text-gray-300 border-gray-500/50";
+      case "open": return "bg-green-100 text-green-700 border-green-300";
+      case "in_progress": return "bg-blue-100 text-blue-700 border-blue-300";
+      case "completed": return "bg-purple-100 text-purple-700 border-purple-300";
+      case "cancelled": return "bg-red-100 text-red-700 border-red-300";
+      default: return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
 
@@ -204,13 +204,13 @@ export default function MyProjectsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">My Projects</h1>
-            <p className="text-gray-400">Manage and track all your posted projects</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Projects</h1>
+            <p className="text-gray-600">Manage and track all your posted projects</p>
           </div>
           <Link
             href="/client/projects/new"
@@ -224,14 +224,14 @@ export default function MyProjectsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 mb-6">
+        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 mb-6">
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "all"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
               All ({projects.length})
@@ -241,7 +241,7 @@ export default function MyProjectsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "open"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
               Open ({projects.filter(p => p.status === "open").length})
@@ -251,7 +251,7 @@ export default function MyProjectsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "in_progress"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
               In Progress ({projects.filter(p => p.status === "in_progress").length})
@@ -261,7 +261,7 @@ export default function MyProjectsPage() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 filter === "completed"
                   ? "bg-purple-600 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
               Completed ({projects.filter(p => p.status === "completed").length})
@@ -271,19 +271,19 @@ export default function MyProjectsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         {/* Projects List */}
         {filteredProjects.length === 0 ? (
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-12 border border-white/10 text-center">
+          <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="text-xl font-semibold text-white mb-2">No projects found</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No projects found</h3>
+            <p className="text-gray-600 mb-6">
               {filter === "all" 
                 ? "You haven't posted any projects yet. Start by creating your first project!"
                 : `No ${filter.replace("_", " ")} projects found.`}
@@ -305,18 +305,18 @@ export default function MyProjectsPage() {
             {filteredProjects.map((project) => (
               <div
                 key={project.id}
-                className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-purple-500/50 transition-all"
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{project.title}</h3>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)}`}>
                         {project.status.replace("_", " ").toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm mb-3 line-clamp-2">{project.description}</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-400">
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{project.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <span className="flex items-center space-x-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -337,23 +337,23 @@ export default function MyProjectsPage() {
                       </span>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition border border-white/10">
+                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">
                     Manage Project
                   </button>
                 </div>
 
                 {/* Skills */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-white/10 mb-4">
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 mb-4">
                   {project.skills.slice(0, 5).map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full"
+                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
                     >
                       {skill}
                     </span>
                   ))}
                   {project.skills.length > 5 && (
-                    <span className="px-3 py-1 bg-gray-500/20 text-gray-300 text-xs rounded-full">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
                       +{project.skills.length - 5} more
                     </span>
                   )}
@@ -361,10 +361,10 @@ export default function MyProjectsPage() {
 
                 {/* Applications Section */}
                 {project.applications && project.applications.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-white/10">
+                  <div className="mt-4 pt-4 border-t border-gray-200">
                     <button
                       onClick={() => openApplicationsModal(project)}
-                      className="flex items-center space-x-2 text-purple-400 hover:text-purple-300 transition"
+                      className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -387,25 +387,25 @@ export default function MyProjectsPage() {
       {/* Applications Modal */}
       {selectedProjectApplications && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedProjectApplications(null)}
         >
           <div 
-            className="bg-slate-900 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl"
+            className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-slate-900/95 backdrop-blur-sm border-b border-white/10 p-6">
+            <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">Applications</h2>
-                  <p className="text-gray-400">{selectedProjectApplications.project.title}</p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-1">Applications</h2>
+                  <p className="text-gray-600">{selectedProjectApplications.project.title}</p>
                 </div>
                 <button
                   onClick={() => setSelectedProjectApplications(null)}
-                  className="p-2 hover:bg-white/10 rounded-lg transition"
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
                 >
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -419,14 +419,14 @@ export default function MyProjectsPage() {
                   <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  <p className="text-gray-400">No applications yet</p>
+                  <p className="text-gray-600">No applications yet</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {selectedProjectApplications.applications.map((application) => (
                     <div
                       key={application.id}
-                      className="bg-white/5 rounded-lg p-5 border border-white/10 hover:border-purple-500/30 transition"
+                      className="bg-gray-50 rounded-lg p-5 border border-gray-200 hover:border-purple-500 transition"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
@@ -452,17 +452,17 @@ export default function MyProjectsPage() {
                           {/* Developer Info */}
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
-                              <h4 className="text-lg font-semibold text-white">
+                              <h4 className="text-lg font-semibold text-gray-900">
                                 {application.talent.talentProfile
                                   ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
                                   : application.talent.name ?? 'Developer'}
                               </h4>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 application.status === 'pending'
-                                  ? 'bg-yellow-500/20 text-yellow-300'
+                                  ? 'bg-yellow-100 text-yellow-700'
                                   : application.status === 'accepted'
-                                  ? 'bg-green-500/20 text-green-300'
-                                  : 'bg-red-500/20 text-red-300'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-red-100 text-red-700'
                               }`}>
                                 {application.status.toUpperCase()}
                               </span>
@@ -470,7 +470,7 @@ export default function MyProjectsPage() {
                             
                             {application.talent.talentProfile && (
                               <>
-                                <p className="text-gray-400 text-sm mb-3">
+                                <p className="text-gray-600 text-sm mb-3">
                                   {application.talent.talentProfile.title}
                                 </p>
                                 
@@ -479,20 +479,20 @@ export default function MyProjectsPage() {
                                   {application.talent.talentProfile.skills.slice(0, 5).map((skill, idx) => (
                                     <span
                                       key={idx}
-                                      className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded"
+                                      className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded"
                                     >
                                       {skill}
                                     </span>
                                   ))}
                                   {application.talent.talentProfile.skills.length > 5 && (
-                                    <span className="px-2 py-1 bg-gray-500/20 text-gray-300 text-xs rounded">
+                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
                                       +{application.talent.talentProfile.skills.length - 5}
                                     </span>
                                   )}
                                 </div>
 
                                 {/* Experience and Rate */}
-                                <div className="flex items-center space-x-4 text-xs text-gray-400 mb-3">
+                                <div className="flex items-center space-x-4 text-xs text-gray-500 mb-3">
                                   <span className="capitalize">
                                     {application.talent.talentProfile.experience} Level
                                   </span>
@@ -500,7 +500,7 @@ export default function MyProjectsPage() {
                                     <span>${application.talent.talentProfile.hourlyRate}/hr</span>
                                   )}
                                   {application.proposedRate && (
-                                    <span className="text-purple-400 font-medium">
+                                    <span className="text-purple-600 font-medium">
                                       Proposed: ${application.proposedRate.toLocaleString()}
                                     </span>
                                   )}
@@ -510,13 +510,13 @@ export default function MyProjectsPage() {
 
                             {/* Cover Letter Preview */}
                             {application.coverLetter && (
-                              <div className="mt-3 p-3 bg-white/5 rounded text-sm text-gray-300">
+                              <div className="mt-3 p-3 bg-white rounded border border-gray-200 text-sm text-gray-700">
                                 <p className="line-clamp-2">{application.coverLetter}</p>
                               </div>
                             )}
 
                             {/* Applied Date */}
-                            <p className="text-xs text-gray-500 mt-3">
+                            <p className="text-xs text-gray-400 mt-3">
                               Applied {formatDate(application.createdAt)}
                             </p>
                           </div>
@@ -557,7 +557,7 @@ export default function MyProjectsPage() {
                           <button
                             onClick={() => handleMessageDeveloper(application.talent.id, selectedProjectApplications.project.id)}
                             disabled={loadingMessage === application.talent.id}
-                            className="px-4 py-2 bg-white/5 hover:bg-white/10 disabled:bg-white/5 text-white text-sm rounded-lg transition border border-white/10"
+                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-100 text-gray-900 text-sm rounded-lg transition border border-gray-300"
                           >
                             {loadingMessage === application.talent.id ? (
                               <svg className="animate-spin h-4 w-4 mx-auto" fill="none" viewBox="0 0 24 24">
@@ -582,21 +582,21 @@ export default function MyProjectsPage() {
       {/* Developer Profile Modal */}
       {selectedDeveloper && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedDeveloper(null)}
         >
           <div 
-            className="bg-slate-900 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/30 shadow-2xl"
+            className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="sticky top-0 bg-slate-900/95 backdrop-blur-sm border-b border-white/10 p-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Developer Profile</h2>
+            <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Developer Profile</h2>
               <button
                 onClick={() => setSelectedDeveloper(null)}
-                className="p-2 hover:bg-white/10 rounded-lg transition"
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
               >
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -624,17 +624,17 @@ export default function MyProjectsPage() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-white mb-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-1">
                     {selectedDeveloper.talent.talentProfile
                       ? `${selectedDeveloper.talent.talentProfile.firstName} ${selectedDeveloper.talent.talentProfile.lastName}`
                       : selectedDeveloper.talent.name ?? 'Developer'}
                   </h3>
                   {selectedDeveloper.talent.talentProfile && (
                     <>
-                      <p className="text-purple-400 text-lg mb-2">
+                      <p className="text-purple-600 text-lg mb-2">
                         {selectedDeveloper.talent.talentProfile.title}
                       </p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-400">
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
                         <span className="flex items-center space-x-1 capitalize">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
@@ -656,24 +656,24 @@ export default function MyProjectsPage() {
               </div>
 
               {/* Application Status */}
-              <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Application Status</p>
+                    <p className="text-sm text-gray-600 mb-1">Application Status</p>
                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
                       selectedDeveloper.status === 'pending'
-                        ? 'bg-yellow-500/20 text-yellow-300'
+                        ? 'bg-yellow-100 text-yellow-700'
                         : selectedDeveloper.status === 'accepted'
-                        ? 'bg-green-500/20 text-green-300'
-                        : 'bg-red-500/20 text-red-300'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
                     }`}>
                       {selectedDeveloper.status.toUpperCase()}
                     </span>
                   </div>
                   {selectedDeveloper.proposedRate && (
                     <div className="text-right">
-                      <p className="text-sm text-gray-400 mb-1">Proposed Rate</p>
-                      <p className="text-xl font-bold text-purple-400">
+                      <p className="text-sm text-gray-600 mb-1">Proposed Rate</p>
+                      <p className="text-xl font-bold text-purple-600">
                         ${selectedDeveloper.proposedRate.toLocaleString()}
                       </p>
                     </div>
@@ -684,8 +684,8 @@ export default function MyProjectsPage() {
               {/* Skills Section */}
               {selectedDeveloper.talent.talentProfile && (
                 <div>
-                  <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                     <span>Skills & Expertise</span>
@@ -694,7 +694,7 @@ export default function MyProjectsPage() {
                     {selectedDeveloper.talent.talentProfile.skills.map((skill, idx) => (
                       <span
                         key={idx}
-                        className="px-4 py-2 bg-purple-500/20 text-purple-300 text-sm rounded-lg border border-purple-500/30"
+                        className="px-4 py-2 bg-purple-100 text-purple-700 text-sm rounded-lg border border-purple-200"
                       >
                         {skill}
                       </span>
@@ -706,14 +706,14 @@ export default function MyProjectsPage() {
               {/* Cover Letter */}
               {selectedDeveloper.coverLetter && (
                 <div>
-                  <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span>Cover Letter</span>
                   </h4>
-                  <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-                    <p className="text-gray-300 whitespace-pre-wrap">{selectedDeveloper.coverLetter}</p>
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p className="text-gray-700 whitespace-pre-wrap">{selectedDeveloper.coverLetter}</p>
                   </div>
                 </div>
               )}
@@ -721,8 +721,8 @@ export default function MyProjectsPage() {
               {/* Portfolio Link */}
               {selectedDeveloper.talent.talentProfile?.portfolio && (
                 <div>
-                  <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
+                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                     </svg>
                     <span>Portfolio</span>
@@ -731,7 +731,7 @@ export default function MyProjectsPage() {
                     href={selectedDeveloper.talent.talentProfile.portfolio}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-purple-400 hover:text-purple-300 transition"
+                    className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition"
                   >
                     <span>{selectedDeveloper.talent.talentProfile.portfolio}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -743,23 +743,23 @@ export default function MyProjectsPage() {
 
               {/* Contact Information */}
               <div>
-                <h4 className="text-lg font-semibold text-white mb-3 flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Contact</span>
                 </h4>
-                <p className="text-gray-300">{selectedDeveloper.talent.email}</p>
+                <p className="text-gray-700">{selectedDeveloper.talent.email}</p>
               </div>
 
               {/* Application Date */}
-              <div className="text-sm text-gray-400 pt-4 border-t border-white/10">
+              <div className="text-sm text-gray-500 pt-4 border-t border-gray-200">
                 Applied on {formatDate(selectedDeveloper.createdAt)}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="sticky bottom-0 bg-slate-900/95 backdrop-blur-sm border-t border-white/10 p-6 flex space-x-3">
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-6 flex space-x-3">
               {selectedDeveloper.status === 'pending' && (
                 <button
                   onClick={() => handleAcceptApplication(selectedDeveloper.id)}
@@ -798,7 +798,7 @@ export default function MyProjectsPage() {
               </button>
               <button
                 onClick={() => setSelectedDeveloper(null)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white font-semibold rounded-lg transition border border-white/10"
+                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition border border-gray-300"
               >
                 Close
               </button>

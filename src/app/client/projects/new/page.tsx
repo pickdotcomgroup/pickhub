@@ -36,7 +36,7 @@ export default function NewProjectPage() {
   }, [session, status, router]);
 
   if (status === "loading" || !session || session.user.role !== "client") {
-    return <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900"><div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div></main>;
+    return <main className="flex min-h-screen items-center justify-center bg-white"><div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div></main>;
   }
 
   const techOptions = ["React", "Next.js", "Vue.js", "Angular", "TypeScript", "JavaScript", "Node.js", "Express.js", "Python", "Django", "Java", "Spring Boot", "C#", ".NET", "PHP", "Laravel", "Ruby", "Go", "Rust", "React Native", "Flutter", "Swift", "Kotlin", "MongoDB", "PostgreSQL", "MySQL", "Redis", "Firebase", "GraphQL", "REST API", "AWS", "Azure", "Google Cloud", "Docker", "Kubernetes"];
@@ -130,104 +130,104 @@ export default function NewProjectPage() {
   const budget = calcBudget();
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Post a New Project</h1>
-          <p className="text-gray-400">Guided workflow with AI-assisted features</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Post a New Project</h1>
+          <p className="text-gray-600">Guided workflow with AI-assisted features</p>
         </div>
 
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {[1, 2, 3, 4, 5].map((s) => (
               <div key={s} className="flex items-center flex-1">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step >= s ? "bg-purple-600 border-purple-600 text-white" : "bg-white/5 border-white/20 text-gray-400"}`}>{s}</div>
-                {s < 5 && <div className={`flex-1 h-1 mx-2 ${step > s ? "bg-purple-600" : "bg-white/10"}`} />}
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step >= s ? "bg-purple-600 border-purple-600 text-white" : "bg-gray-100 border-gray-300 text-gray-400"}`}>{s}</div>
+                {s < 5 && <div className={`flex-1 h-1 mx-2 ${step > s ? "bg-purple-600" : "bg-gray-200"}`} />}
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-400">
+          <div className="flex justify-between mt-2 text-xs text-gray-500">
             <span>Template</span><span>Details</span><span>Tech Stack</span><span>Budget</span><span>Visibility</span>
           </div>
         </div>
 
         <form onSubmit={handleFormSubmit} className="space-y-6">
           {step === 1 && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Choose a Project Template</h2>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Choose a Project Template</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 {Object.entries(PROJECT_TEMPLATES).map(([key, t]) => (
-                  <button key={key} type="button" onClick={() => selectTemplate(key)} className={`p-6 rounded-lg border-2 text-left transition ${form.projectTemplate === key ? "border-purple-500 bg-purple-500/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                    <h3 className="text-lg font-semibold text-white mb-2">{t.name}</h3>
-                    <p className="text-sm text-gray-400 mb-3">{t.desc}</p>
+                  <button key={key} type="button" onClick={() => selectTemplate(key)} className={`p-6 rounded-lg border-2 text-left transition ${form.projectTemplate === key ? "border-purple-500 bg-purple-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.name}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{t.desc}</p>
                     <div className="flex flex-wrap gap-2">
-                      {t.tech.slice(0, 3).map((tech) => (<span key={tech} className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">{tech}</span>))}
-                      {t.tech.length > 3 && <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded">+{t.tech.length - 3} more</span>}
+                      {t.tech.slice(0, 3).map((tech) => (<span key={tech} className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">{tech}</span>))}
+                      {t.tech.length > 3 && <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded">+{t.tech.length - 3} more</span>}
                     </div>
                   </button>
                 ))}
               </div>
-              {errors.projectTemplate && <p className="mt-4 text-sm text-red-400">{errors.projectTemplate}</p>}
+              {errors.projectTemplate && <p className="mt-4 text-sm text-red-600">{errors.projectTemplate}</p>}
             </div>
           )}
 
           {step === 2 && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Project Details</h2>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Project Details</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Project Title *</label>
-                  <input type="text" value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.title ? "border-red-500" : "border-white/10"}`} placeholder="e.g., Build a responsive e-commerce website" />
-                  {errors.title && <p className="mt-2 text-sm text-red-400">{errors.title}</p>}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Project Title *</label>
+                  <input type="text" value={form.title} onChange={(e) => setForm(p => ({ ...p, title: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.title ? "border-red-500" : "border-gray-300"}`} placeholder="e.g., Build a responsive e-commerce website" />
+                  {errors.title && <p className="mt-2 text-sm text-red-600">{errors.title}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Project Description *</label>
-                  <textarea rows={6} value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.description ? "border-red-500" : "border-white/10"}`} placeholder="Describe your project in detail..." />
-                  {errors.description && <p className="mt-2 text-sm text-red-400">{errors.description}</p>}
-                  <button type="button" onClick={refineDesc} className="mt-3 px-4 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-sm transition">✨ AI-Assist: Add Suggested Features</button>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
+                  <textarea rows={6} value={form.description} onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.description ? "border-red-500" : "border-gray-300"}`} placeholder="Describe your project in detail..." />
+                  {errors.description && <p className="mt-2 text-sm text-red-600">{errors.description}</p>}
+                  <button type="button" onClick={refineDesc} className="mt-3 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm transition">✨ AI-Assist: Add Suggested Features</button>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
-                  <select value={form.category} onChange={(e) => setForm(p => ({ ...p, category: e.target.value }))} className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.category ? "border-red-500" : "border-white/10"}`}>
-                    <option value="" className="bg-slate-800">Select a category</option>
-                    {categories.map((cat) => (<option key={cat} value={cat} className="bg-slate-800">{cat}</option>))}
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                  <select value={form.category} onChange={(e) => setForm(p => ({ ...p, category: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.category ? "border-red-500" : "border-gray-300"}`}>
+                    <option value="" className="bg-white">Select a category</option>
+                    {categories.map((cat) => (<option key={cat} value={cat} className="bg-white">{cat}</option>))}
                   </select>
-                  {errors.category && <p className="mt-2 text-sm text-red-400">{errors.category}</p>}
+                  {errors.category && <p className="mt-2 text-sm text-red-600">{errors.category}</p>}
                 </div>
               </div>
             </div>
           )}
 
           {step === 3 && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Technical Requirements</h2>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Technical Requirements</h2>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Technology Stack *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Technology Stack *</label>
                   <div className="relative">
-                    <input type="text" value={techInput} onChange={(e) => { setTechInput(e.target.value); setShowSuggestions(e.target.value.length > 0); }} onFocus={() => setShowSuggestions(techInput.length > 0)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Type to search technologies..." />
+                    <input type="text" value={techInput} onChange={(e) => { setTechInput(e.target.value); setShowSuggestions(e.target.value.length > 0); }} onFocus={() => setShowSuggestions(techInput.length > 0)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Type to search technologies..." />
                     {showSuggestions && filtered.length > 0 && (
-                      <div className="absolute z-10 w-full mt-2 bg-slate-800 border border-white/10 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                        {filtered.slice(0, 10).map((tech) => (<button key={tech} type="button" onClick={() => { setForm(p => ({ ...p, techStack: [...p.techStack, tech] })); setTechInput(""); setShowSuggestions(false); }} className="w-full px-4 py-2 text-left text-white hover:bg-purple-600/20 transition">{tech}</button>))}
+                      <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                        {filtered.slice(0, 10).map((tech) => (<button key={tech} type="button" onClick={() => { setForm(p => ({ ...p, techStack: [...p.techStack, tech] })); setTechInput(""); setShowSuggestions(false); }} className="w-full px-4 py-2 text-left text-gray-900 hover:bg-purple-50 transition">{tech}</button>))}
                       </div>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2 mt-3">
                     {form.techStack.map((tech) => (<span key={tech} className="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm flex items-center gap-2">{tech}<button type="button" onClick={() => setForm(p => ({ ...p, techStack: p.techStack.filter(t => t !== tech) }))} className="hover:text-red-300">×</button></span>))}
                   </div>
-                  {errors.techStack && <p className="mt-2 text-sm text-red-400">{errors.techStack}</p>}
+                  {errors.techStack && <p className="mt-2 text-sm text-red-600">{errors.techStack}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Required Skills *</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Required Skills *</label>
                   <div className="flex flex-wrap gap-2">
-                    {skillOptions.map((skill) => (<button key={skill} type="button" onClick={() => setForm(p => ({ ...p, skills: p.skills.includes(skill) ? p.skills.filter(s => s !== skill) : [...p.skills, skill] }))} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${form.skills.includes(skill) ? "bg-purple-600 text-white" : "bg-white/5 text-gray-300 hover:bg-white/10"}`}>{skill}</button>))}
+                    {skillOptions.map((skill) => (<button key={skill} type="button" onClick={() => setForm(p => ({ ...p, skills: p.skills.includes(skill) ? p.skills.filter(s => s !== skill) : [...p.skills, skill] }))} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${form.skills.includes(skill) ? "bg-purple-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>{skill}</button>))}
                   </div>
-                  {errors.skills && <p className="mt-2 text-sm text-red-400">{errors.skills}</p>}
+                  {errors.skills && <p className="mt-2 text-sm text-red-600">{errors.skills}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Project Complexity</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Project Complexity</label>
                   <div className="grid grid-cols-3 gap-4">
-                    {["simple", "moderate", "complex"].map((level) => (<button key={level} type="button" onClick={() => { setForm(p => ({ ...p, complexity: level })); estimateTime(); }} className={`p-4 rounded-lg border-2 text-center transition ${form.complexity === level ? "border-purple-500 bg-purple-500/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}><div className="text-white font-semibold capitalize">{level}</div><div className="text-xs text-gray-400 mt-1">${MARKET_RATES[level as keyof typeof MARKET_RATES].min}-${MARKET_RATES[level as keyof typeof MARKET_RATES].max}/hr</div></button>))}
+                    {["simple", "moderate", "complex"].map((level) => (<button key={level} type="button" onClick={() => { setForm(p => ({ ...p, complexity: level })); estimateTime(); }} className={`p-4 rounded-lg border-2 text-center transition ${form.complexity === level ? "border-purple-500 bg-purple-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}><div className="text-gray-900 font-semibold capitalize">{level}</div><div className="text-xs text-gray-600 mt-1">${MARKET_RATES[level as keyof typeof MARKET_RATES].min}-${MARKET_RATES[level as keyof typeof MARKET_RATES].max}/hr</div></button>))}
                   </div>
                 </div>
               </div>
@@ -235,38 +235,38 @@ export default function NewProjectPage() {
           )}
 
           {step === 4 && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Budget & Timeline</h2>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Budget & Timeline</h2>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Budget (USD) *</label>
-                  <input type="number" value={form.budget} onChange={(e) => setForm(p => ({ ...p, budget: e.target.value }))} className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.budget ? "border-red-500" : "border-white/10"}`} placeholder="5000" />
-                  {errors.budget && <p className="mt-2 text-sm text-red-400">{errors.budget}</p>}
-                  <div className="mt-4 p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                    <div className="text-sm text-purple-300 font-semibold mb-2">💡 Market Rate Suggestions</div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Budget (USD) *</label>
+                  <input type="number" value={form.budget} onChange={(e) => setForm(p => ({ ...p, budget: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.budget ? "border-red-500" : "border-gray-300"}`} placeholder="5000" />
+                  {errors.budget && <p className="mt-2 text-sm text-red-600">{errors.budget}</p>}
+                  <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                    <div className="text-sm text-purple-700 font-semibold mb-2">💡 Market Rate Suggestions</div>
                     <div className="grid grid-cols-3 gap-4 text-sm">
-                      <div><div className="text-gray-400">Minimum</div><div className="text-white font-semibold">${budget.min.toLocaleString()}</div></div>
-                      <div><div className="text-gray-400">Suggested</div><div className="text-purple-300 font-semibold">${budget.suggested.toLocaleString()}</div></div>
-                      <div><div className="text-gray-400">Maximum</div><div className="text-white font-semibold">${budget.max.toLocaleString()}</div></div>
+                      <div><div className="text-gray-600">Minimum</div><div className="text-gray-900 font-semibold">${budget.min.toLocaleString()}</div></div>
+                      <div><div className="text-gray-600">Suggested</div><div className="text-purple-700 font-semibold">${budget.suggested.toLocaleString()}</div></div>
+                      <div><div className="text-gray-600">Maximum</div><div className="text-gray-900 font-semibold">${budget.max.toLocaleString()}</div></div>
                     </div>
-                    <button type="button" onClick={() => setForm(p => ({ ...p, budget: budget.suggested.toString() }))} className="mt-3 text-xs text-purple-300 hover:text-purple-200 underline">Use suggested budget</button>
+                    <button type="button" onClick={() => setForm(p => ({ ...p, budget: budget.suggested.toString() }))} className="mt-3 text-xs text-purple-700 hover:text-purple-800 underline">Use suggested budget</button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Project Type</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Project Type</label>
                   <div className="grid grid-cols-2 gap-4">
-                    {["fixed", "hourly"].map((type) => (<button key={type} type="button" onClick={() => setForm(p => ({ ...p, projectType: type }))} className={`p-4 rounded-lg border-2 text-center transition ${form.projectType === type ? "border-purple-500 bg-purple-500/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}><div className="text-white font-semibold capitalize">{type === "fixed" ? "Fixed Price" : "Hourly Rate"}</div><div className="text-xs text-gray-400 mt-1">{type === "fixed" ? "One-time payment" : "Pay per hour"}</div></button>))}
+                    {["fixed", "hourly"].map((type) => (<button key={type} type="button" onClick={() => setForm(p => ({ ...p, projectType: type }))} className={`p-4 rounded-lg border-2 text-center transition ${form.projectType === type ? "border-purple-500 bg-purple-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}><div className="text-gray-900 font-semibold capitalize">{type === "fixed" ? "Fixed Price" : "Hourly Rate"}</div><div className="text-xs text-gray-600 mt-1">{type === "fixed" ? "One-time payment" : "Pay per hour"}</div></button>))}
                   </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Deadline *</label>
-                    <input type="date" value={form.deadline} onChange={(e) => setForm(p => ({ ...p, deadline: e.target.value }))} className={`w-full px-4 py-3 bg-white/5 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.deadline ? "border-red-500" : "border-white/10"}`} />
-                    {errors.deadline && <p className="mt-2 text-sm text-red-400">{errors.deadline}</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Deadline *</label>
+                    <input type="date" value={form.deadline} onChange={(e) => setForm(p => ({ ...p, deadline: e.target.value }))} className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.deadline ? "border-red-500" : "border-gray-300"}`} />
+                    {errors.deadline && <p className="mt-2 text-sm text-red-600">{errors.deadline}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Estimated Duration</label>
-                    <div className="px-4 py-3 bg-purple-500/10 border border-purple-500/20 rounded-lg"><div className="text-2xl font-bold text-purple-300">{form.estimatedDuration} days</div><div className="text-xs text-gray-400 mt-1">Based on complexity</div></div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Estimated Duration</label>
+                    <div className="px-4 py-3 bg-purple-50 border border-purple-200 rounded-lg"><div className="text-2xl font-bold text-purple-700">{form.estimatedDuration} days</div><div className="text-xs text-gray-600 mt-1">Based on complexity</div></div>
                   </div>
                 </div>
               </div>
@@ -274,21 +274,21 @@ export default function NewProjectPage() {
           )}
 
           {step === 5 && (
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-              <h2 className="text-xl font-semibold text-white mb-4">Project Visibility</h2>
-              <p className="text-gray-400 mb-6">Choose who can see and apply to your project</p>
+            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Project Visibility</h2>
+              <p className="text-gray-600 mb-6">Choose who can see and apply to your project</p>
               <div className="grid md:grid-cols-2 gap-4">
-                {[{ key: "public", name: "Public to All Developers", desc: "Anyone can see and apply to your project" }, { key: "invite_only", name: "Invite Only", desc: "Only developers you invite can see and apply" }].map((vis) => (<button key={vis.key} type="button" onClick={() => setForm(p => ({ ...p, visibility: vis.key }))} className={`p-6 rounded-lg border-2 text-left transition ${form.visibility === vis.key ? "border-purple-500 bg-purple-500/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}><h3 className="text-lg font-semibold text-white mb-2">{vis.name}</h3><p className="text-sm text-gray-400">{vis.desc}</p></button>))}
+                {[{ key: "public", name: "Public to All Developers", desc: "Anyone can see and apply to your project" }, { key: "invite_only", name: "Invite Only", desc: "Only developers you invite can see and apply" }].map((vis) => (<button key={vis.key} type="button" onClick={() => setForm(p => ({ ...p, visibility: vis.key }))} className={`p-6 rounded-lg border-2 text-left transition ${form.visibility === vis.key ? "border-purple-500 bg-purple-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}><h3 className="text-lg font-semibold text-gray-900 mb-2">{vis.name}</h3><p className="text-sm text-gray-600">{vis.desc}</p></button>))}
               </div>
             </div>
           )}
 
-          {errors.general && (<div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4"><p className="text-sm text-red-400">{errors.general}</p></div>)}
+          {errors.general && (<div className="bg-red-50 border border-red-200 rounded-lg p-4"><p className="text-sm text-red-600">{errors.general}</p></div>)}
 
           <div className="flex items-center justify-between">
-            <button type="button" onClick={() => router.back()} className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition border border-white/10">Cancel</button>
+            <button type="button" onClick={() => router.back()} className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">Cancel</button>
             <div className="flex gap-4">
-              {step > 1 && <button type="button" onClick={prev} className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition border border-white/10">Previous</button>}
+              {step > 1 && <button type="button" onClick={prev} className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">Previous</button>}
               {step < 5 ? (<button type="button" onClick={next} className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition">Next</button>) : (<button type="button" onClick={handlePostProject} disabled={submitting} className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">{submitting ? "Posting..." : "Post Project"}</button>)}
             </div>
           </div>
