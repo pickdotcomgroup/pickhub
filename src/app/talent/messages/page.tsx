@@ -259,7 +259,7 @@ export default function TalentMessagesPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <div className="text-lg text-gray-900">Loading messages...</div>
         </div>
       </main>
@@ -301,7 +301,7 @@ export default function TalentMessagesPage() {
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                   />
                 </div>
               </div>
@@ -310,8 +310,8 @@ export default function TalentMessagesPage() {
               <div className="max-h-[calc(100vh-280px)] overflow-y-auto">
                 {filteredConversations.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <div className="mb-4 rounded-full bg-purple-100 p-4">
-                      <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mb-4 rounded-full bg-blue-100 p-4">
+                      <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>
@@ -334,13 +334,13 @@ export default function TalentMessagesPage() {
                           key={conversation.id}
                           onClick={() => void handleSelectConversation(conversation)}
                           className={`w-full p-4 text-left transition-all duration-200 hover:bg-gray-50 ${selectedConversation?.id === conversation.id
-                              ? "bg-purple-50 border-l-4 border-purple-500"
+                              ? "bg-blue-50 border-l-4 border-blue-500"
                               : ""
                             }`}
                         >
                           <div className="flex items-start gap-3">
                             <div className="flex-shrink-0">
-                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold shadow-lg">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg">
                                 {getUserInitials(otherUser)}
                               </div>
                             </div>
@@ -368,7 +368,7 @@ export default function TalentMessagesPage() {
                                 <div className="mt-1 flex items-center justify-between gap-2">
                                   <p className="truncate text-sm text-gray-600">{lastMessage.content}</p>
                                   {unreadCount > 0 && (
-                                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-purple-500 text-xs font-semibold text-white">
+                                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-semibold text-white">
                                       {unreadCount}
                                     </span>
                                   )}
@@ -393,7 +393,7 @@ export default function TalentMessagesPage() {
                   {/* Chat Header */}
                   <div className="border-b border-gray-200 bg-gray-50 p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-semibold shadow-lg">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg">
                         {getUserInitials(getOtherUser(selectedConversation))}
                       </div>
                       <div>
@@ -413,7 +413,7 @@ export default function TalentMessagesPage() {
                   <div 
                     ref={messagesContainerRef}
                     onScroll={handleScroll}
-                    className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-transparent"
+                    className="flex-1 space-y-4 overflow-y-auto p-4 bg-gray-50 scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-transparent"
                   >
                     {messages.length === 0 ? (
                       <div className="flex h-full items-center justify-center text-gray-600">
@@ -437,7 +437,7 @@ export default function TalentMessagesPage() {
                               <div className={`max-w-[70%] ${isOwn ? "order-2" : "order-1"}`}>
                                 <div
                                   className={`rounded-2xl px-4 py-2.5 shadow-sm ${isOwn
-                                      ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white"
+                                      ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white"
                                       : "bg-white text-gray-900 border border-gray-200"
                                     }`}
                                 >
@@ -445,7 +445,7 @@ export default function TalentMessagesPage() {
                                     {message.content}
                                   </p>
                                   <p
-                                    className={`mt-1.5 text-xs ${isOwn ? "text-purple-100" : "text-gray-500"
+                                    className={`mt-1.5 text-xs ${isOwn ? "text-blue-100" : "text-gray-500"
                                       }`}
                                   >
                                     {formatMessageTime(message.createdAt)}
@@ -468,13 +468,13 @@ export default function TalentMessagesPage() {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message..."
-                        className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                        className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                         disabled={sending}
                       />
                       <button
                         type="submit"
                         disabled={!newMessage.trim() || sending}
-                        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-purple-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-blue-600 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {sending ? (
                           <>
@@ -497,8 +497,8 @@ export default function TalentMessagesPage() {
               ) : (
                 <div className="flex h-[calc(100vh-200px)] items-center justify-center bg-gray-50">
                   <div className="text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
-                      <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                      <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>

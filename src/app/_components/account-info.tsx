@@ -12,20 +12,20 @@ export default function AccountInfo({ session }: AccountInfoProps) {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Page Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-white mb-2">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">
           Account Information
         </h1>
-        <p className="text-xl text-gray-300">
+        <p className="text-xl text-gray-600">
           View your account details and session information
         </p>
       </div>
 
       {/* Session Information Card */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 mb-6">   
+      <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-6">
         <div className="grid md:grid-cols-2 gap-8">
           {/* User Details */}
           <div>
-            <h3 className="text-lg font-medium text-purple-300 mb-4 flex items-center">
+            <h3 className="text-lg font-medium text-blue-600 mb-4 flex items-center">
               <svg
                 className="w-5 h-5 mr-2"
                 fill="none"
@@ -42,28 +42,28 @@ export default function AccountInfo({ session }: AccountInfoProps) {
               User Details
             </h3>
             <div className="space-y-3">
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">User ID</p>
-                <p className="text-white font-mono text-sm">{session.user.id}</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-xs text-gray-500 mb-1">User ID</p>
+                <p className="text-gray-900 font-mono text-sm">{session.user.id}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">Name</p>
-                <p className="text-white">{session.user.name}</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-xs text-gray-500 mb-1">Name</p>
+                <p className="text-gray-900">{session.user.name}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">Email</p>
-                <p className="text-white">{session.user.email}</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-xs text-gray-500 mb-1">Email</p>
+                <p className="text-gray-900">{session.user.email}</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p className="text-xs text-gray-400 mb-1">Role</p>
-                <p className="text-white capitalize">{session.user.role ? getRoleDisplayName(session.user.role) : 'N/A'}</p>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-xs text-gray-500 mb-1">Role</p>
+                <p className="text-gray-900 capitalize">{session.user.role ? getRoleDisplayName(session.user.role) : 'N/A'}</p>
               </div>
             </div>
           </div>
 
           {/* Permissions */}
           <div>
-            <h3 className="text-lg font-medium text-purple-300 mb-4 flex items-center">
+            <h3 className="text-lg font-medium text-blue-600 mb-4 flex items-center">
               <svg
                 className="w-5 h-5 mr-2"
                 fill="none"
@@ -84,10 +84,10 @@ export default function AccountInfo({ session }: AccountInfoProps) {
                 session.user.permissions.map((permission) => (
                   <div
                     key={permission}
-                    className="flex items-center bg-white/5 rounded-lg p-3"
+                    className="flex items-center bg-gray-50 rounded-lg p-3"
                   >
                     <svg
-                      className="w-4 h-4 text-green-400 mr-2 flex-shrink-0"
+                      className="w-4 h-4 text-green-600 mr-2 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -99,13 +99,13 @@ export default function AccountInfo({ session }: AccountInfoProps) {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    <span className="text-gray-300 text-sm capitalize">
+                    <span className="text-gray-700 text-sm capitalize">
                       {permission.replace(/_/g, " ")}
                     </span>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-400 text-sm">No permissions assigned</p>
+                <p className="text-gray-500 text-sm">No permissions assigned</p>
               )}
             </div>
           </div>
@@ -114,11 +114,11 @@ export default function AccountInfo({ session }: AccountInfoProps) {
 
       {/* Account Stats */}
       <div className="grid md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-purple-600/20 to-purple-700/20 border border-purple-500/30 rounded-xl p-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-purple-300 font-medium">Account Status</h3>
+            <h3 className="text-gray-700 font-medium">Account Status</h3>
             <svg
-              className="w-5 h-5 text-green-400"
+              className="w-5 h-5 text-green-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -131,14 +131,14 @@ export default function AccountInfo({ session }: AccountInfoProps) {
               />
             </svg>
           </div>
-          <p className="text-2xl font-bold text-white">Active</p>
+          <p className="text-2xl font-bold text-gray-900">Active</p>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-600/20 to-blue-700/20 border border-blue-500/30 rounded-xl p-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-blue-300 font-medium">Account Type</h3>
+            <h3 className="text-gray-700 font-medium">Account Type</h3>
             <svg
-              className="w-5 h-5 text-blue-400"
+              className="w-5 h-5 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -151,14 +151,14 @@ export default function AccountInfo({ session }: AccountInfoProps) {
               />
             </svg>
           </div>
-          <p className="text-2xl font-bold text-white capitalize">{session.user.role ?? 'N/A'}</p>
+          <p className="text-2xl font-bold text-gray-900 capitalize">{session.user.role ?? 'N/A'}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-600/20 to-green-700/20 border border-green-500/30 rounded-xl p-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-green-300 font-medium">Permissions</h3>
+            <h3 className="text-gray-700 font-medium">Permissions</h3>
             <svg
-              className="w-5 h-5 text-green-400"
+              className="w-5 h-5 text-blue-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -171,15 +171,15 @@ export default function AccountInfo({ session }: AccountInfoProps) {
               />
             </svg>
           </div>
-          <p className="text-2xl font-bold text-white">{session.user.permissions.length}</p>
+          <p className="text-2xl font-bold text-gray-900">{session.user.permissions.length}</p>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-        <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
+      <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid md:grid-cols-2 gap-4">
-          <button className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg transition">
+          <button className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition">
             <svg
               className="w-5 h-5 mr-2"
               fill="none"

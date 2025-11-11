@@ -79,7 +79,7 @@ export default function TalentProjectsPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <div className="text-lg text-gray-900">Loading projects...</div>
         </div>
       </main>
@@ -122,7 +122,7 @@ export default function TalentProjectsPage() {
           </div>
           <Link
             href="/talent/browse"
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition flex items-center space-x-2"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center space-x-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -137,7 +137,7 @@ export default function TalentProjectsPage() {
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "all"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
@@ -146,7 +146,7 @@ export default function TalentProjectsPage() {
             <button
               onClick={() => setFilter("pending")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "pending"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
@@ -155,7 +155,7 @@ export default function TalentProjectsPage() {
             <button
               onClick={() => setFilter("accepted")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "accepted"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
@@ -164,7 +164,7 @@ export default function TalentProjectsPage() {
             <button
               onClick={() => setFilter("rejected")}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${filter === "rejected"
-                  ? "bg-purple-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
                 }`}
             >
@@ -222,7 +222,7 @@ export default function TalentProjectsPage() {
             {filter === "all" && (
               <Link
                 href="/talent/browse"
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -236,7 +236,7 @@ export default function TalentProjectsPage() {
             {filteredApplications.map((application) => (
               <div
                 key={application.id}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-purple-500 transition-all shadow-sm hover:shadow-md"
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 transition-all shadow-sm hover:shadow-md"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -287,9 +287,9 @@ export default function TalentProjectsPage() {
                       </span>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border border-gray-200">
+                  {/* <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition border border-gray-200">
                     View Details
-                  </button>
+                  </button> */}
                 </div>
 
                 {/* Skills */}
@@ -297,7 +297,7 @@ export default function TalentProjectsPage() {
                   {application.project.skills.map((skill, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                      className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
                     >
                       {skill}
                     </span>

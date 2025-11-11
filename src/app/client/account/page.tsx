@@ -25,10 +25,10 @@ export default function ClientAccountPage() {
 
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-white">Loading projects...</div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          <div className="text-lg text-gray-900">Loading...</div>
         </div>
       </main>
     );
@@ -39,7 +39,7 @@ export default function ClientAccountPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <main className="min-h-screen bg-white">
       <AccountInfo session={session} />
     </main>
   );

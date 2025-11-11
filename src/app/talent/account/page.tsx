@@ -81,7 +81,7 @@ export default function TalentAccountPage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <div className="text-lg text-gray-900">Loading profile...</div>
         </div>
       </main>
@@ -153,10 +153,10 @@ export default function TalentAccountPage() {
                   alt={`${profile.firstName} ${profile.lastName}`}
                   width={80}
                   height={80}
-                  className="w-20 h-20 rounded-full border-2 border-purple-500"
+                  className="w-20 h-20 rounded-full border-2 border-blue-500"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold">
                   {profile.firstName[0]}{profile.lastName[0]}
                 </div>
               )}
@@ -164,7 +164,7 @@ export default function TalentAccountPage() {
                 <h2 className="text-2xl font-bold text-gray-900">
                   {profile.firstName} {profile.lastName}
                 </h2>
-                <p className="text-lg text-purple-600">{profile.title}</p>
+                <p className="text-lg text-blue-600">{profile.title}</p>
                 <p className="text-sm text-gray-600">{profile.user.email}</p>
               </div>
             </div>
@@ -205,7 +205,7 @@ export default function TalentAccountPage() {
                       href={profile.portfolioUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-purple-600 hover:text-purple-700 underline"
+                      className="text-blue-600 hover:text-blue-700 underline"
                     >
                       View Portfolio
                     </a>
@@ -228,7 +228,7 @@ export default function TalentAccountPage() {
                 {profile.skills.map((skill, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-purple-100 border border-purple-300 rounded-full text-sm text-purple-700"
+                    className="px-3 py-1 bg-blue-100 border border-blue-300 rounded-full text-sm text-blue-700"
                   >
                     {skill}
                   </span>
@@ -315,11 +315,11 @@ export default function TalentAccountPage() {
             <p className="text-3xl font-bold text-gray-900">{profile.completedProjects}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-300 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-300 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-purple-700 font-medium">Success Rate</h3>
+              <h3 className="text-blue-700 font-medium">Success Rate</h3>
               <svg
-                className="w-6 h-6 text-purple-600"
+                className="w-6 h-6 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

@@ -1,5 +1,6 @@
 "use client";
 
+import { Pointer } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
@@ -96,13 +97,13 @@ export default function TalentBrowsePage() {
           const data = await response.json() as {
             platformAccess?: boolean;
           };
-          
+
           // Redirect to verification page if not verified
           if (!data.platformAccess) {
             router.push("/talent/verification");
             return;
           }
-          
+
           // Only fetch data if verified
           void fetchTalentProfile();
           void fetchProjects();
@@ -119,7 +120,7 @@ export default function TalentBrowsePage() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
           <div className="text-lg text-gray-900">Loading projects...</div>
         </div>
       </main>
@@ -326,7 +327,7 @@ export default function TalentBrowsePage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search projects..."
-                    className="w-full px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                    className="w-full px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
                   <svg className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -340,7 +341,7 @@ export default function TalentBrowsePage() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 >
                   <option value="" className="bg-white">All Categories</option>
                   {categories.map((cat) => (
@@ -357,11 +358,10 @@ export default function TalentBrowsePage() {
                     <button
                       key={skill}
                       onClick={() => toggleSkill(skill)}
-                      className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
-                        selectedSkills.includes(skill)
-                          ? "bg-purple-600 text-white ring-2 ring-purple-400"
-                          : "bg-purple-600/80 text-white hover:bg-purple-600"
-                      }`}
+                      className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${selectedSkills.includes(skill)
+                          ? "bg-blue-600 text-white ring-2 ring-blue-400"
+                          : "bg-blue-600/80 text-white hover:bg-blue-600"
+                        }`}
                     >
                       {skill}
                     </button>
@@ -419,15 +419,14 @@ export default function TalentBrowsePage() {
               <div className="grid md:grid-cols-2 gap-4">
                 {filteredProjects.map((project) => {
                   const hasAccess = canAccessProject(project.minimumTier);
-                  
+
                   return (
                     <div
                       key={project.id}
-                      className={`bg-white rounded-xl p-6 border transition-all flex flex-col shadow-sm ${
-                        hasAccess
-                          ? "border-gray-200 hover:border-purple-500 hover:shadow-md"
+                      className={`bg-white rounded-xl p-6 border transition-all flex flex-col shadow-sm ${hasAccess
+                          ? "border-gray-200 hover:border-blue-500 hover:shadow-md"
                           : "border-red-300 opacity-75"
-                      }`}
+                        }`}
                     >
                       <div className="flex flex-col flex-1">
                         <div className="mb-4">
@@ -468,7 +467,7 @@ export default function TalentBrowsePage() {
                           {project.skills.slice(0, 3).map((skill, index) => (
                             <span
                               key={index}
-                              className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full"
+                              className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
                             >
                               {skill}
                             </span>
@@ -491,8 +490,9 @@ export default function TalentBrowsePage() {
                         <button
                           onClick={() => handleApply(project)}
                           disabled={applyingProjectId !== null || !hasAccess}
-                          className="w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
+                          className="w-full flex justify-center gap-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
                         >
+                          <Pointer className="w-5 h-5" />
                           {applyingProjectId === project.id ? "Picking..." : "Pick Project"}
                         </button>
                       </div>
