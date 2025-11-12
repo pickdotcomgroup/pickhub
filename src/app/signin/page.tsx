@@ -80,6 +80,50 @@ function AuthContent() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "CEO, TechStart Inc.",
+      type: "Client",
+      avatar: "SC",
+      feedback: "TechPickHub connected us with amazing developers. We built our MVP in just 6 weeks!",
+      rating: 5
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "Full Stack Developer",
+      type: "Developer",
+      avatar: "MR",
+      feedback: "Best platform for finding quality projects. The client vetting process is excellent.",
+      rating: 5
+    },
+    {
+      name: "Digital Innovations",
+      role: "Creative Agency",
+      type: "Agency",
+      avatar: "DI",
+      feedback: "We've scaled our business 3x using TechPickHub. The project quality is outstanding.",
+      rating: 5
+    },
+    {
+      name: "James Wilson",
+      role: "CTO, FinanceFlow",
+      type: "Client",
+      avatar: "JW",
+      feedback: "Found our entire development team here. Professional, skilled, and reliable talent.",
+      rating: 5
+    },
+    {
+      name: "Priya Sharma",
+      role: "UI/UX Designer",
+      type: "Developer",
+      avatar: "PS",
+      feedback: "Love the transparent communication and fair payment terms. Highly recommended!",
+      rating: 5
+    }
+  ];
 
   // Check for professional signup type in URL
   useEffect(() => {
@@ -110,6 +154,15 @@ function AuthContent() {
       }
     }
   }, [session, router]);
+
+  // Auto-rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -307,6 +360,22 @@ function AuthContent() {
     }));
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      // Call NextAuth signIn with Google provider
+      await signIn("google", {
+        callbackUrl: "/dashboard",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setErrors({ general: "Failed to sign in with Google. Please try again." });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const getProfessionalInfo = () => {
     switch (professionalType) {
@@ -341,48 +410,170 @@ function AuthContent() {
   const professionalInfo = getProfessionalInfo();
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className={`w-full px-6 ${authMode === "professional" ? "max-w-4xl" : "max-w-md"}`}>
-        {/* Logo/Brand Section */}
-        <div className="text-center mb-8 mt-20">
-          {authMode === "professional" && (
-            <div className="text-6xl mb-4">{professionalInfo.icon}</div>
-          )}
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <h1 className="text-4xl font-bold text-gray-900">
-              <span className="text-blue-600">TechPick</span>Hub
-            </h1>
-            <Image
-              src="/image/TechLogo.png"
-              alt="TechPickHub Logo"
-              width={60}
-              height={60}
-              className="object-contain"
-            />
+    <main className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <div className="w-full flex flex-col lg:flex-row">
+        {/* Left Side - Header/Logo Section */}
+        <div className="lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+          {/* Abstract Circuit Background */}
+          <div className="absolute inset-0 opacity-20">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="circuit-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+                  {/* Circuit lines */}
+                  <path d="M0 50 L25 50 L25 25 L50 25" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                  <path d="M50 25 L75 25 L75 50 L100 50" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                  <path d="M50 75 L50 50 L75 50" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                  <path d="M25 75 L50 75 L50 100" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                  <path d="M0 25 L25 25 L25 0" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                  
+                  {/* Circuit nodes */}
+                  <circle cx="25" cy="25" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="50" cy="25" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="75" cy="25" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="25" cy="50" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="50" cy="50" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="75" cy="50" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="25" cy="75" r="3" fill="white" opacity="0.8"/>
+                  <circle cx="50" cy="75" r="3" fill="white" opacity="0.8"/>
+                  
+                  {/* Microchip elements */}
+                  <rect x="35" y="35" width="30" height="30" stroke="white" strokeWidth="1.5" fill="none" opacity="0.5" rx="2"/>
+                  <line x1="35" y1="42" x2="30" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
+                  <line x1="35" y1="50" x2="30" y2="50" stroke="white" strokeWidth="1" opacity="0.5"/>
+                  <line x1="35" y1="58" x2="30" y2="58" stroke="white" strokeWidth="1" opacity="0.5"/>
+                  <line x1="65" y1="42" x2="70" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
+                  <line x1="65" y1="50" x2="70" y2="50" stroke="white" strokeWidth="1" opacity="0.5"/>
+                  <line x1="65" y1="58" x2="70" y2="58" stroke="white" strokeWidth="1" opacity="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#circuit-pattern)"/>
+            </svg>
           </div>
-          <p className="text-gray-600">
-            {authMode === "professional" 
-              ? professionalInfo.subtitle
-              : "Your gateway to freelance tech projects—find pick projects, pick devs, and pick agencies to grow your business."
-            }
-          </p>
+          
+          <div className="max-w-lg text-center lg:text-left relative z-10">
+            {authMode === "professional" && (
+              <div className="text-6xl mb-6">{professionalInfo.icon}</div>
+            )}
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+              <h1 className="text-4xl lg:text-5xl font-bold text-white">
+                <span className="text-white">TechPick</span>Hub
+              </h1>
+              <Image
+                src="/image/TechLogo.png"
+                alt="TechPickHub Logo"
+                width={60}
+                height={60}
+                className="object-contain"
+              />
+            </div>
+            <p className="text-blue-100 text-lg mb-8">
+              {authMode === "professional" 
+                ? professionalInfo.subtitle
+                : "Your gateway to freelance tech projects—find pick projects, pick devs, and pick agencies to grow your business."
+              }
+            </p>
+
+            {/* Testimonial Carousel */}
+            <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+              <div className="relative">
+                {/* Testimonial Content */}
+                <div className="transition-all duration-500 ease-in-out">
+                  <div className="flex items-start gap-4 mb-4">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm border-2 border-white/30">
+                      {testimonials[currentTestimonial]?.avatar}
+                    </div>
+                    
+                    {/* Name and Role */}
+                    <div className="flex-1">
+                      <h4 className="text-white font-semibold text-base">
+                        {testimonials[currentTestimonial]?.name}
+                      </h4>
+                      <p className="text-blue-100 text-sm">
+                        {testimonials[currentTestimonial]?.role}
+                      </p>
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-white/20 rounded-full text-xs text-white">
+                        {testimonials[currentTestimonial]?.type}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Rating Stars */}
+                  <div className="flex gap-1 mb-3">
+                    {Array.from({ length: testimonials[currentTestimonial]?.rating ?? 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        className="w-4 h-4 text-yellow-400 fill-current"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                      </svg>
+                    ))}
+                  </div>
+
+                  {/* Feedback Text */}
+                  <p className="text-white/90 text-sm leading-relaxed italic">
+                    &ldquo;{testimonials[currentTestimonial]?.feedback}&rdquo;
+                  </p>
+                </div>
+
+                {/* Navigation Dots */}
+                <div className="flex justify-center gap-2 mt-6">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonial(index)}
+                      className={`transition-all duration-300 rounded-full ${
+                        index === currentTestimonial
+                          ? 'w-8 h-2 bg-white'
+                          : 'w-2 h-2 bg-white/40 hover:bg-white/60'
+                      }`}
+                      aria-label={`Go to testimonial ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Auth Form Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-200">
+        {/* Right Side - Auth Form */}
+        <div className="lg:w-1/2 flex items-center justify-center">
+          <div className={`w-full ${authMode === "professional" ? "max-w-2xl" : "max-w-md"}`}>
+            <div className="bg-white rounded-2xl p-8">
 
-          {/* Professional Mode Header */}
-          {authMode === "professional" && (
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {professionalInfo.title}
-              </h2>
-              <p className="text-gray-600">{professionalInfo.subtitle}</p>
-            </div>
-          )}
+              {/* Sign In Header - only show for signin mode */}
+              {authMode === "signin" && (
+                <div className="text-start mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    Sign In
+                  </h2>
+                  <p className="text-gray-600">Welcome back! Please sign in to continue</p>
+                </div>
+              )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Sign Up Header - only show for signup mode */}
+              {authMode === "signup" && (
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    Create Account
+                  </h2>
+                  <p className="text-gray-600">Join TechPickHub to get started</p>
+                </div>
+              )}
+
+              {/* Professional Mode Header */}
+              {authMode === "professional" && (
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    {professionalInfo.title}
+                  </h2>
+                  <p className="text-gray-600">{professionalInfo.subtitle}</p>
+                </div>
+              )}
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
             {authMode === "professional" ? (
               // Professional Signup Form
               <div className="space-y-6">
@@ -759,120 +950,160 @@ function AuthContent() {
               </>
             )}
 
-            {/* General error message */}
-            {errors.general && (
-              <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-                <p className="text-sm text-red-400">{errors.general}</p>
-              </div>
-            )}
+                {/* General error message */}
+                {errors.general && (
+                  <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
+                    <p className="text-sm text-red-400">{errors.general}</p>
+                  </div>
+                )}
 
-            {/* Submit button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center text-white disabled:cursor-not-allowed ${
-                authMode === "professional"
-                  ? professionalType === "client"
-                    ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
-                    : professionalType === "talent"
-                    ? "bg-green-600 hover:bg-green-700 disabled:bg-green-800"
-                    : "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
-                    : "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {authMode === "professional" 
-                    ? "Creating Account..." 
-                    : authMode === "signup" 
-                    ? "Creating Account..." 
-                    : "Signing In..."
-                  }
-                </div>
-              ) : (
-                authMode === "professional" 
-                  ? `Create ${professionalInfo.title.split(' ')[2]} Account`
-                  : authMode === "signup" 
-                  ? "Create Account" 
-                  : "Sign In"
-              )}
-            </button>
-          </form>
-
-        {/* Footer links - only show for non-professional mode */}
-        {authMode !== "professional" && (
-          <>
-            {authMode === "signin" && (
-              <div className="mt-4 text-center">
-                <Link
-                  href="#"
-                  className="text-sm text-blue-600 hover:text-blue-700 transition"
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center text-white disabled:cursor-not-allowed ${
+                    authMode === "professional"
+                      ? professionalType === "client"
+                        ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
+                        : professionalType === "talent"
+                        ? "bg-green-600 hover:bg-green-700 disabled:bg-green-800"
+                        : "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
+                        : "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
+                  }`}
                 >
-                  Forgot your password?
-                </Link>
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {authMode === "professional" 
+                        ? "Creating Account..." 
+                        : authMode === "signup" 
+                        ? "Creating Account..." 
+                        : "Signing In..."
+                      }
+                    </div>
+                  ) : (
+                    authMode === "professional" 
+                      ? `Create ${professionalInfo.title.split(' ')[2]} Account`
+                      : authMode === "signup" 
+                      ? "Create Account" 
+                      : "Sign In"
+                  )}
+                </button>
+              </form>
+
+              {/* Divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
               </div>
-            )}
-            
-            {/* Toggle between Sign In and Sign Up */}
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                {authMode === "signin" ? (
-                  <>
-                    Don&apos;t have an account?{" "}
+
+              {/* Google Sign In Button */}
+              <button
+                type="button"
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+                Sign in with Google
+              </button>
+
+              {/* Footer links - only show for non-professional mode */}
+              {authMode !== "professional" && (
+                <>
+                  {authMode === "signin" && (
+                    <div className="mt-4 text-center">
+                      <Link
+                        href="#"
+                        className="text-sm text-blue-600 hover:text-blue-700 transition"
+                      >
+                        Forgot your password?
+                      </Link>
+                    </div>
+                  )}
+                  
+                  {/* Toggle between Sign In and Sign Up */}
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-600">
+                      {authMode === "signin" ? (
+                        <>
+                          Don&apos;t have an account?{" "}
+                          <Link
+                            href="/join"
+                            className="text-blue-600 hover:text-blue-700 font-semibold transition"
+                          >
+                            Join Us
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          Already have an account?{" "}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAuthMode("signin");
+                              setErrors({});
+                            }}
+                            className="text-blue-600 hover:text-blue-700 font-semibold transition"
+                          >
+                            Sign In
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {/* Professional mode - link back to join page */}
+              {authMode === "professional" && (
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-gray-600">
+                    Want to choose a different account type?{" "}
                     <Link
                       href="/join"
                       className="text-blue-600 hover:text-blue-700 font-semibold transition"
                     >
-                      Join Us
+                      Go back
                     </Link>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAuthMode("signin");
-                        setErrors({});
-                      }}
-                      className="text-blue-600 hover:text-blue-700 font-semibold transition"
-                    >
-                      Sign In
-                    </button>
-                  </>
-                )}
-              </p>
+                  </p>
+                </div>
+              )}
+
+              {/* Terms and Privacy */}
+              <div className="mt-6 text-center text-xs text-gray-600">
+                By {authMode === "professional" ? "creating a professional account" : authMode === "signup" ? "creating an account" : "signing in"}, you agree to our{" "}
+                <Link href="#" className="text-blue-600 hover:text-blue-700">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="#" className="text-blue-600 hover:text-blue-700">
+                  Privacy Policy
+                </Link>
+              </div>
             </div>
-          </>
-        )}
-
-        {/* Professional mode - link back to join page */}
-        {authMode === "professional" && (
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Want to choose a different account type?{" "}
-              <Link
-                href="/join"
-                className="text-blue-600 hover:text-blue-700 font-semibold transition"
-              >
-                Go back
-              </Link>
-            </p>
           </div>
-        )}
-      </div>
-
-        {/* Terms and Privacy */}
-        <div className="mt-6 text-center text-xs text-gray-600">
-          By {authMode === "professional" ? "creating a professional account" : authMode === "signup" ? "creating an account" : "signing in"}, you agree to our{" "}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Privacy Policy
-          </Link>
         </div>
       </div>
     </main>
