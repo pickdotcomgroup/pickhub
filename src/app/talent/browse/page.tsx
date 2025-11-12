@@ -16,6 +16,8 @@ interface Project {
   projectType: string;
   status: string;
   minimumTier: string;
+  estimatedDuration: number | null;
+  hourlyRate: number | null;
   createdAt: string;
   client: {
     id: string;
@@ -460,6 +462,17 @@ export default function TalentBrowsePage() {
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                               {project.projectType === "fixed" ? "Fixed" : "Hourly"}
                             </span>
+                            {project.projectType === "hourly" && project.hourlyRate && (
+                              <>
+                                <span className="font-bold text-xs mr-0">Hourly Rate:</span>
+                                <span className="flex items-center space-x-1 text-green-600 font-semibold">
+                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  <span>${project.hourlyRate.toFixed(2)}/hr</span>
+                                </span>
+                              </>
+                            )}
                             <div className="flex items-center space-x-1 text-xs text-gray-500">
                               <span className="font-bold text-xs mr-0">Target completion Date:</span>
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

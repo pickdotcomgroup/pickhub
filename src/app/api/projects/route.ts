@@ -14,6 +14,7 @@ interface ProjectRequestBody {
   projectTemplate?: string;
   techStack?: string[];
   visibility?: string;
+  hourlyRate?: number;
 }
 
 export async function POST(req: Request) {
@@ -46,7 +47,8 @@ export async function POST(req: Request) {
       estimatedDuration,
       projectTemplate,
       techStack,
-      visibility
+      visibility,
+      hourlyRate
     } = body;
 
     // Validation
@@ -73,6 +75,7 @@ export async function POST(req: Request) {
         projectTemplate: projectTemplate,
         techStack: techStack ?? [],
         visibility: visibility ?? "public",
+        hourlyRate: hourlyRate ?? null,
       },
     });
 

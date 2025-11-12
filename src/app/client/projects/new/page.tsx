@@ -26,14 +26,26 @@ export default function NewProjectPage() {
 
   const [form, setForm] = useState({
     projectTemplate: "", title: "", description: "", category: "", techStack: [] as string[], skills: [] as string[],
-    budget: "", projectType: "fixed", deadline: "", estimatedDuration: 30, visibility: "public",
+    budget: "", projectType: "fixed", deadline: "", estimatedDuration: 30, visibility: "public", hourlyRate: 0,
   });
 
+  // Authentication check - must be before any conditional returns
   useEffect(() => {
     if (status === "loading") return;
     if (!session) { router.push("/auth"); return; }
     if (session.user.role !== "client") { router.push("/dashboard"); return; }
   }, [session, status, router]);
+
+  // Update hourly rate when budget or duration changes
+  useEffect(() => {
+    if (form.projectType === "hourly") {
+      const hoursPerDay = 8;
+      const workingDays = 22;
+      const totalHours = workingDays * hoursPerDay;
+      const rate = form.budget && form.estimatedDuration ? parseFloat(form.budget) / totalHours : 0;
+      setForm(p => ({ ...p, hourlyRate: rate }));
+    }
+  }, [form.budget, form.estimatedDuration, form.projectType]);
 
   if (status === "loading" || !session || session.user.role !== "client") {
     return <main className="flex min-h-screen items-center justify-center bg-white"><div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div></main>;
@@ -63,6 +75,15 @@ export default function NewProjectPage() {
   const calcBudget = () => {
     const est = MARKET_RATE.avg * 6 * form.estimatedDuration;
     return { min: MARKET_RATE.min * 6 * form.estimatedDuration, max: MARKET_RATE.max * 6 * form.estimatedDuration, suggested: est };
+  };
+
+  // Calculate hourly rate based on budget and estimated duration
+  const calcHourlyRate = () => {
+    if (!form.budget || !form.estimatedDuration) return 0;
+    const hoursPerDay = 8; // Assuming 8 working hours per day
+    const workingDays = 22; // Standard working days per month (excluding weekends)
+    const totalHours = workingDays * hoursPerDay;
+    return parseFloat(form.budget) / totalHours;
   };
 
 
@@ -241,6 +262,15 @@ export default function NewProjectPage() {
                   <div className="grid grid-cols-2 gap-4">
                     {["fixed", "hourly"].map((type) => (<button key={type} type="button" onClick={() => setForm(p => ({ ...p, projectType: type }))} className={`p-4 rounded-lg border-2 text-center transition ${form.projectType === type ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}><div className="text-gray-900 font-semibold capitalize">{type === "fixed" ? "Fixed Price" : "Hourly Rate"}</div><div className="text-xs text-gray-600 mt-1">{type === "fixed" ? "One-time payment" : "Pay per hour"}</div></button>))}
                   </div>
+                  {form.projectType === "hourly" && form.budget && form.estimatedDuration && (
+                    <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="text-sm text-green-700 font-semibold mb-2">💰 Calculated Hourly Rate</div>
+                      <div className="text-2xl font-bold text-green-700">${calcHourlyRate().toFixed(2)}/hour</div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        Based on ${parseFloat(form.budget).toLocaleString()} budget ÷ 22 working days × 8 hours/day
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>

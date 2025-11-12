@@ -245,6 +245,7 @@ model Project {
     projectTemplate    String?       // web_app, mobile_app, api_development, etc.
     techStack          String[]      @default([]) // Technology stack
     visibility         String        @default("public") // public or invite_only
+    hourlyRate         Float?        // Calculated hourly rate for hourly projects
     
     // Tier-based access
     minimumTier        String        @default("bronze") // bronze, silver, gold - minimum tier required
