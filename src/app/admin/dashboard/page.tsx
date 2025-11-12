@@ -49,6 +49,13 @@ export default function AdminDashboard() {
   const [userType, setUserType] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [selectedTalent, setSelectedTalent] = useState<PendingTalent | null>(null);
+  
+  // Pagination states
+  const [pendingPage, setPendingPage] = useState(1);
+  const [approvedPage, setApprovedPage] = useState(1);
+  const [usersPage, setUsersPage] = useState(1);
+  const itemsPerPage = 10;
+  
   const [verificationForm, setVerificationForm] = useState({
     portfolioScore: "",
     codeSampleScore: "",
@@ -84,8 +91,93 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     void fetchData();
+    // Reset pagination when tab changes
+    setPendingPage(1);
+    setApprovedPage(1);
+    setUsersPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, userType]);
+
+  // Pagination helpers
+  const getPaginatedData = <T,>(data: T[], page: number): T[] => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = (totalItems: number): number => {
+    return Math.ceil(totalItems / itemsPerPage);
+  };
+
+  const PaginationControls = ({ 
+    currentPage, 
+    totalItems, 
+    onPageChange 
+  }: { 
+    currentPage: number; 
+    totalItems: number; 
+    onPageChange: (page: number) => void;
+  }) => {
+    const totalPages = getTotalPages(totalItems);
+    
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+        <div className="flex items-center text-sm text-gray-700">
+          <span>
+            Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{" "}
+            <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{" "}
+            <span className="font-medium">{totalItems}</span> results
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition ${
+              currentPage === 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            Previous
+          </button>
+          
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition ${
+                currentPage === page
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition ${
+              currentPage === totalPages
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Get paginated data for each table
+  const paginatedPendingTalents = getPaginatedData(pendingTalents, pendingPage);
+  const paginatedApprovedTalents = getPaginatedData(approvedTalents, approvedPage);
+  const paginatedUsers = getPaginatedData(users, usersPage);
 
   const handleVerifyTalent = async (decision: "approved" | "rejected") => {
     if (!selectedTalent) return;
@@ -251,6 +343,11 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                <PaginationControls 
+                  currentPage={pendingPage}
+                  totalItems={pendingTalents.length}
+                  onPageChange={setPendingPage}
+                />
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -273,7 +370,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {pendingTalents.map((talent) => (
+                      {paginatedPendingTalents.map((talent) => (
                         <tr key={talent.id} className="hover:bg-gray-50 transition">
                           <td className="whitespace-nowrap px-6 py-4">
                             <div>
@@ -350,6 +447,11 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                <PaginationControls 
+                  currentPage={approvedPage}
+                  totalItems={approvedTalents.length}
+                  onPageChange={setApprovedPage}
+                />
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -369,7 +471,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {approvedTalents.map((talent) => (
+                      {paginatedApprovedTalents.map((talent) => (
                         <tr key={talent.id} className="hover:bg-gray-50 transition">
                           <td className="whitespace-nowrap px-6 py-4">
                             <div className="text-sm font-medium text-gray-900">
@@ -413,6 +515,11 @@ export default function AdminDashboard() {
 
             {/* Users Table */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+              <PaginationControls 
+                currentPage={usersPage}
+                totalItems={users.length}
+                onPageChange={setUsersPage}
+              />
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -432,7 +539,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {users.map((user) => (
+                    {paginatedUsers.map((user) => (
                       <tr key={user.id} className="hover:bg-gray-50 transition">
                         <td className="whitespace-nowrap px-6 py-4">
                           <div>
