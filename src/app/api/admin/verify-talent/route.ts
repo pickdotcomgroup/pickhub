@@ -131,8 +131,8 @@ export async function POST(request: Request) {
   }
 }
 
-// Get pending verification requests
-export async function GET() {
+// Get pending or approved verification requests
+export async function GET(request: Request) {
   try {
     const session = await auth();
 
@@ -153,35 +153,67 @@ export async function GET() {
       );
     }
 
-    // Get all talent profiles with pending or in_review status
-    const pendingTalents = await db.talentProfile.findMany({
-      where: {
-        verificationStatus: {
-          in: ["pending", "in_review"],
+    // Get status from query params
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status") ?? "pending";
+
+    let talents;
+    
+    if (status === "approved") {
+      // Get all talent profiles with verified status
+      talents = await db.talentProfile.findMany({
+        where: {
+          verificationStatus: "verified",
         },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              createdAt: true,
+            },
+          },
+          verification: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return NextResponse.json({
+        approvedTalents: talents,
+        count: talents.length,
+      });
+    } else {
+      // Get all talent profiles with pending or in_review status
+      talents = await db.talentProfile.findMany({
+        where: {
+          verificationStatus: {
+            in: ["pending", "in_review"],
           },
         },
-        verification: true,
-      },
-      orderBy: { createdAt: "asc" },
-    });
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              createdAt: true,
+            },
+          },
+          verification: true,
+        },
+        orderBy: { createdAt: "asc" },
+      });
 
-    return NextResponse.json({
-      pendingTalents,
-      count: pendingTalents.length,
-    });
+      return NextResponse.json({
+        pendingTalents: talents,
+        count: talents.length,
+      });
+    }
   } catch (error) {
-    console.error("Error fetching pending verifications:", error);
+    console.error("Error fetching verifications:", error);
     return NextResponse.json(
-      { error: "Failed to fetch pending verifications" },
+      { error: "Failed to fetch verifications" },
       { status: 500 }
     );
   }
