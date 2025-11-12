@@ -5,6 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, ArrowLeft, UserPlus } from "lucide-react";
 
 type ProfessionalType = "client" | "talent" | "agency";
 
@@ -43,6 +44,7 @@ function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [professionalType, setProfessionalType] = useState<ProfessionalType>("talent");
+  const [currentStep, setCurrentStep] = useState(1);
   const [professionalFormData, setProfessionalFormData] = useState<ProfessionalFormData>({
     email: "",
     password: "",
@@ -55,6 +57,8 @@ function SignupContent() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const totalSteps = professionalType === "client" ? 2 : 3;
 
   useEffect(() => {
     const type = searchParams.get("type") as ProfessionalType;
@@ -80,39 +84,52 @@ function SignupContent() {
     }
   }, [session, router]);
 
-  const validateForm = (): boolean => {
+  const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!professionalFormData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!professionalFormData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!professionalFormData.email.trim()) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(professionalFormData.email)) newErrors.email = "Invalid email format";
-    
-    if (!professionalFormData.password) newErrors.password = "Password is required";
-    else if (professionalFormData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
-    
-    if (professionalFormData.password !== professionalFormData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (professionalType === "talent") {
-      if (!professionalFormData.title?.trim()) newErrors.title = "Professional title is required";
-      if (!professionalFormData.skills?.length) newErrors.skills = "At least one skill is required";
-      if (!professionalFormData.experience) newErrors.experience = "Experience level is required";
-    } else if (professionalType === "agency") {
-      if (!professionalFormData.agencyName?.trim()) newErrors.agencyName = "Agency name is required";
-      if (!professionalFormData.description?.trim()) newErrors.description = "Agency description is required";
-      if (!professionalFormData.agencySkills?.length) newErrors.agencySkills = "At least one skill is required";
+    if (step === 1) {
+      if (!professionalFormData.firstName.trim()) newErrors.firstName = "First name is required";
+      if (!professionalFormData.lastName.trim()) newErrors.lastName = "Last name is required";
+      if (!professionalFormData.email.trim()) newErrors.email = "Email is required";
+      else if (!/\S+@\S+\.\S+/.test(professionalFormData.email)) newErrors.email = "Invalid email format";
+    } else if (step === 2) {
+      if (!professionalFormData.password) newErrors.password = "Password is required";
+      else if (professionalFormData.password.length < 8) newErrors.password = "Password must be at least 8 characters";
+      
+      if (professionalFormData.password !== professionalFormData.confirmPassword) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+    } else if (step === 3) {
+      if (professionalType === "talent") {
+        if (!professionalFormData.title?.trim()) newErrors.title = "Professional title is required";
+        if (!professionalFormData.skills?.length) newErrors.skills = "At least one skill is required";
+        if (!professionalFormData.experience) newErrors.experience = "Experience level is required";
+      } else if (professionalType === "agency") {
+        if (!professionalFormData.agencyName?.trim()) newErrors.agencyName = "Agency name is required";
+        if (!professionalFormData.description?.trim()) newErrors.description = "Agency description is required";
+        if (!professionalFormData.agencySkills?.length) newErrors.agencySkills = "At least one skill is required";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(prev => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep(prev => prev - 1);
+    setErrors({});
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateStep(currentStep)) return;
 
     setIsLoading(true);
     setErrors({});
@@ -195,157 +212,213 @@ function SignupContent() {
     }));
   };
 
-  const getProfessionalInfo = () => {
-    switch (professionalType) {
-      case "client":
-        return {
-          title: "Join as a Client",
-          subtitle: "Post projects and hire top Developers",
-          icon: "🏢"
-        };
-      case "talent":
-        return {
-          title: "Join as a Talent",
-          subtitle: "Showcase your skills and find opportunities",
-          icon: "👨‍💻"
-        };
-      case "agency":
-        return {
-          title: "Join as an Agency",
-          subtitle: "Scale your business and manage clients",
-          icon: "🏛️"
-        };
-    }
-  };
-
   if (session?.user) {
     return null;
   }
 
-  const professionalInfo = getProfessionalInfo();
-
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-8">
+    <main className={`flex min-h-screen flex-col items-center py-3 ${
+      professionalType === "client" || professionalType === "talent"
+        ? "bg-white" 
+        : "bg-white"
+    }`}>
       <div className="w-full px-6 max-w-4xl">
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">{professionalInfo.icon}</div>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            <span className="text-purple-400">TechPick</span>Hub
-          </h1>
-          <p className="text-gray-300">{professionalInfo.subtitle}</p>
-        </div>
+        <div className={`rounded-2xl p-8 ${
+          professionalType === "client" || professionalType === "talent"
+            ? "bg-white"
+            : "bg-white"
+        }`}>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className={`text-2xl font-bold ${
+              professionalType === "client" || professionalType === "talent" ? "text-gray-900" : "text-white"
+            }`}>
+              {professionalType === "client" && "Client Sign Up"}
+              {professionalType === "talent" && "Developer Sign Up"}
+              {professionalType === "agency" && "Agency Sign Up"}
+            </h1>
+            <p className={`mt-2 text-sm ${
+              professionalType === "client" || professionalType === "talent" ? "text-gray-600" : "text-gray-300"
+            }`}>
+              {professionalType === "client" && "Create your account to start hiring top talent"}
+              {professionalType === "talent" && "Create your account to find amazing opportunities"}
+              {professionalType === "agency" && "Create your account to connect with clients"}
+            </p>
+          </div>
 
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">{professionalInfo.title}</h2>
-            <p className="text-gray-300">{professionalInfo.subtitle}</p>
+          {/* Progress Indicator */}
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-2 max-w-xs mx-auto">
+              {Array.from({ length: totalSteps }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-0.5 flex-1 rounded-full transition-all duration-300 ${
+                    currentStep > index
+                      ? "bg-blue-600"
+                      : professionalType === "client" || professionalType === "talent" ? "bg-gray-300" : "bg-white/20"
+                  }`}
+                />
+              ))}
+            </div>
+            <div className="text-center mt-4">
+              <p className={`text-sm ${professionalType === "client" || professionalType === "talent" ? "text-gray-600" : "text-gray-300"}`}>
+                Step {currentStep} of {totalSteps}
+              </p>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
-              <div className="grid md:grid-cols-2 gap-4">
+            {/* Step 1: Basic Information */}
+            {currentStep === 1 && (
+              <div>
+                <h3 className={`text-lg font-semibold mb-4 ${
+                  professionalType === "client" || professionalType === "talent" ? "text-gray-900" : "text-white"
+                }`}>Let&apos;s start with your basic information</h3>
+                <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-200 mb-1">First Name *</label>
+                  <label htmlFor="firstName" className={`block text-sm font-medium mb-1 ${
+                    professionalType === "client" || professionalType === "talent" ? "text-gray-700" : "text-gray-200"
+                  }`}>First Name *</label>
                   <input
                     type="text"
                     id="firstName"
                     name="firstName"
                     value={professionalFormData.firstName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.firstName ? "border-red-500" : "border-white/20"}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                      professionalType === "client" || professionalType === "talent"
+                        ? `bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 ${errors.firstName ? "border-red-500" : "border-gray-300"}`
+                        : `bg-white/10 text-white placeholder-gray-400 focus:ring-purple-500 ${errors.firstName ? "border-red-500" : "border-white/20"}`
+                    }`}
                     placeholder="Enter your first name"
                   />
                   {errors.firstName && <p className="mt-1 text-sm text-red-400">{errors.firstName}</p>}
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-200 mb-1">Last Name *</label>
+                  <label htmlFor="lastName" className={`block text-sm font-medium mb-1 ${
+                    professionalType === "client" || professionalType === "talent" ? "text-gray-700" : "text-gray-200"
+                  }`}>Last Name *</label>
                   <input
                     type="text"
                     id="lastName"
                     name="lastName"
                     value={professionalFormData.lastName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.lastName ? "border-red-500" : "border-white/20"}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                      professionalType === "client" || professionalType === "talent"
+                        ? `bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 ${errors.lastName ? "border-red-500" : "border-gray-300"}`
+                        : `bg-white/10 text-white placeholder-gray-400 focus:ring-purple-500 ${errors.lastName ? "border-red-500" : "border-white/20"}`
+                    }`}
                     placeholder="Enter your last name"
                   />
                   {errors.lastName && <p className="mt-1 text-sm text-red-400">{errors.lastName}</p>}
                 </div>
-              </div>
+                </div>
 
-              <div className="mt-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-1">Email Address *</label>
+                <div className="mt-4">
+                <label htmlFor="email" className={`block text-sm font-medium mb-1 ${
+                  professionalType === "client" || professionalType === "talent" ? "text-gray-700" : "text-gray-200"
+                }`}>Email Address *</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
                   value={professionalFormData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.email ? "border-red-500" : "border-white/20"}`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                    professionalType === "client" || professionalType === "talent"
+                      ? `bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 ${errors.email ? "border-red-500" : "border-gray-300"}`
+                      : `bg-white/10 text-white placeholder-gray-400 focus:ring-purple-500 ${errors.email ? "border-red-500" : "border-white/20"}`
+                  }`}
                   placeholder="Enter your email address"
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
+                </div>
               </div>
+            )}
 
-              <div className="grid md:grid-cols-2 gap-4 mt-4">
+            {/* Step 2: Password Setup */}
+            {currentStep === 2 && (
+              <div>
+                <h3 className={`text-lg font-semibold mb-4 ${
+                  professionalType === "client" || professionalType === "talent" ? "text-gray-900" : "text-white"
+                }`}>Create a secure password</h3>
+                <div className="space-y-4">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-1">Password *</label>
+                  <label htmlFor="password" className={`block text-sm font-medium mb-1 ${
+                    professionalType === "client" || professionalType === "talent" ? "text-gray-700" : "text-gray-200"
+                  }`}>Password *</label>
                   <input
                     type="password"
                     id="password"
                     name="password"
                     value={professionalFormData.password}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.password ? "border-red-500" : "border-white/20"}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                      professionalType === "client" || professionalType === "talent"
+                        ? `bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 ${errors.password ? "border-red-500" : "border-gray-300"}`
+                        : `bg-white/10 text-white placeholder-gray-400 focus:ring-purple-500 ${errors.password ? "border-red-500" : "border-white/20"}`
+                    }`}
                     placeholder="Create a password"
                   />
                   {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password}</p>}
                 </div>
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-200 mb-1">Confirm Password *</label>
+                  <label htmlFor="confirmPassword" className={`block text-sm font-medium mb-1 ${
+                    professionalType === "client" || professionalType === "talent" ? "text-gray-700" : "text-gray-200"
+                  }`}>Confirm Password *</label>
                   <input
                     type="password"
                     id="confirmPassword"
                     name="confirmPassword"
                     value={professionalFormData.confirmPassword}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.confirmPassword ? "border-red-500" : "border-white/20"}`}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
+                      professionalType === "client" || professionalType === "talent"
+                        ? `bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500 ${errors.confirmPassword ? "border-red-500" : "border-gray-300"}`
+                        : `bg-white/10 text-white placeholder-gray-400 focus:ring-purple-500 ${errors.confirmPassword ? "border-red-500" : "border-white/20"}`
+                    }`}
                     placeholder="Confirm your password"
                   />
-                  {errors.confirmPassword && <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {professionalType !== "client" && (
-              <div className="border-t border-white/20 pt-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Professional Information</h3>
+            {/* Step 3: Professional Information (only for talent and agency) */}
+
+            {currentStep === 3 && professionalType !== "client" && (
+              <div>
+                <h3 className={`text-lg font-semibold mb-4 ${
+                  professionalType === "talent" ? "text-gray-900" : "text-white"
+                }`}>Professional Information</h3>
 
                 {professionalType === "talent" && (
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="title" className="block text-sm font-medium text-gray-200 mb-1">Professional Title *</label>
+                      <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Professional Title *</label>
                       <input
                         type="text"
                         id="title"
                         name="title"
                         value={professionalFormData.title ?? ""}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.title ? "border-red-500" : "border-white/20"}`}
+                        className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.title ? "border-red-500" : "border-gray-300"}`}
                         placeholder="e.g., Full Stack Developer"
                       />
                       {errors.title && <p className="mt-1 text-sm text-red-400">{errors.title}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-200 mb-2">Skills & Technologies *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Skills & Technologies *</label>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {skillOptions.map((skill) => (
                           <button
                             key={skill}
                             type="button"
                             onClick={() => handleSkillToggle(skill)}
-                            className={`px-3 py-2 rounded-lg text-sm transition ${professionalFormData.skills?.includes(skill) ? "bg-purple-600 text-white" : "bg-white/10 text-gray-300 hover:bg-white/20"}`}
+                            className={`px-3 py-2 rounded-lg text-sm transition ${professionalFormData.skills?.includes(skill) ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
                           >
                             {skill}
                           </button>
@@ -356,45 +429,45 @@ function SignupContent() {
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="experience" className="block text-sm font-medium text-gray-200 mb-1">Experience Level *</label>
+                        <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-1">Experience Level *</label>
                         <select
                           id="experience"
                           name="experience"
                           value={professionalFormData.experience ?? ""}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 bg-white/10 border rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 ${errors.experience ? "border-red-500" : "border-white/20"}`}
+                          className={`w-full px-4 py-3 bg-white border rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.experience ? "border-red-500" : "border-gray-300"}`}
                         >
                           <option value="">Select experience level</option>
-                          <option value="entry" className="bg-slate-800">Entry Level (0-2 years)</option>
-                          <option value="intermediate" className="bg-slate-800">Intermediate (2-5 years)</option>
-                          <option value="senior" className="bg-slate-800">Senior (5-10 years)</option>
-                          <option value="expert" className="bg-slate-800">Expert (10+ years)</option>
+                          <option value="entry">Entry Level (0-2 years)</option>
+                          <option value="intermediate">Intermediate (2-5 years)</option>
+                          <option value="senior">Senior (5-10 years)</option>
+                          <option value="expert">Expert (10+ years)</option>
                         </select>
                         {errors.experience && <p className="mt-1 text-sm text-red-400">{errors.experience}</p>}
                       </div>
                       <div>
-                        <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-200 mb-1">Hourly Rate (USD)</label>
+                        <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-1">Hourly Rate (USD)</label>
                         <input
                           type="text"
                           id="hourlyRate"
                           name="hourlyRate"
                           value={professionalFormData.hourlyRate ?? ""}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder="e.g., $50/hr"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label htmlFor="portfolio" className="block text-sm font-medium text-gray-200 mb-1">Portfolio URL</label>
+                      <label htmlFor="portfolio" className="block text-sm font-medium text-gray-700 mb-1">Portfolio URL</label>
                       <input
                         type="url"
                         id="portfolio"
                         name="portfolio"
                         value={professionalFormData.portfolio ?? ""}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="https://your-portfolio.com"
                       />
                     </div>
@@ -475,47 +548,87 @@ function SignupContent() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center text-white disabled:cursor-not-allowed ${
-                professionalType === "client" ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800" :
-                professionalType === "talent" ? "bg-green-600 hover:bg-green-700 disabled:bg-green-800" :
-                "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
-              }`}
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating Account...
-                </div>
-              ) : (
-                `Create ${professionalInfo.title.split(' ')[2]} Account`
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 justify-between">
+              {currentStep > 1 && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className={`font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center gap-2 ${
+                    professionalType === "client" || professionalType === "talent"
+                      ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </button>
               )}
-            </button>
+              
+              {currentStep < totalSteps ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className={`font-semibold py-3 px-4 rounded-lg transition duration-200 text-white flex items-center gap-2 ${
+                    currentStep === 1 ? "ml-auto" : ""
+                  } ${
+                    professionalType === "client" || professionalType === "talent" ? "bg-blue-600 hover:bg-blue-700" :
+                    "bg-indigo-600 hover:bg-indigo-700"
+                  }`}
+                >
+                  Continue
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`font-semibold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center gap-2 text-white disabled:cursor-not-allowed ${
+                    professionalType === "client" || professionalType === "talent" ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400" :
+                    "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
+                  }`}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Creating Account...
+                    </div>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4" />
+                      Create Account
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-300">
+            <p className={`text-sm ${professionalType === "client" || professionalType === "talent" ? "text-gray-600" : "text-gray-300"}`}>
               Want to choose a different account type?{" "}
-              <Link href="/join" className="text-purple-400 hover:text-purple-300 font-semibold transition">
+              <Link href="/join" className={`font-semibold transition ${
+                professionalType === "client" || professionalType === "talent" ? "text-blue-600 hover:text-blue-700" : "text-purple-400 hover:text-purple-300"
+              }`}>
                 Go back
               </Link>
             </p>
-            <p className="text-sm text-gray-300 mt-2">
+            <p className={`text-sm mt-2 ${professionalType === "client" || professionalType === "talent" ? "text-gray-600" : "text-gray-300"}`}>
               Already have an account?{" "}
-              <Link href="/signin" className="text-purple-400 hover:text-purple-300 font-semibold transition">
+              <Link href="/signin" className={`font-semibold transition ${
+                professionalType === "client" || professionalType === "talent" ? "text-blue-600 hover:text-blue-700" : "text-purple-400 hover:text-purple-300"
+              }`}>
                 Sign In
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="mt-6 text-center text-xs text-gray-400">
+        <div className={`mt-6 text-center text-xs ${professionalType === "client" || professionalType === "talent" ? "text-gray-500" : "text-gray-400"}`}>
           By creating an account, you agree to our{" "}
-          <Link href="#" className="text-purple-400 hover:text-purple-300">Terms of Service</Link>
+          <Link href="#" className={professionalType === "client" || professionalType === "talent" ? "text-blue-600 hover:text-blue-700" : "text-purple-400 hover:text-purple-300"}>Terms of Service</Link>
           {" "}and{" "}
-          <Link href="#" className="text-purple-400 hover:text-purple-300">Privacy Policy</Link>
+          <Link href="#" className={professionalType === "client" || professionalType === "talent" ? "text-blue-600 hover:text-blue-700" : "text-purple-400 hover:text-purple-300"}>Privacy Policy</Link>
         </div>
       </div>
     </main>
