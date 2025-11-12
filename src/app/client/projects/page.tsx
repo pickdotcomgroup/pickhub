@@ -661,7 +661,7 @@ ${session?.user.name ?? 'The Team'}`;
                                   {application.talent.talentProfile.skills.slice(0, 5).map((skill, idx) => (
                                     <span
                                       key={idx}
-                                      className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded"
+                                      className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded"
                                     >
                                       {skill}
                                     </span>
@@ -682,7 +682,7 @@ ${session?.user.name ?? 'The Team'}`;
                                     <span>${application.talent.talentProfile.hourlyRate}/hr</span>
                                   )}
                                   {application.proposedRate && (
-                                    <span className="text-purple-600 font-medium">
+                                    <span className="text-blue-600 font-medium">
                                       Proposed: ${application.proposedRate.toLocaleString()}
                                     </span>
                                   )}
@@ -708,7 +708,7 @@ ${session?.user.name ?? 'The Team'}`;
                         <div className="flex flex-col space-y-2 ml-4">
                           <button
                             onClick={() => setSelectedDeveloper(application)}
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition whitespace-nowrap"
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition whitespace-nowrap"
                           >
                             View Profile
                           </button>
@@ -797,7 +797,7 @@ ${session?.user.name ?? 'The Team'}`;
             <div className="p-6 space-y-6">
               {/* Developer Header */}
               <div className="flex items-start space-x-4">
-                <div className="w-20 h-20 rounded-full bg-purple-600 flex items-center justify-center text-white text-2xl font-semibold flex-shrink-0">
+                <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-semibold flex-shrink-0">
                   {selectedDeveloper.talent.image ? (
                     <Image
                       src={selectedDeveloper.talent.image}
@@ -822,7 +822,7 @@ ${session?.user.name ?? 'The Team'}`;
                   </h3>
                   {selectedDeveloper.talent.talentProfile && (
                     <>
-                      <p className="text-purple-600 text-lg mb-2">
+                      <p className="text-blue-600 text-lg mb-2">
                         {selectedDeveloper.talent.talentProfile.title}
                       </p>
                       <div className="flex items-center space-x-4 text-sm text-gray-500">
@@ -864,7 +864,7 @@ ${session?.user.name ?? 'The Team'}`;
                   {selectedDeveloper.proposedRate && (
                     <div className="text-right">
                       <p className="text-sm text-gray-600 mb-1">Proposed Rate</p>
-                      <p className="text-xl font-bold text-purple-600">
+                      <p className="text-xl font-bold text-blue-600">
                         ${selectedDeveloper.proposedRate.toLocaleString()}
                       </p>
                     </div>
@@ -876,7 +876,7 @@ ${session?.user.name ?? 'The Team'}`;
               {selectedDeveloper.talent.talentProfile && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                     <span>Skills & Expertise</span>
@@ -885,7 +885,7 @@ ${session?.user.name ?? 'The Team'}`;
                     {selectedDeveloper.talent.talentProfile.skills.map((skill, idx) => (
                       <span
                         key={idx}
-                        className="px-4 py-2 bg-purple-100 text-purple-700 text-sm rounded-lg border border-purple-200"
+                        className="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-lg border border-blue-200"
                       >
                         {skill}
                       </span>
@@ -898,7 +898,7 @@ ${session?.user.name ?? 'The Team'}`;
               {selectedDeveloper.coverLetter && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span>Cover Letter</span>
@@ -913,7 +913,7 @@ ${session?.user.name ?? 'The Team'}`;
               {selectedDeveloper.talent.talentProfile?.portfolio && (
                 <div>
                   <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                     </svg>
                     <span>Portfolio</span>
@@ -922,7 +922,7 @@ ${session?.user.name ?? 'The Team'}`;
                     href={selectedDeveloper.talent.talentProfile.portfolio}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-purple-600 hover:text-purple-700 transition"
+                    className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition"
                   >
                     <span>{selectedDeveloper.talent.talentProfile.portfolio}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -935,7 +935,7 @@ ${session?.user.name ?? 'The Team'}`;
               {/* Contact Information */}
               <div>
                 <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>Contact</span>
@@ -980,7 +980,7 @@ ${session?.user.name ?? 'The Team'}`;
                   setSelectedDeveloper(null);
                   void handleMessageDeveloper(selectedDeveloper.talent.id, '');
                 }}
-                className="flex-1 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition flex items-center justify-center space-x-2"
+                className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition flex items-center justify-center space-x-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -1029,9 +1029,9 @@ ${session?.user.name ?? 'The Team'}`;
             {/* Modal Content */}
             <div className="p-6 space-y-6">
               {/* Recipient Info */}
-              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <div className="flex items-center space-x-2 mb-2">
-                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   <span className="font-semibold text-gray-900">Recipient</span>
@@ -1049,7 +1049,7 @@ ${session?.user.name ?? 'The Team'}`;
                   type="text"
                   value={emailData.subject}
                   onChange={(e) => setEmailData({ ...emailData, subject: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Email subject"
                 />
               </div>
@@ -1063,7 +1063,7 @@ ${session?.user.name ?? 'The Team'}`;
                   value={emailData.message}
                   onChange={(e) => setEmailData({ ...emailData, message: e.target.value })}
                   rows={12}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
                   placeholder="Email message"
                 />
                 <p className="text-xs text-gray-500 mt-2">
