@@ -248,18 +248,70 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // Update the application status
-    const updatedApplication = await db.application.update({
-      where: { id: applicationId },
-      data: { status: status as "pending" | "accepted" | "rejected" },
-      include: {
-        talent: {
+    // Update the application status and project status if accepted
+    let updatedApplication;
+    
+    if (status === "accepted") {
+      // Use transaction to update both application and project
+      const result = await db.$transaction([
+        db.application.update({
+          where: { id: applicationId },
+          data: { status: status as "pending" | "accepted" | "rejected" },
           include: {
-            talentProfile: true,
+            talent: {
+              include: {
+                talentProfile: true,
+              },
+            },
+          },
+        }),
+        // Update project status to in_progress when developer is accepted
+        db.project.update({
+          where: { id: application.projectId },
+          data: { status: "in_progress" },
+        }),
+        // Create notification for the accepted talent
+        db.notification.create({
+          data: {
+            type: "application_accepted",
+            title: "Your Application Was Accepted!",
+            message: `Congratulations! Your application for "${application.project.title}" has been accepted by the client.`,
+            userId: application.talentId,
+            relatedProjectId: application.projectId,
+            relatedApplicationId: applicationId,
+          },
+        }),
+      ]);
+      
+      updatedApplication = result[0];
+    } else {
+      // For rejected or pending status, just update the application
+      updatedApplication = await db.application.update({
+        where: { id: applicationId },
+        data: { status: status as "pending" | "accepted" | "rejected" },
+        include: {
+          talent: {
+            include: {
+              talentProfile: true,
+            },
           },
         },
-      },
-    });
+      });
+      
+      // Create notification for rejected applications
+      if (status === "rejected") {
+        await db.notification.create({
+          data: {
+            type: "application_rejected",
+            title: "Application Update",
+            message: `Your application for "${application.project.title}" was not selected this time.`,
+            userId: application.talentId,
+            relatedProjectId: application.projectId,
+            relatedApplicationId: applicationId,
+          },
+        });
+      }
+    }
 
     return NextResponse.json(
       { 

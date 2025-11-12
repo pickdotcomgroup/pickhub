@@ -23,6 +23,7 @@ interface Project {
     id: string;
     name: string | null;
     email: string | null;
+    image: string | null;
   };
 }
 
@@ -436,6 +437,25 @@ export default function TalentBrowsePage() {
                             <h3 className="text-lg font-semibold text-gray-900 flex-1">{project.title}</h3>
                             <span className={`px-2 py-1 text-xs rounded-full border capitalize ${getTierBadgeColor(project.minimumTier)}`}>
                               {project.minimumTier}
+                            </span>
+                          </div>
+                          {/* Client Avatar and Name */}
+                          <div className="flex items-center gap-2 mb-2">
+                            {project.client.image ? (
+                              <img
+                                src={project.client.image}
+                                alt={project.client.name ?? "Client"}
+                                className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                              />
+                            ) : (
+                              <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                <span className="text-xs font-semibold text-blue-600">
+                                  {(project.client.name ?? project.client.email ?? "A").charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
+                            <span className="text-sm text-gray-600">
+                              <span className="font-medium text-gray-900">{project.client.name ?? project.client.email ?? "Anonymous"}</span>
                             </span>
                           </div>
                           <span className="font-bold text-gray-500 text-xs mr-1">Description:</span>

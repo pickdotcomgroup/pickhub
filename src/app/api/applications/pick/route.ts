@@ -83,13 +83,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Update application and talent profile in a transaction
+    // Update application, talent profile, and project status in a transaction
     const result = await db.$transaction([
       db.application.update({
         where: { id: applicationId },
         data: {
           isPicked: true,
           pickedAt: new Date(),
+          status: "accepted",
         },
       }),
       db.talentProfile.update({
@@ -98,6 +99,12 @@ export async function POST(request: Request) {
           activePicks: {
             increment: 1,
           },
+        },
+      }),
+      db.project.update({
+        where: { id: application.projectId },
+        data: {
+          status: "in_progress",
         },
       }),
     ]);
@@ -162,13 +169,14 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Update application and talent profile in a transaction
+    // Update application, talent profile, and project status in a transaction
     await db.$transaction([
       db.application.update({
         where: { id: applicationId },
         data: {
           isPicked: false,
           pickedAt: null,
+          status: "pending",
         },
       }),
       db.talentProfile.update({
@@ -177,6 +185,12 @@ export async function DELETE(request: Request) {
           activePicks: {
             decrement: 1,
           },
+        },
+      }),
+      db.project.update({
+        where: { id: application.projectId },
+        data: {
+          status: "open",
         },
       }),
     ]);
