@@ -355,6 +355,45 @@ export default function Header() {
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
+              ) : session.user.role === "agency" ? (
+                <>
+                  <Link
+                    href="/agency/browse-clients"
+                    className={`${getNavLinkClasses("/agency/browse-clients")} flex items-center gap-2`}
+                  >
+                    <FolderKanban className="w-4 h-4" />
+                    <span>Browse Clients</span>
+                  </Link>
+                  <Link
+                    href="/agency/browse-developers"
+                    className={`${getNavLinkClasses("/agency/browse-developers")} flex items-center gap-2`}
+                  >
+                    <Users className="w-4 h-4" />
+                    <span>Browse Developers</span>
+                  </Link>
+                  <Link
+                    href="/agency/picked-clients"
+                    className={`${getNavLinkClasses("/agency/picked-clients")} flex items-center gap-2`}
+                  >
+                    <FolderKanban className="w-5 h-5" />
+                    <span>Picked Clients</span>
+                  </Link>
+                  <Link
+                    href="/agency/picked-developers"
+                    className={`${getNavLinkClasses("/agency/picked-developers")} flex items-center gap-2`}
+                  >
+                    <FolderGit className="w-5 h-5" />
+                    <span>Picked Developers</span>
+                  </Link>
+                  <Link
+                    href="/agency/messages"
+                    className={`relative ${getNavLinkClasses("/agency/messages")}`}
+                    aria-label="Messages"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    <NotificationBadge count={unreadCount} />
+                  </Link>
+                </>
               ) : session.user.role === "admin" ? (
                 <>
                   <Link
@@ -615,6 +654,29 @@ export default function Header() {
                           </Link>
                         )}
 
+                        {session.user.role === "agency" && (
+                          <Link
+                            href="/agency/dashboard"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            <svg
+                              className="w-4 h-4 mr-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                              />
+                            </svg>
+                            Dashboard
+                          </Link>
+                        )}
+
                         {session.user.role === "admin" && (
                           <Link
                             href="/admin/dashboard"
@@ -665,6 +727,29 @@ export default function Header() {
                         {session.user.role === "talent" && (
                           <Link
                             href="/talent/account"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            <svg
+                              className="w-4 h-4 mr-3"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                            Account
+                          </Link>
+                        )}
+
+                        {session.user.role === "agency" && (
+                          <Link
+                            href="/agency/account"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
                             onClick={() => setIsDropdownOpen(false)}
                           >
@@ -836,6 +921,53 @@ export default function Header() {
                   <Link
                     href="/talent/messages"
                     className={`relative ${getMobileNavLinkClasses("/talent/messages")} flex items-center`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <MessageSquare className="w-4 h-4 mr-3" />
+                    Messages
+                    <NotificationBadge count={unreadCount} />
+                  </Link>
+                </>
+              ) : session.user.role === "agency" ? (
+                <>
+                  <Link
+                    href="/agency/dashboard"
+                    className={getMobileNavLinkClasses("/agency/dashboard")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/agency/browse-clients"
+                    className={getMobileNavLinkClasses("/agency/browse-clients")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Browse Clients
+                  </Link>
+                  <Link
+                    href="/agency/browse-developers"
+                    className={getMobileNavLinkClasses("/agency/browse-developers")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Browse Developers
+                  </Link>
+                  <Link
+                    href="/agency/picked-clients"
+                    className={getMobileNavLinkClasses("/agency/picked-clients")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Picked Clients
+                  </Link>
+                  <Link
+                    href="/agency/picked-developers"
+                    className={getMobileNavLinkClasses("/agency/picked-developers")}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Picked Developers
+                  </Link>
+                  <Link
+                    href="/agency/messages"
+                    className={`relative ${getMobileNavLinkClasses("/agency/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <MessageSquare className="w-4 h-4 mr-3" />

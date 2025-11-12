@@ -4,6 +4,7 @@ import { Pointer } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 
 interface Project {
   id: string;
@@ -442,9 +443,11 @@ export default function TalentBrowsePage() {
                           {/* Client Avatar and Name */}
                           <div className="flex items-center gap-2 mb-2">
                             {project.client.image ? (
-                              <img
+                              <Image
                                 src={project.client.image}
                                 alt={project.client.name ?? "Client"}
+                                width={24}
+                                height={24}
                                 className="w-6 h-6 rounded-full object-cover border border-gray-200"
                               />
                             ) : (

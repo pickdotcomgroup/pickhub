@@ -14,9 +14,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (session.user.role !== "talent") {
+    if (session.user.role !== "talent" && session.user.role !== "agency") {
       return NextResponse.json(
-        { error: "Only talents can apply to projects" },
+        { error: "Only talents and agencies can apply to projects" },
         { status: 403 }
       );
     }
@@ -67,10 +67,30 @@ export async function POST(req: Request) {
       );
     }
 
-    // Get talent profile for developer name
+    // Get talent profile for developer name (if talent) or user info (if agency)
     const talentProfile = await db.talentProfile.findUnique({
       where: { userId: session.user.id },
     });
+
+    // Get user info for notification message
+    const user = await db.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true, role: true },
+    });
+
+    // Determine the applicant name and type
+    let applicantName = "Someone";
+    let applicantType = "developer";
+    
+    if (user?.role === "agency") {
+      applicantName = user.name ?? "An agency";
+      applicantType = "agency";
+    } else if (talentProfile) {
+      applicantName = `${talentProfile.firstName} ${talentProfile.lastName}`;
+      applicantType = "developer";
+    } else if (user?.name) {
+      applicantName = user.name;
+    }
 
     // Create application and notification in a transaction
     const [application] = await db.$transaction([
@@ -101,7 +121,7 @@ export async function POST(req: Request) {
         data: {
           type: "project_picked",
           title: "Your Project Has Been Picked",
-          message: `${talentProfile?.firstName ?? "A developer"} ${talentProfile?.lastName ?? ""} has picked your project "${project.title}".`,
+          message: `${applicantName} (${applicantType}) has picked your project "${project.title}".`,
           userId: project.clientId,
           relatedProjectId: projectId,
         },

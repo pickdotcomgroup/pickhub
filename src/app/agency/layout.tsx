@@ -26,7 +26,7 @@ export default function AgencyLayout({
       if (session.user.role === "client") {
         router.push("/client/dashboard");
       } else if (session.user.role === "talent") {
-        router.push("/talent");
+        router.push("/talent/dashboard");
       } else {
         router.push("/dashboard");
       }
@@ -36,7 +36,7 @@ export default function AgencyLayout({
   // Show loading state
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-white">
         <div className="text-white text-xl">Loading...</div>
       </main>
     );

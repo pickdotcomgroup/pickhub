@@ -24,8 +24,8 @@ interface TalentProfileData {
 
 interface AgencyProfileData {
   professionalType: "agency";
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
   agencyName: string;
   description: string;
   teamSize?: string;
@@ -111,8 +111,8 @@ export async function POST(request: NextRequest) {
           await db.agencyProfile.create({
             data: {
               userId: user.id,
-              firstName: agencyData.firstName,
-              lastName: agencyData.lastName,
+              firstName: agencyData.firstName ?? "",
+              lastName: agencyData.lastName ?? "",
               agencyName: agencyData.agencyName,
               description: agencyData.description,
               teamSize: agencyData.teamSize,

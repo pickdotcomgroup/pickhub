@@ -92,9 +92,12 @@ export default function JoinPage() {
                 </ul>
               </div>
               <div className="mt-auto">
-                <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center">
-                  Sign Up as Agency (Coming Soon)
-                </button>
+                <Link
+                  href="/signup?type=agency"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                >
+                  Sign Up as Agency
+                </Link>
               </div>
             </div>
           </div>

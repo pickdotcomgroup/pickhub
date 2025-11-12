@@ -1,4 +1,5 @@
 import "~/styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -6,6 +7,8 @@ import { SessionProvider } from "next-auth/react";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import LayoutWrapper from "./_components/layout-wrapper";
+import ToastProvider from "./_components/toast-provider";
+
 
 export const metadata: Metadata = {
   title: "TechPickHub - Browse Tech Projects, Developers, and Top Agencies",
@@ -27,6 +30,7 @@ export default function RootLayout({
         <SessionProvider>
           <TRPCReactProvider>
             <LayoutWrapper>{children}</LayoutWrapper>
+            <ToastProvider />
           </TRPCReactProvider>
         </SessionProvider>
       </body>

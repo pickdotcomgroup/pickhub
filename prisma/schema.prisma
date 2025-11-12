@@ -142,8 +142,8 @@ model AgencyProfile {
     userId      String   @unique
     user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     
-    firstName   String
-    lastName    String
+    firstName   String   @default("")
+    lastName    String   @default("")
     agencyName  String
     description String
     teamSize    String?

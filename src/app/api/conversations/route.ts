@@ -32,6 +32,13 @@ export async function GET() {
                 companyName: true,
               },
             },
+            agencyProfile: {
+              select: {
+                firstName: true,
+                lastName: true,
+                agencyName: true,
+              },
+            },
           },
         },
         talent: {
@@ -45,6 +52,13 @@ export async function GET() {
                 firstName: true,
                 lastName: true,
                 title: true,
+              },
+            },
+            agencyProfile: {
+              select: {
+                firstName: true,
+                lastName: true,
+                agencyName: true,
               },
             },
           },
@@ -108,12 +122,13 @@ export async function POST(request: Request) {
 
     const currentUserId = session.user.id;
 
-    // Determine who is client and who is talent
+    // Determine who is client and who is talent/agency
     const currentUser = await db.user.findUnique({
       where: { id: currentUserId },
       include: {
         clientProfile: true,
         talentProfile: true,
+        agencyProfile: true,
       },
     });
 
@@ -122,6 +137,7 @@ export async function POST(request: Request) {
       include: {
         clientProfile: true,
         talentProfile: true,
+        agencyProfile: true,
       },
     });
 
@@ -129,19 +145,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Determine client and talent IDs
+    // Determine client and talent/agency IDs
+    // Note: We use talentId field for both talents and agencies
+    // Support three conversation types:
+    // 1. Client <-> Talent
+    // 2. Client <-> Agency
+    // 3. Agency <-> Talent
     let clientId: string;
     let talentId: string;
 
-    if (currentUser.clientProfile && otherUser.talentProfile) {
+    if (currentUser.clientProfile && (otherUser.talentProfile || otherUser.agencyProfile)) {
+      // Client messaging talent or agency
       clientId = currentUserId;
       talentId = otherUserId;
-    } else if (currentUser.talentProfile && otherUser.clientProfile) {
+    } else if ((currentUser.talentProfile || currentUser.agencyProfile) && otherUser.clientProfile) {
+      // Talent or agency messaging client
+      clientId = otherUserId;
+      talentId = currentUserId;
+    } else if (currentUser.agencyProfile && otherUser.talentProfile) {
+      // Agency messaging talent - use agency as "client" and talent as "talent"
+      clientId = currentUserId;
+      talentId = otherUserId;
+    } else if (currentUser.talentProfile && otherUser.agencyProfile) {
+      // Talent messaging agency - use agency as "client" and talent as "talent"
       clientId = otherUserId;
       talentId = currentUserId;
     } else {
       return NextResponse.json(
-        { error: "One user must be a client and the other a talent" },
+        { error: "Invalid conversation participants" },
         { status: 400 },
       );
     }
@@ -162,6 +193,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               clientProfile: true,
+              agencyProfile: true,
             },
           },
           talent: {
@@ -171,6 +203,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               talentProfile: true,
+              agencyProfile: true,
             },
           },
         },
@@ -189,6 +222,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               clientProfile: true,
+              agencyProfile: true,
             },
           },
           talent: {
@@ -198,6 +232,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               talentProfile: true,
+              agencyProfile: true,
             },
           },
         },
