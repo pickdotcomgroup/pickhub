@@ -359,8 +359,8 @@ export default function TalentBrowsePage() {
                       key={skill}
                       onClick={() => toggleSkill(skill)}
                       className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${selectedSkills.includes(skill)
-                          ? "bg-blue-600 text-white ring-2 ring-blue-400"
-                          : "bg-blue-600/80 text-white hover:bg-blue-600"
+                        ? "bg-blue-600 text-white ring-2 ring-blue-400"
+                        : "bg-blue-600/80 text-white hover:bg-blue-600"
                         }`}
                     >
                       {skill}
@@ -424,8 +424,8 @@ export default function TalentBrowsePage() {
                     <div
                       key={project.id}
                       className={`bg-white rounded-xl p-6 border transition-all flex flex-col shadow-sm ${hasAccess
-                          ? "border-gray-200 hover:border-blue-500 hover:shadow-md"
-                          : "border-red-300 opacity-75"
+                        ? "border-gray-200 hover:border-blue-500 hover:shadow-md"
+                        : "border-red-300 opacity-75"
                         }`}
                     >
                       <div className="flex flex-col flex-1">
@@ -436,29 +436,37 @@ export default function TalentBrowsePage() {
                               {project.minimumTier}
                             </span>
                           </div>
+                          <span className="font-bold text-gray-500 text-xs mr-1">Description:</span>
                           <p className="text-gray-600 text-sm mb-3 line-clamp-3">{project.description}</p>
                           <div className="flex items-center flex-wrap gap-3 text-xs text-gray-500 mb-3">
-                            <span className="flex items-center space-x-1">
+                            {/* Category Header */}
+                            <span className="flex items-center space-x-1 text-black-700">
+                              <span className="font-bold text-xs mr-1">Category:</span>
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                               </svg>
-                              <span>{project.category}</span>
+                              <span>
+                                {project.category}
+                              </span>
                             </span>
+                            <span className="font-bold text-xs mr-0">Budget:</span>
                             <span className="flex items-center space-x-1">
                               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span>${project.budget.toLocaleString()}</span>
                             </span>
+                            <span className="font-bold text-xs mr-0">Project type:</span>
                             <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                               {project.projectType === "fixed" ? "Fixed" : "Hourly"}
                             </span>
-                          </div>
-                          <div className="flex items-center space-x-1 text-xs text-gray-500 mb-3">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span>{formatDate(project.deadline)}</span>
+                            <div className="flex items-center space-x-1 text-xs text-gray-500">
+                              <span className="font-bold text-xs mr-0">Target completion Date:</span>
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span>{formatDate(project.deadline)}</span>
+                            </div>
                           </div>
                         </div>
 
