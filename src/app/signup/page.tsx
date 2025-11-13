@@ -28,6 +28,9 @@ interface ProfessionalFormData {
   teamSize?: string;
   agencySkills?: string[];
   description?: string;
+  website?: string;
+  location?: string;
+  foundedYear?: string;
 }
 
 type FormErrors = Record<string, string>;
@@ -162,6 +165,9 @@ function SignupContent() {
           description: professionalFormData.description,
           teamSize: professionalFormData.teamSize,
           skills: professionalFormData.agencySkills,
+          website: professionalFormData.website,
+          location: professionalFormData.location,
+          foundedYear: professionalFormData.foundedYear,
         }),
       };
 
@@ -267,8 +273,8 @@ function SignupContent() {
               <div>
                 {professionalType === "agency" ? (
                   // Agency-specific fields
-                  <div>
-                    <div className="mb-4">
+                  <div className="space-y-4">
+                    <div>
                       <label htmlFor="agencyName" className="block text-sm font-medium mb-1 text-gray-700">Agency Name / Company Name *</label>
                       <input
                         type="text"
@@ -294,6 +300,46 @@ function SignupContent() {
                         placeholder="Enter your business email"
                       />
                       {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
+                    </div>
+
+                    <div>
+                      <label htmlFor="website" className="block text-sm font-medium mb-1 text-gray-700">Company Website</label>
+                      <input
+                        type="url"
+                        id="website"
+                        name="website"
+                        value={professionalFormData.website ?? ""}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500"
+                        placeholder="https://www.yourcompany.com"
+                      />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="location" className="block text-sm font-medium mb-1 text-gray-700">Location</label>
+                        <input
+                          type="text"
+                          id="location"
+                          name="location"
+                          value={professionalFormData.location ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500"
+                          placeholder="e.g., San Francisco, CA"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="foundedYear" className="block text-sm font-medium mb-1 text-gray-700">Founded Year</label>
+                        <input
+                          type="text"
+                          id="foundedYear"
+                          name="foundedYear"
+                          value={professionalFormData.foundedYear ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 bg-white text-gray-900 placeholder-gray-400 focus:ring-blue-500"
+                          placeholder="e.g., 2020"
+                        />
+                      </div>
                     </div>
                   </div>
                 ) : (

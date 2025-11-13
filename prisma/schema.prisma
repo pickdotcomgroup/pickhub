@@ -148,6 +148,9 @@ model AgencyProfile {
     description String
     teamSize    String?
     skills      String[] // Array of agency skills/services
+    website     String?  // Company website URL
+    location    String?  // Company location
+    foundedYear String?  // Year the company was founded
     
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt

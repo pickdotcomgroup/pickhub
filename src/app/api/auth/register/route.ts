@@ -30,6 +30,9 @@ interface AgencyProfileData {
   description: string;
   teamSize?: string;
   skills: string[];
+  website?: string;
+  location?: string;
+  foundedYear?: string;
 }
 
 interface RequestBody {
@@ -117,6 +120,9 @@ export async function POST(request: NextRequest) {
               description: agencyData.description,
               teamSize: agencyData.teamSize,
               skills: agencyData.skills,
+              website: agencyData.website,
+              location: agencyData.location,
+              foundedYear: agencyData.foundedYear,
             },
           });
           break;
