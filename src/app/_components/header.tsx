@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Users, PlusCircle, FolderKanban, Search, FolderGit } from "lucide-react";
+import { MessageSquare, Users, PlusCircle, FolderKanban, Search, FolderGit, Building2 } from "lucide-react";
 
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
@@ -306,6 +306,13 @@ export default function Header() {
                   >
                     <Users className="w-4 h-4" />
                     <span>Browse Developers</span>
+                  </Link>
+                  <Link
+                    href="/client/browse-agencies"
+                    className={`${getNavLinkClasses("/client/browse-agencies")} flex items-center gap-2`}
+                  >
+                    <Building2 className="w-4 h-4" />
+                    <span>Browse Agencies</span>
                   </Link>
                   <Link
                     href="/client/projects/new"
@@ -864,6 +871,14 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Developers
+                  </Link>
+                  <Link
+                    href="/client/browse-agencies"
+                    className={`${getMobileNavLinkClasses("/client/browse-agencies")} flex items-center`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Building2 className="w-4 h-4 mr-3" />
+                    Browse Agencies
                   </Link>
                   <Link
                     href="/client/projects/new"

@@ -513,10 +513,6 @@ export default function Home() {
           </svg>
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
-            {/* The #1 IT development marketplace that connects<br className="hidden sm:block" />Clients, Developers, and Agencies */}
-            Stop Bidding. Start Picking.
-          </h1>
           <p className="text-base sm:text-md md:text-md text-gray-600 mb-6 sm:mb-8">
             {/* Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration! */}
             The modern freelance platform where developers choose projects and clients choose from interested developers.

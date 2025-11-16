@@ -17,6 +17,17 @@ interface TalentProfile {
   portfolio: string | null;
 }
 
+interface AgencyProfile {
+  id: string;
+  agencyName: string;
+  description: string;
+  teamSize: string | null;
+  skills: string[];
+  website: string | null;
+  location: string | null;
+  foundedYear: string | null;
+}
+
 interface Application {
   id: string;
   status: string;
@@ -29,6 +40,7 @@ interface Application {
     email: string | null;
     image: string | null;
     talentProfile: TalentProfile | null;
+    agencyProfile: AgencyProfile | null;
   };
 }
 
@@ -72,13 +84,15 @@ export default function MyProjectsPage() {
   const [sendingEmail, setSendingEmail] = useState(false);
 
   const generateInterviewEmail = (application: Application, projectTitle: string) => {
-    const developerName = application.talent.talentProfile
+    const applicantName = application.talent.agencyProfile
+      ? application.talent.agencyProfile.agencyName
+      : application.talent.talentProfile
       ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
-      : application.talent.name ?? 'Developer';
+      : application.talent.name ?? 'Applicant';
     
     const subject = `Interview Invitation - ${projectTitle}`;
     
-    const message = `Dear ${developerName},
+    const message = `Dear ${applicantName},
 
 Thank you for your application to the "${projectTitle}" project. We were impressed with your profile and would like to invite you for an interview to discuss the project further.
 
@@ -109,9 +123,11 @@ ${session?.user.name ?? 'The Team'}`;
     
     setEmailData({
       recipientEmail: application.talent.email ?? '',
-      recipientName: application.talent.talentProfile
+      recipientName: application.talent.agencyProfile
+        ? application.talent.agencyProfile.agencyName
+        : application.talent.talentProfile
         ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
-        : application.talent.name ?? 'Developer',
+        : application.talent.name ?? 'Applicant',
       subject,
       message,
       projectTitle,
@@ -126,7 +142,6 @@ ${session?.user.name ?? 'The Team'}`;
     setError("");
     
     try {
-      // Get the talent ID from the application
       const application = selectedProjectApplications?.applications.find(
         app => app.id === emailData.applicationId
       );
@@ -137,7 +152,6 @@ ${session?.user.name ?? 'The Team'}`;
         return;
       }
 
-      // Send email via API
       const emailResponse = await fetch("/api/interviews/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -152,7 +166,6 @@ ${session?.user.name ?? 'The Team'}`;
         return;
       }
 
-      // Create or get conversation
       const conversationResponse = await fetch("/api/conversations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -170,7 +183,6 @@ ${session?.user.name ?? 'The Team'}`;
 
       const conversationData = await conversationResponse.json() as { id: string };
 
-      // Send message through messaging system
       const messageResponse = await fetch("/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -186,7 +198,6 @@ ${session?.user.name ?? 'The Team'}`;
         return;
       }
 
-      // Success - close modal and reset
       setShowEmailModal(false);
       setEmailData({
         recipientEmail: "",
@@ -218,7 +229,6 @@ ${session?.user.name ?? 'The Team'}`;
         return;
       }
 
-      // Fetch applications for each project
       const projectsWithApplications = await Promise.all(
         data.projects.map(async (project) => {
           try {
@@ -277,9 +287,7 @@ ${session?.user.name ?? 'The Team'}`;
       });
 
       if (response.ok) {
-        // Refresh projects to show updated status
         await fetchProjects();
-        // Close modal if open
         if (selectedDeveloper?.id === applicationId) {
           setSelectedDeveloper(null);
         }
@@ -489,7 +497,7 @@ ${session?.user.name ?? 'The Team'}`;
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">
-                    Manage Project Comming Soon
+                    Manage Project Coming Soon
                   </button>
                 </div>
 
@@ -522,22 +530,24 @@ ${session?.user.name ?? 'The Team'}`;
                         {project.applications.slice(0, 3).map((application, idx) => (
                           <div
                             key={application.id}
-                            className="w-8 h-8 rounded-full bg-blue-600 border-2 border-white flex items-center justify-center text-white text-xs font-semibold relative hover:z-10 transition-transform group-hover:scale-110"
+                            className={`w-8 h-8 rounded-full ${application.talent.agencyProfile ? 'bg-purple-600' : 'bg-blue-600'} border-2 border-white flex items-center justify-center text-white text-xs font-semibold relative hover:z-10 transition-transform group-hover:scale-110`}
                             style={{ zIndex: 3 - idx }}
                           >
                             {application.talent.image ? (
                               <Image
                                 src={application.talent.image}
-                                alt={application.talent.name ?? 'Developer'}
+                                alt={application.talent.agencyProfile?.agencyName ?? application.talent.name ?? 'Applicant'}
                                 width={32}
                                 height={32}
                                 className="w-8 h-8 rounded-full object-cover"
                               />
                             ) : (
                               <span>
-                                {application.talent.talentProfile
+                                {application.talent.agencyProfile
+                                  ? application.talent.agencyProfile.agencyName[0]
+                                  : application.talent.talentProfile
                                   ? `${application.talent.talentProfile.firstName[0]}${application.talent.talentProfile.lastName[0]}`
-                                  : application.talent.name?.[0] ?? 'D'}
+                                  : application.talent.name?.[0] ?? 'A'}
                               </span>
                             )}
                           </div>
@@ -551,7 +561,7 @@ ${session?.user.name ?? 'The Team'}`;
                       
                       <div className="flex items-center space-x-2">
                         <span className="font-medium">
-                          {project.applications.length} Developer{project.applications.length !== 1 ? 's' : ''} Applied
+                          {project.applications.filter(app => app.talent.talentProfile).length} Developer{project.applications.filter(app => app.talent.talentProfile).length !== 1 ? 's' : ''} & {project.applications.filter(app => app.talent.agencyProfile).length} Agenc{project.applications.filter(app => app.talent.agencyProfile).length !== 1 ? 'ies' : 'y'} Applied
                         </span>
                         <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -608,44 +618,47 @@ ${session?.user.name ?? 'The Team'}`;
                   {selectedProjectApplications.applications.map((application) => (
                     <div
                       key={application.id}
-                      className="bg-gray-50 rounded-lg p-5 border border-gray-200 hover:border-blue-500 transition"
+                      className={`${application.talent.agencyProfile ? 'bg-purple-50 border-purple-200 hover:border-purple-500' : 'bg-gray-50 border-gray-200 hover:border-blue-500'} rounded-lg p-5 border transition`}
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
-                          {/* Developer Avatar */}
-                          <div className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+                          {/* Avatar */}
+                          <div className={`w-14 h-14 rounded-full ${application.talent.agencyProfile ? 'bg-purple-600' : 'bg-blue-600'} flex items-center justify-center text-white font-semibold flex-shrink-0`}>
                             {application.talent.image ? (
                               <Image
                                 src={application.talent.image}
-                                alt={application.talent.name ?? 'Developer'}
+                                alt={application.talent.agencyProfile?.agencyName ?? application.talent.name ?? 'Applicant'}
                                 width={56}
                                 height={56}
                                 className="w-14 h-14 rounded-full object-cover"
                               />
                             ) : (
                               <span className="text-lg">
-                                {application.talent.talentProfile
+                                {application.talent.agencyProfile
+                                  ? application.talent.agencyProfile.agencyName[0]
+                                  : application.talent.talentProfile
                                   ? `${application.talent.talentProfile.firstName[0]}${application.talent.talentProfile.lastName[0]}`
-                                  : application.talent.name?.[0] ?? 'D'}
+                                  : application.talent.name?.[0] ?? 'A'}
                               </span>
                             )}
                           </div>
 
-                          {/* Developer Info */}
+                          {/* Info */}
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
                               <h4 className="text-lg font-semibold text-gray-900">
-                                {application.talent.talentProfile
+                                {application.talent.agencyProfile
+                                  ? application.talent.agencyProfile.agencyName
+                                  : application.talent.talentProfile
                                   ? `${application.talent.talentProfile.firstName} ${application.talent.talentProfile.lastName}`
-                                  : application.talent.name ?? 'Developer'}
+                                  : application.talent.name ?? 'Applicant'}
                               </h4>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 application.status === 'pending'
                                   ? 'bg-yellow-100 text-yellow-700'
                                   : application.status === 'accepted'
                                   ? 'bg-green-100 text-green-700'
-                                  : 'bg-red-100 text-red-700'
-                              }`}>
+                                  : 'bg-red-100 text-red-700'                              }`}>
                                 {application.status.toUpperCase()}
                               </span>
                             </div>
@@ -1117,3 +1130,4 @@ ${session?.user.name ?? 'The Team'}`;
     </main>
   );
 }
+

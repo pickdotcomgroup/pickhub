@@ -87,11 +87,6 @@ export default function Home() {
             <span className="font-semibold text-lg">Launching Soon</span>
           </div>
 
-          {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Stop Bidding. Start Picking.
-          </h2>
-
           {/* Description */}
           <p className="text-lg sm:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
             The modern tech freelance platform where developers choose projects and clients choose from interested developers. 
