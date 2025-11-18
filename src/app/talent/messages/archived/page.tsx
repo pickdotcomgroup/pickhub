@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { SendHorizontal, MoreVertical, Archive, Trash2, ArchiveIcon } from "lucide-react";
+import { SendHorizontal, MoreVertical, ArchiveRestore, Trash2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface User {
@@ -55,7 +55,7 @@ interface MessageWithSender extends Message {
   };
 }
 
-export default function TalentMessagesPage() {
+export default function ArchivedMessagesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -78,7 +78,7 @@ export default function TalentMessagesPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      void fetchConversations();
+      void fetchArchivedConversations();
     }
   }, [status]);
 
@@ -99,7 +99,7 @@ export default function TalentMessagesPage() {
   useEffect(() => {
     if (status !== "authenticated") return;
     const interval = setInterval(() => {
-      void fetchConversations();
+      void fetchArchivedConversations();
     }, 5000);
     return () => clearInterval(interval);
   }, [status]);
@@ -129,15 +129,15 @@ export default function TalentMessagesPage() {
     shouldAutoScrollRef.current = isNearBottom;
   };
 
-  const fetchConversations = async () => {
+  const fetchArchivedConversations = async () => {
     try {
-      const response = await fetch("/api/conversations");
+      const response = await fetch("/api/conversations?archived=true");
       if (response.ok) {
         const data = (await response.json()) as Conversation[];
         setConversations(data);
       }
     } catch (error) {
-      console.error("Error fetching conversations:", error);
+      console.error("Error fetching archived conversations:", error);
     } finally {
       setLoading(false);
     }
@@ -157,7 +157,7 @@ export default function TalentMessagesPage() {
 
   const handleSelectConversation = async (conversation: Conversation) => {
     setSelectedConversation(conversation);
-    shouldAutoScrollRef.current = true; // Scroll to bottom when selecting a new conversation
+    shouldAutoScrollRef.current = true;
     await fetchMessages(conversation.id);
 
     try {
@@ -176,7 +176,7 @@ export default function TalentMessagesPage() {
     if (!newMessage.trim() || !selectedConversation || sending) return;
 
     setSending(true);
-    shouldAutoScrollRef.current = true; // Always scroll when sending a message
+    shouldAutoScrollRef.current = true;
     try {
       const response = await fetch("/api/messages", {
         method: "POST",
@@ -191,7 +191,7 @@ export default function TalentMessagesPage() {
         const message = (await response.json()) as MessageWithSender;
         setMessages([...messages, message]);
         setNewMessage("");
-        void fetchConversations();
+        void fetchArchivedConversations();
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -263,26 +263,24 @@ export default function TalentMessagesPage() {
     });
   };
 
-  const handleArchiveConversation = async (conversationId: string, e: React.MouseEvent) => {
+  const handleUnarchiveConversation = async (conversationId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       const response = await fetch(`/api/conversations/${conversationId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "archive" }),
+        body: JSON.stringify({ action: "unarchive" }),
       });
 
       if (response.ok) {
-        // Refresh conversations list
-        await fetchConversations();
+        await fetchArchivedConversations();
         setOpenMenuId(null);
-        // If the archived conversation was selected, deselect it
         if (selectedConversation?.id === conversationId) {
           setSelectedConversation(null);
         }
       }
     } catch (error) {
-      console.error("Error archiving conversation:", error);
+      console.error("Error unarchiving conversation:", error);
     }
   };
 
@@ -300,10 +298,8 @@ export default function TalentMessagesPage() {
       });
 
       if (response.ok) {
-        // Refresh conversations list
-        await fetchConversations();
+        await fetchArchivedConversations();
         setOpenMenuId(null);
-        // If the deleted conversation was selected, deselect it
         if (selectedConversation?.id === conversationId) {
           setSelectedConversation(null);
         }
@@ -324,7 +320,7 @@ export default function TalentMessagesPage() {
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <div className="text-lg text-gray-900">Loading messages...</div>
+          <div className="text-lg text-gray-900">Loading archived messages...</div>
         </div>
       </main>
     );
@@ -333,20 +329,18 @@ export default function TalentMessagesPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
-            </p>
-          </div>
-          <Link
-            href="/talent/messages/archived"
-            className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
+        <div className="mb-6">
+          <Link 
+            href="/talent/messages"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors mb-4"
           >
-            <ArchiveIcon className="h-5 w-5" />
-            <span>View Archived</span>
+            <ArrowLeft className="h-5 w-5" />
+            <span className="font-medium">Back to Messages</span>
           </Link>
+          <h1 className="text-3xl font-bold text-gray-900">Archived Messages</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            {conversations.length} archived conversation{conversations.length !== 1 ? "s" : ""}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-6">
@@ -371,7 +365,7 @@ export default function TalentMessagesPage() {
                   </svg>
                   <input
                     type="text"
-                    placeholder="Search conversations..."
+                    placeholder="Search archived conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -383,16 +377,16 @@ export default function TalentMessagesPage() {
               <div className="max-h-[calc(100vh-280px)] overflow-y-auto">
                 {filteredConversations.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-8 text-center">
-                    <div className="mb-4 rounded-full bg-blue-100 p-4">
-                      <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    <div className="mb-4 rounded-full bg-gray-100 p-4">
+                      <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                       </svg>
                     </div>
                     <p className="text-gray-600">
-                      {searchQuery ? "No conversations found" : "No conversations yet"}
+                      {searchQuery ? "No archived conversations found" : "No archived conversations"}
                     </p>
                     <p className="mt-1 text-sm text-gray-500">
-                      {searchQuery ? "Try a different search term" : "Start a conversation with a client"}
+                      {searchQuery ? "Try a different search term" : "Archived conversations will appear here"}
                     </p>
                   </div>
                 ) : (
@@ -416,7 +410,7 @@ export default function TalentMessagesPage() {
                           >
                             <div className="flex items-start gap-3">
                               <div className="flex-shrink-0">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold shadow-lg">
                                   {getUserInitials(otherUser)}
                                 </div>
                               </div>
@@ -473,11 +467,11 @@ export default function TalentMessagesPage() {
                             {openMenuId === conversation.id && (
                               <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-gray-200 bg-white shadow-lg z-10">
                                 <button
-                                  onClick={(e) => void handleArchiveConversation(conversation.id, e)}
+                                  onClick={(e) => void handleUnarchiveConversation(conversation.id, e)}
                                   className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors rounded-t-lg"
                                 >
-                                  <Archive className="h-4 w-4" />
-                                  <span>Archive</span>
+                                  <ArchiveRestore className="h-4 w-4" />
+                                  <span>Unarchive</span>
                                 </button>
                                 <button
                                   onClick={(e) => void handleDeleteConversation(conversation.id, e)}
@@ -506,7 +500,7 @@ export default function TalentMessagesPage() {
                   {/* Chat Header */}
                   <div className="border-b border-gray-200 bg-gray-50 p-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold shadow-lg">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gray-400 to-gray-500 text-white font-semibold shadow-lg">
                         {getUserInitials(getOtherUser(selectedConversation))}
                       </div>
                       <div>
@@ -610,13 +604,13 @@ export default function TalentMessagesPage() {
               ) : (
                 <div className="flex h-[calc(100vh-200px)] items-center justify-center bg-gray-50">
                   <div className="text-center">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                      <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                      <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Select a conversation</h3>
-                    <p className="mt-1 text-sm text-gray-600">Choose a conversation from the list to start messaging</p>
+                    <h3 className="text-lg font-semibold text-gray-900">Select an archived conversation</h3>
+                    <p className="mt-1 text-sm text-gray-600">Choose a conversation from the list to view messages</p>
                   </div>
                 </div>
               )}

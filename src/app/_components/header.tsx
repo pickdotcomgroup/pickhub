@@ -88,7 +88,7 @@ export default function Header() {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [session?.user]);
+  }, [session?.user, pathname]); // Added pathname to refresh when navigating
 
   // Fetch unread notification count
   useEffect(() => {

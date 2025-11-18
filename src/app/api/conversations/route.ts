@@ -3,7 +3,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
 // GET /api/conversations - Get all conversations for the current user
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
 
@@ -12,11 +12,37 @@ export async function GET() {
     }
 
     const userId = session.user.id;
+    
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const archived = searchParams.get("archived") === "true";
+
+    // Determine archive filter based on user role
+    const isClient = await db.user.findUnique({
+      where: { id: userId },
+      select: { clientProfile: true },
+    });
+
+    const archiveFilter = isClient?.clientProfile
+      ? { archivedByClient: archived }
+      : { archivedByTalent: archived };
 
     // Get conversations where user is either client or talent
+    // Exclude deleted conversations for the current user
     const conversations = await db.conversation.findMany({
       where: {
-        OR: [{ clientId: userId }, { talentId: userId }],
+        OR: [
+          { 
+            clientId: userId,
+            deletedByClient: false,
+            ...archiveFilter,
+          },
+          { 
+            talentId: userId,
+            deletedByTalent: false,
+            ...archiveFilter,
+          }
+        ],
       },
       include: {
         client: {
