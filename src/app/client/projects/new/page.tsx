@@ -10,6 +10,10 @@ const PROJECT_TEMPLATES = {
   api_development: { name: "API Development", desc: "Design and implement RESTful or GraphQL APIs", tech: ["Node.js", "Express.js", "Python", "Django", "PostgreSQL"], duration: 20 },
   ecommerce: { name: "E-commerce Platform", desc: "Build a complete online store", tech: ["Next.js", "Stripe", "PostgreSQL", "Redis", "AWS"], duration: 60 },
   dashboard: { name: "Admin Dashboard", desc: "Create a data visualization dashboard", tech: ["React", "TypeScript", "Chart.js", "Material-UI"], duration: 25 },
+  ai_development: { name: "AI Development", desc: "Build AI-powered applications and machine learning models", tech: ["Python", "TensorFlow", "PyTorch", "OpenAI", "LangChain", "FastAPI"], duration: 40 },
+  cms_application: { name: "CMS Application Development", desc: "Create a content management system", tech: ["Next.js", "Strapi", "WordPress", "Contentful", "PostgreSQL", "GraphQL"], duration: 35 },
+  blockchain_development: { name: "BlockChain Development", desc: "Develop blockchain and smart contract solutions", tech: ["Solidity", "Ethereum", "Web3.js", "Hardhat", "React", "Node.js"], duration: 50 },
+  web3_development: { name: "Web3 Development", desc: "Build decentralized applications (dApps)", tech: ["Solidity", "Ethers.js", "IPFS", "MetaMask", "React", "TypeScript"], duration: 45 },
   custom: { name: "Custom Project", desc: "Define your own requirements", tech: [], duration: 30 },
 };
 
@@ -151,14 +155,23 @@ export default function NewProjectPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             {[1, 2, 3, 4, 5].map((s) => (
-              <div key={s} className="flex items-center flex-1">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step >= s ? "bg-blue-600 border-blue-600 text-white" : "bg-gray-100 border-gray-300 text-gray-400"}`}>{s}</div>
-                {s < 5 && <div className={`flex-1 h-1 mx-2 ${step > s ? "bg-blue-600" : "bg-gray-200"}`} />}
+              <div key={s} className="flex flex-col items-center" style={{ flex: s < 5 ? '1' : '0 0 auto' }}>
+                <div className="flex items-center w-full">
+                  {s > 1 && <div className={`flex-1 h-1 ${step > s - 1 ? "bg-blue-600" : "bg-gray-200"}`} />}
+                  <div className="flex-shrink-0">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${step >= s ? "bg-blue-600 border-blue-600 text-white" : "bg-gray-100 border-gray-300 text-gray-400"}`}>{s}</div>
+                  </div>
+                  {s < 5 && <div className={`flex-1 h-1 ${step > s ? "bg-blue-600" : "bg-gray-200"}`} />}
+                </div>
+                <span className="mt-2 text-xs text-gray-500 text-center whitespace-nowrap">
+                  {s === 1 && "Template"}
+                  {s === 2 && "Details"}
+                  {s === 3 && "Tech Stack"}
+                  {s === 4 && "Budget"}
+                  {s === 5 && "Visibility"}
+                </span>
               </div>
             ))}
-          </div>
-          <div className="flex justify-between mt-2 text-xs text-gray-500">
-            <span>Template</span><span>Details</span><span>Tech Stack</span><span>Budget</span><span>Visibility</span>
           </div>
         </div>
 
@@ -167,16 +180,48 @@ export default function NewProjectPage() {
             <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Choose a Project Template</h2>
               <div className="grid md:grid-cols-2 gap-4">
-                {Object.entries(PROJECT_TEMPLATES).map(([key, t]) => (
-                  <button key={key} type="button" onClick={() => selectTemplate(key)} className={`p-6 rounded-lg border-2 text-left transition ${form.projectTemplate === key ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.name}</h3>
-                    <p className="text-sm text-gray-600 mb-3">{t.desc}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {t.tech.slice(0, 3).map((tech) => (<span key={tech} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">{tech}</span>))}
-                      {t.tech.length > 3 && <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded">+{t.tech.length - 3} more</span>}
-                    </div>
-                  </button>
-                ))}
+                {Object.entries(PROJECT_TEMPLATES).map(([key, t]) => {
+                  const getIcon = () => {
+                    switch(key) {
+                      case 'web_app':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />;
+                      case 'mobile_app':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />;
+                      case 'api_development':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />;
+                      case 'ecommerce':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />;
+                      case 'dashboard':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />;
+                      case 'ai_development':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />;
+                      case 'cms_application':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />;
+                      case 'blockchain_development':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />;
+                      case 'web3_development':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />;
+                      case 'custom':
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />;
+                      default:
+                        return <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />;
+                    }
+                  };
+                  
+                  return (
+                    <button key={key} type="button" onClick={() => selectTemplate(key)} className={`p-6 rounded-lg border-2 text-left transition flex items-start gap-4 ${form.projectTemplate === key ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-gray-50 hover:border-gray-300"}`}>
+                      <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          {getIcon()}
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.name}</h3>
+                        <p className="text-sm text-gray-600">{t.desc}</p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
               {errors.projectTemplate && <p className="mt-4 text-sm text-red-600">{errors.projectTemplate}</p>}
             </div>

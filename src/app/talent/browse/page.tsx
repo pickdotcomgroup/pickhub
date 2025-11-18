@@ -120,12 +120,12 @@ export default function TalentBrowsePage() {
     void checkVerification();
   }, [session, status, router, fetchProjects, fetchTalentProfile]);
 
-  if (status === "loading" || isLoading) {
+  if (status === "loading") {
     return (
       <main className="flex min-h-screen items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <div className="text-lg text-gray-900">Loading projects...</div>
+          <div className="text-lg text-gray-900">Loading...</div>
         </div>
       </main>
     );
@@ -364,7 +364,7 @@ export default function TalentBrowsePage() {
                       onClick={() => toggleSkill(skill)}
                       className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${selectedSkills.includes(skill)
                         ? "bg-blue-600 text-white ring-2 ring-blue-400"
-                        : "bg-blue-600/80 text-white hover:bg-blue-600"
+                        : "bg-white text-black border-2 border-black hover:bg-gray-50"
                         }`}
                     >
                       {skill}
@@ -409,7 +409,12 @@ export default function TalentBrowsePage() {
             )}
 
             {/* Projects List */}
-            {filteredProjects.length === 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center min-h-[400px]">
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                <div className="text-lg text-gray-900 mt-4">Loading projects...</div>
+              </div>
+            ) : filteredProjects.length === 0 ? (
               <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
                 <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -534,7 +539,7 @@ export default function TalentBrowsePage() {
                         <button
                           onClick={() => handleApply(project)}
                           disabled={applyingProjectId !== null || !hasAccess}
-                          className="w-full flex justify-center gap-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
+                          className="w-full flex justify-center gap-3 px-4 py-2 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed mt-auto"
                         >
                           <Pointer className="w-5 h-5" />
                           {applyingProjectId === project.id ? "Picking..." : "Pick Project"}

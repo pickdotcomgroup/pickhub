@@ -97,7 +97,18 @@ export default function ClientBrowseAgenciesPage() {
     return null;
   }
 
-  const skills = ["React", "Next.js", "TypeScript", "Node.js", "Python", "UI/UX Design", "Mobile Dev", "DevOps"];
+  const skillCategories = {
+    "Programming Languages": ["JavaScript", "TypeScript", "Python", "Java", "C#", "PHP", "Ruby", "Go", "Swift", "Kotlin"],
+    "Frontend": ["React", "Next.js", "Angular", "Vue.js", "HTML/CSS", "Tailwind CSS"],
+    "Backend": ["Node.js", "Django", "Flask", "Express.js", "Spring Boot", "ASP.NET", "Laravel", "Ruby on Rails"],
+    "Mobile": ["React Native", "Flutter", "iOS", "Android", "Mobile Dev"],
+    "Database": ["MongoDB", "PostgreSQL", "MySQL", "Redis", "Firebase"],
+    "DevOps & Cloud": ["Docker", "Kubernetes", "AWS", "Azure", "GCP", "CI/CD", "DevOps"],
+    "API": ["REST API", "GraphQL", "WebSocket"],
+    "Design": ["UI/UX Design", "Figma", "Adobe XD", "Sketch"],
+    "Emerging Tech": ["Machine Learning", "AI", "Data Science", "Blockchain", "Web3"],
+    "Other": ["Cybersecurity", "Testing", "QA", "Git"]
+  };
 
   const toggleSkill = (skill: string) => {
     setSelectedSkills(prev =>
@@ -158,87 +169,104 @@ export default function ClientBrowseAgenciesPage() {
             <p className="text-gray-600">Discover and partner with professional agencies for your projects</p>
           </div>
 
-          {/* Search and Filters */}
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-8">
-            <div className="grid md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Search Agencies</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by name, location, or services..."
-                    className="w-full px-4 py-3 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <svg className="absolute left-3 top-3.5 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
+          {/* Two Column Layout: Filters Left, Content Right */}
+          <div className="flex gap-6">
+            {/* Left Sidebar - Filters */}
+            <aside className="w-80 flex-shrink-0">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 sticky top-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+                
+                {/* Search */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by name, location..."
+                      className="w-full px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Team Size */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Team Size</label>
+                  <select
+                    value={teamSize}
+                    onChange={(e) => setTeamSize(e.target.value)}
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="" className="bg-white">All Sizes</option>
+                    <option value="1-10" className="bg-white">1-10 employees</option>
+                    <option value="11-50" className="bg-white">11-50 employees</option>
+                    <option value="51-200" className="bg-white">51-200 employees</option>
+                    <option value="200+" className="bg-white">200+ employees</option>
+                  </select>
+                </div>
+
+                {/* Services Filter - Categorized */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Services</label>
+                  <div className="max-h-96 overflow-y-auto space-y-4">
+                    {Object.entries(skillCategories).map(([category, skills]) => (
+                      <div key={category}>
+                        <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">{category}</h3>
+                        <div className="space-y-1">
+                          {skills.map((skill) => (
+                            <button
+                              key={skill}
+                              onClick={() => toggleSkill(skill)}
+                              className={`w-full text-left px-3 py-1.5 rounded-lg text-sm font-medium transition ${selectedSkills.includes(skill)
+                                ? "bg-blue-600 text-white"
+                                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
+                                }`}
+                            >
+                              {skill}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+            </aside>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Team Size</label>
-                <select
-                  value={teamSize}
-                  onChange={(e) => setTeamSize(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="" className="bg-white">All Sizes</option>
-                  <option value="1-10" className="bg-white">1-10 employees</option>
-                  <option value="11-50" className="bg-white">11-50 employees</option>
-                  <option value="51-200" className="bg-white">51-200 employees</option>
-                  <option value="200+" className="bg-white">200+ employees</option>
-                </select>
-              </div>
-            </div>
+            {/* Right Content - Agencies List */}
+            <div className="flex-1">
+              {/* Loading State */}
+              {loading && (
+                <div className="flex flex-col items-center justify-center gap-3 py-20">
+                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                  <div className="text-gray-500 text-md">Loading Agencies...</div>
+                </div>
+              )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Services</label>
-              <div className="flex flex-wrap gap-2">
-                {skills.map((skill) => (
-                  <button
-                    key={skill}
-                    onClick={() => toggleSkill(skill)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${selectedSkills.includes(skill)
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-                      }`}
-                  >
-                    {skill}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+              {/* Error State */}
+              {error && (
+                <div className="bg-red-50 border border-red-300 rounded-xl p-6 mb-8">
+                  <p className="text-red-700">Error: {error}</p>
+                </div>
+              )}
 
-          {/* Loading State */}
-          {loading && (
-            <div className="flex flex-col items-center justify-center gap-3 m-10">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-              <div className="text-gray-500 text-md">Loading Agencies...</div>
-            </div>
-          )}
+              {/* Empty State */}
+              {!loading && !error && agencies.length === 0 && (
+                <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
+                  <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No agencies found</h3>
+                  <p className="text-gray-600">Try adjusting your search filters to find more agencies</p>
+                </div>
+              )}
 
-          {/* Error State */}
-          {error && (
-            <div className="bg-red-50 border border-red-300 rounded-xl p-6 mb-8">
-              <p className="text-red-700">Error: {error}</p>
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!loading && !error && agencies.length === 0 && (
-            <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
-              <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No agencies found</h3>
-              <p className="text-gray-600">Try adjusting your search filters to find more agencies</p>
-            </div>
-          )}
-
-          {/* Agencies Grid */}
-          {!loading && !error && agencies.length > 0 && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Agencies Grid */}
+              {!loading && !error && agencies.length > 0 && (
+                <>
+                  <div className="grid md:grid-cols-2 gap-6">
               {agencies.map((agency) => (
                 <div key={agency.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all group">
                   <div className="flex items-start justify-between mb-4">
@@ -327,7 +355,7 @@ export default function ClientBrowseAgenciesPage() {
                         <button
                           onClick={() => handleStartConversation(agency.id)}
                           disabled={messagingAgencyId === agency.id}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition disabled:bg-gray-600 ml-auto"
+                          className="px-4 py-2 bg-transparent border border-blue-600 hover:bg-blue-50 text-blue-600 text-sm font-medium rounded-lg transition disabled:border-gray-400 disabled:text-gray-400 ml-auto"
                         >
                           {messagingAgencyId === agency.id ? "..." : "Message Agency"}
                         </button>
@@ -336,17 +364,20 @@ export default function ClientBrowseAgenciesPage() {
                   )}
                 </div>
               ))}
+                  </div>
+                  
+                  {/* Results Count */}
+                  {!loading && !error && agencies.length > 0 && (
+                    <div className="mt-8 text-center">
+                      <p className="text-gray-600">
+                        Showing {agencies.length} agenc{agencies.length !== 1 ? "ies" : "y"}
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
-          )}
-
-          {/* Results Count */}
-          {!loading && !error && agencies.length > 0 && (
-            <div className="mt-8 text-center">
-              <p className="text-gray-600">
-                Showing {agencies.length} agenc{agencies.length !== 1 ? "ies" : "y"}
-              </p>
-            </div>
-          )}
+          </div>
         </div>
       </main>
   );

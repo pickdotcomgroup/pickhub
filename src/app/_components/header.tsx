@@ -49,7 +49,7 @@ export default function Header() {
   // Helper function to get navigation link classes
   const getNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-2 text-sm rounded-lg transition";
-    const activeClasses = "bg-blue-600 text-white font-semibold";
+    const activeClasses = "bg-white text-blue-600 border-2 border-blue-600 font-semibold";
     const inactiveClasses = "text-gray-700 hover:text-gray-900 hover:bg-gray-100";
 
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
