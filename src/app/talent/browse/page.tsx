@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
+import ProjectCardSkeleton from "~/app/_components/project-card-skeleton";
 
 interface Project {
   id: string;
@@ -410,9 +411,10 @@ export default function TalentBrowsePage() {
 
             {/* Projects List */}
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center min-h-[400px]">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-                <div className="text-lg text-gray-900 mt-4">Loading projects...</div>
+              <div className="grid md:grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <ProjectCardSkeleton key={i} />
+                ))}
               </div>
             ) : filteredProjects.length === 0 ? (
               <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">

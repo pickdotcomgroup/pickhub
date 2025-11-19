@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import ApplicationCardSkeleton from "~/app/_components/application-card-skeleton";
 
 interface Application {
   id: string;
@@ -200,9 +201,10 @@ export default function TalentProjectsPage() {
 
         {/* Applications List */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center min-h-[400px]">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-            <div className="text-lg text-gray-900 mt-4">Loading applications...</div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <ApplicationCardSkeleton key={i} />
+            ))}
           </div>
         ) : filteredApplications.length === 0 ? (
           <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">

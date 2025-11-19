@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import ApplicationCardSkeleton from "~/app/_components/application-card-skeleton";
 
 interface TalentProfile {
   id: string;
@@ -430,11 +431,10 @@ ${session?.user.name ?? 'The Team'}`;
 
         {/* Projects List */}
         {isLoading ? (
-          <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-              <div className="text-gray-500 text-md">Loading Projects...</div>
-            </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <ApplicationCardSkeleton key={i} />
+            ))}
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
@@ -1130,4 +1130,3 @@ ${session?.user.name ?? 'The Team'}`;
     </main>
   );
 }
-

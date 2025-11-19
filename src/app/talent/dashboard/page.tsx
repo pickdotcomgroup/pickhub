@@ -49,10 +49,54 @@ export default function TalentDashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-          <div className="text-lg text-gray-900">Loading Dashboard...</div>
+      <main className="min-h-screen bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Welcome Section Skeleton */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex-1">
+                <div className="h-9 bg-gray-200 rounded-lg w-64 mb-3 animate-pulse"></div>
+                <div className="h-5 bg-gray-200 rounded-lg w-48 animate-pulse"></div>
+              </div>
+              <div className="hidden md:block">
+                <div className="h-10 w-10 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Overview Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-12 w-12 bg-gray-200 rounded-lg animate-pulse"></div>
+                  <div className="h-6 w-12 bg-gray-200 rounded-full animate-pulse"></div>
+                </div>
+                <div className="h-8 bg-gray-200 rounded-lg w-16 mb-2 animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded-lg w-32 animate-pulse"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Recent Activity Skeleton */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div className="h-7 bg-gray-200 rounded-lg w-40 animate-pulse"></div>
+              <div className="h-5 bg-gray-200 rounded-lg w-20 animate-pulse"></div>
+            </div>
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="h-9 w-9 bg-gray-200 rounded-lg animate-pulse flex-shrink-0"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-5 bg-gray-200 rounded-lg w-48 animate-pulse"></div>
+                    <div className="h-4 bg-gray-200 rounded-lg w-full animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded-lg w-20 animate-pulse"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     );

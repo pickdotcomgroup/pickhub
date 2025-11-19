@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { Eye } from "lucide-react";
+import ProjectCardSkeleton from "~/app/_components/project-card-skeleton";
 
 interface TalentProfile {
   id: string;
@@ -337,7 +338,7 @@ export default function ClientBrowsePage() {
                               rel="noopener noreferrer"
                               className="flex gap-2 px-2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 text-sm rounded-lg transition"
                             >
-                              <Eye className="w-5 h-5"/>
+                              <Eye className="w-5 h-5" />
                               View Portfolio
                             </a>
                           )}
@@ -504,7 +505,7 @@ export default function ClientBrowsePage() {
             <aside className="w-80 flex-shrink-0">
               <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 sticky top-8">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
-                
+
                 {/* Search */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
@@ -570,9 +571,10 @@ export default function ClientBrowsePage() {
             <div className="flex-1">
               {/* Loading State */}
               {loading && (
-                <div className="flex flex-col items-center justify-center gap-3 py-20">
-                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-                  <div className="text-gray-500 text-md">Loading Developers...</div>
+                <div className="grid md:grid-cols-2 xl:grid-cols-2 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <ProjectCardSkeleton key={i} />
+                  ))}
                 </div>
               )}
 
@@ -599,105 +601,105 @@ export default function ClientBrowsePage() {
                 <>
                   <div className="grid md:grid-cols-2 xl:grid-cols-2 gap-6">
                     {talents.map((talent) => (
-                <div key={talent.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all group">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        {talent.image ? (
-                          <Image
-                            src={talent.image}
-                            alt={getDisplayName(talent)}
-                            width={48}
-                            height={48}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
-                            {getInitials(talent)}
+                      <div key={talent.id} className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all group">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="relative">
+                              {talent.image ? (
+                                <Image
+                                  src={talent.image}
+                                  alt={getDisplayName(talent)}
+                                  width={48}
+                                  height={48}
+                                  className="w-12 h-12 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold">
+                                  {getInitials(talent)}
+                                </div>
+                              )}
+                              {talent.profile?.verificationStatus === "verified" && (
+                                <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1" title="Verified Talent">
+                                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-lg font-semibold text-gray-900">{getDisplayName(talent)}</h3>
+                                {talent.profile && (
+                                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getTierBadgeColor(talent.profile.tier)}`}>
+                                    {talent.profile.tier.toUpperCase()}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-600">{talent.profile?.title ?? "Professional"}</p>
+                            </div>
                           </div>
-                        )}
-                        {talent.profile?.verificationStatus === "verified" && (
-                          <div className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1" title="Verified Talent">
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+                            <svg className="w-5 h-5 text-gray-500 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{getDisplayName(talent)}</h3>
-                          {talent.profile && (
-                            <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border ${getTierBadgeColor(talent.profile.tier)}`}>
-                              {talent.profile.tier.toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-600">{talent.profile?.title ?? "Professional"}</p>
-                      </div>
-                    </div>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-                      <svg className="w-5 h-5 text-gray-500 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {talent.profile && (
-                    <>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Experience Level</p>
-                          <p className="text-sm text-gray-900 font-medium">{formatExperience(talent.profile.experience)}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Completed Projects</p>
-                          <p className="text-sm text-gray-900 font-medium">{talent.profile.completedProjects}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {talent.profile.skills.slice(0, 3).map((skill, index) => (
-                          <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                            {skill}
-                          </span>
-                        ))}
-                        {talent.profile.skills.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                            +{talent.profile.skills.length - 3} more
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                        <div>
-                          <p className="text-xs text-gray-500">Hourly Rate</p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            {talent.profile.hourlyRate ?? "Not specified"}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleStartConversation(talent.id)}
-                            disabled={messagingTalentId === talent.id}
-                            className="px-3 py-2 bg-transparent border border-blue-600 hover:bg-blue-50 text-blue-600 text-sm font-medium rounded-lg transition disabled:border-gray-400 disabled:text-gray-400"
-                          >
-                            {messagingTalentId === talent.id ? "..." : "Message"}
-                          </button>
-                          <button
-                            onClick={() => handleViewProfile(talent.id)}
-                            className="px-3 py-2 bg-transparent border border-gray-600 hover:bg-gray-50 text-gray-600 text-sm font-medium rounded-lg transition"
-                          >
-                            View Profile
                           </button>
                         </div>
+
+                        {talent.profile && (
+                          <>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Experience Level</p>
+                                <p className="text-sm text-gray-900 font-medium">{formatExperience(talent.profile.experience)}</p>
+                              </div>
+                              <div>
+                                <p className="text-xs text-gray-500 mb-1">Completed Projects</p>
+                                <p className="text-sm text-gray-900 font-medium">{talent.profile.completedProjects}</p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {talent.profile.skills.slice(0, 3).map((skill, index) => (
+                                <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                  {skill}
+                                </span>
+                              ))}
+                              {talent.profile.skills.length > 3 && (
+                                <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                  +{talent.profile.skills.length - 3} more
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                              <div>
+                                <p className="text-xs text-gray-500">Hourly Rate</p>
+                                <p className="text-lg font-semibold text-gray-900">
+                                  {talent.profile.hourlyRate ?? "Not specified"}
+                                </p>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => handleStartConversation(talent.id)}
+                                  disabled={messagingTalentId === talent.id}
+                                  className="px-3 py-2 bg-transparent border border-blue-600 hover:bg-blue-50 text-blue-600 text-sm font-medium rounded-lg transition disabled:border-gray-400 disabled:text-gray-400"
+                                >
+                                  {messagingTalentId === talent.id ? "..." : "Message"}
+                                </button>
+                                <button
+                                  onClick={() => handleViewProfile(talent.id)}
+                                  className="px-3 py-2 bg-transparent border border-gray-600 hover:bg-gray-50 text-gray-600 text-sm font-medium rounded-lg transition"
+                                >
+                                  View Profile
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    </>
-                  )}
-                </div>
-              ))}
+                    ))}
                   </div>
-                  
+
                   {/* Results Count */}
                   {!loading && !error && talents.length > 0 && (
                     <div className="mt-8 text-center">

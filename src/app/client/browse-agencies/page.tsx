@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import { Building2, MapPin, Users, Globe, Calendar } from "lucide-react";
+import ProjectCardSkeleton from "~/app/_components/project-card-skeleton";
 
 interface AgencyProfile {
   id: string;
@@ -241,9 +242,10 @@ export default function ClientBrowseAgenciesPage() {
             <div className="flex-1">
               {/* Loading State */}
               {loading && (
-                <div className="flex flex-col items-center justify-center gap-3 py-20">
-                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-                  <div className="text-gray-500 text-md">Loading Agencies...</div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <ProjectCardSkeleton key={i} />
+                  ))}
                 </div>
               )}
 
