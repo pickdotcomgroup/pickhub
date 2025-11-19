@@ -304,7 +304,6 @@ export default function ClientBrowsePage() {
                       {/* Verified Profiles - Above buttons */}
                       {selectedTalentDetails.verification && (selectedTalentDetails.verification.githubUsername ?? selectedTalentDetails.verification.linkedInUrl) && (
                         <div className="flex items-center gap-2 mb-4">
-                          <span className="text-sm text-gray-600">Verified:</span>
                           {selectedTalentDetails.verification.githubUsername && (
                             <a
                               href={`https://github.com/${selectedTalentDetails.verification.githubUsername}`}

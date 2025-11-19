@@ -304,28 +304,24 @@ export default function Header() {
                     href="/client/browse"
                     className={`${getNavLinkClasses("/client/browse")} flex items-center gap-2`}
                   >
-                    <Users className="w-4 h-4" />
                     <span>Browse Developers</span>
                   </Link>
                   <Link
                     href="/client/browse-agencies"
                     className={`${getNavLinkClasses("/client/browse-agencies")} flex items-center gap-2`}
                   >
-                    <Building2 className="w-4 h-4" />
                     <span>Browse Agencies</span>
                   </Link>
                   <Link
                     href="/client/projects/new"
                     className={`${getNavLinkClasses("/client/projects/new")} flex items-center gap-2`}
                   >
-                    <PlusCircle className="w-4 h-4" />
                     <span>Post a Project</span>
                   </Link>
                   <Link
                     href="/client/projects"
                     className={`${getNavLinkClasses("/client/projects")} flex items-center gap-2`}
                   >
-                    <FolderKanban className="w-4 h-4" />
                     <span>My Projects</span>
                   </Link>
                   <Link
@@ -333,7 +329,7 @@ export default function Header() {
                     className={`relative ${getNavLinkClasses("/client/messages")}`}
                     aria-label="Messages"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <span>Messages</span>
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
@@ -343,14 +339,12 @@ export default function Header() {
                     href="/talent/browse"
                     className={`${getNavLinkClasses("/talent/browse")} flex items-center gap-2`}
                   >
-                    <Search className="w-4 h-4" />
                     Browse Projects
                   </Link>
                   <Link
                     href="/talent/projects"
                     className={`${getNavLinkClasses("/talent/projects")} flex items-center gap-2`}
                   >
-                    <FolderGit className="w-5 h-5" />
                     Pick Projects
                   </Link>
                   <Link
@@ -358,7 +352,7 @@ export default function Header() {
                     className={`relative ${getNavLinkClasses("/talent/messages")}`}
                     aria-label="Messages"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <span>Messages</span>
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
@@ -368,28 +362,24 @@ export default function Header() {
                     href="/agency/browse-clients"
                     className={`${getNavLinkClasses("/agency/browse-clients")} flex items-center gap-2`}
                   >
-                    <FolderKanban className="w-4 h-4" />
                     <span>Browse Clients</span>
                   </Link>
                   <Link
                     href="/agency/browse-developers"
                     className={`${getNavLinkClasses("/agency/browse-developers")} flex items-center gap-2`}
                   >
-                    <Users className="w-4 h-4" />
                     <span>Browse Developers</span>
                   </Link>
                   <Link
                     href="/agency/picked-clients"
                     className={`${getNavLinkClasses("/agency/picked-clients")} flex items-center gap-2`}
                   >
-                    <FolderKanban className="w-5 h-5" />
                     <span>Picked Clients</span>
                   </Link>
                   <Link
                     href="/agency/picked-developers"
                     className={`${getNavLinkClasses("/agency/picked-developers")} flex items-center gap-2`}
                   >
-                    <FolderGit className="w-5 h-5" />
                     <span>Picked Developers</span>
                   </Link>
                   <Link
@@ -397,7 +387,7 @@ export default function Header() {
                     className={`relative ${getNavLinkClasses("/agency/messages")}`}
                     aria-label="Messages"
                   >
-                    <MessageSquare className="w-5 h-5" />
+                    <span>Messages</span>
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
