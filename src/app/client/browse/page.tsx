@@ -139,8 +139,6 @@ export default function ClientBrowsePage() {
     "Other": ["Cybersecurity", "Testing", "QA", "Git"]
   };
 
-  const allSkills = Object.values(skillCategories).flat();
-
   const toggleSkill = (skill: string) => {
     setSelectedSkills(prev =>
       prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]

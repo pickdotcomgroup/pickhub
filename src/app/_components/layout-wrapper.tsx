@@ -12,7 +12,7 @@ export default function LayoutWrapper({
   
   // Pages where we don't want to show the header
   const hideHeaderPaths = ["/auth"];
-  const shouldShowHeader = !hideHeaderPaths.includes(pathname);
+  const shouldShowHeader = !hideHeaderPaths.includes(pathname) && (!pathname.startsWith("/client/projects/") || pathname === "/client/projects" || pathname === "/client/projects/new");
 
   return (
     <>

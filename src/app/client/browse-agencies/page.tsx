@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
-import { Building2, MapPin, Users, Globe, Calendar } from "lucide-react";
+import { Building2, MapPin, Users, Globe } from "lucide-react";
 import ProjectCardSkeleton from "~/app/_components/project-card-skeleton";
 
 interface AgencyProfile {

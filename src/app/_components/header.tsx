@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Users, PlusCircle, FolderKanban, Search, FolderGit, Building2 } from "lucide-react";
+import { MessageSquare, Building2 } from "lucide-react";
 
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
