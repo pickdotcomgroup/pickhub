@@ -300,7 +300,7 @@ export default function Header() {
             {!session?.user && (
               <nav className="hidden md:flex items-center space-x-1 ml-8">
                 <Link
-                  href="/#how-it-works"
+                  href="/how-it-works"
                   className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
                 >
                   How It Works

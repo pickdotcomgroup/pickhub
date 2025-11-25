@@ -434,7 +434,7 @@ export default function LandingPage() {
               href="/join"
               className="bg-white hover:bg-gray-100 text-blue-600 font-semibold py-4 px-8 rounded-full transition duration-200 shadow-lg hover:shadow-xl text-lg"
             >
-              Sign Up Now
+              Join Us Now
             </Link>
             <Link
               href="/signin"
