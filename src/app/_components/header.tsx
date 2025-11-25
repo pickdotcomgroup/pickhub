@@ -282,18 +282,50 @@ export default function Header() {
             </button>
           )}
 
-          <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-900">
-            <Image
-              src="/image/TechLogo.png"
-              alt="TechPickHub Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
-            <span className="hidden sm:inline">
-              <span className="text-blue-600">TechPick</span>Hub
-            </span>
-          </Link>
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-900">
+              <Image
+                src="/image/TechLogo.png"
+                alt="TechPickHub Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <span className="hidden sm:inline">
+                <span className="text-blue-600">TechPick</span>Hub
+              </span>
+            </Link>
+
+            {/* Public Navigation Links - Only show when not authenticated */}
+            {!session?.user && (
+              <nav className="hidden md:flex items-center space-x-1 ml-8">
+                <Link
+                  href="/#how-it-works"
+                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                >
+                  How It Works
+                </Link>
+                <Link
+                  href="/pricing"
+                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="/blog"
+                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                >
+                  Blog
+                </Link>
+                <Link
+                  href="/about"
+                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                >
+                  About Us
+                </Link>
+              </nav>
+            )}
+          </div>
 
           {/* Quick Actions Navigation */}
           {session?.user && (
