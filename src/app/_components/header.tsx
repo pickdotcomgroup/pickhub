@@ -822,12 +822,14 @@ export default function Header() {
               </>
             ) : pathname !== "/wait-list" ? (
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <Link
-                  href="/signin"
-                  className="text-gray-700 hover:text-gray-900 font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-100 transition"
-                >
-                  Sign In
-                </Link>
+                {pathname !== "/signin" && (
+                  <Link
+                    href="/signin"
+                    className="text-gray-700 hover:text-gray-900 font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-100 transition"
+                  >
+                    Sign In
+                  </Link>
+                )}
                 <Link
                   href="/join"
                   className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-3 sm:px-5 text-sm sm:text-base rounded-lg transition"

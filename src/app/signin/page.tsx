@@ -80,50 +80,6 @@ function AuthContent() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "CEO, TechStart Inc.",
-      type: "Client",
-      avatar: "SC",
-      feedback: "TechPickHub connected us with amazing developers. We built our MVP in just 6 weeks!",
-      rating: 5
-    },
-    {
-      name: "Marcus Rodriguez",
-      role: "Full Stack Developer",
-      type: "Developer",
-      avatar: "MR",
-      feedback: "Best platform for finding quality projects. The client vetting process is excellent.",
-      rating: 5
-    },
-    {
-      name: "Digital Innovations",
-      role: "Creative Agency",
-      type: "Agency",
-      avatar: "DI",
-      feedback: "We've scaled our business 3x using TechPickHub. The project quality is outstanding.",
-      rating: 5
-    },
-    {
-      name: "James Wilson",
-      role: "CTO, FinanceFlow",
-      type: "Client",
-      avatar: "JW",
-      feedback: "Found our entire development team here. Professional, skilled, and reliable talent.",
-      rating: 5
-    },
-    {
-      name: "Priya Sharma",
-      role: "UI/UX Designer",
-      type: "Developer",
-      avatar: "PS",
-      feedback: "Love the transparent communication and fair payment terms. Highly recommended!",
-      rating: 5
-    }
-  ];
 
   // Check for professional signup type in URL
   useEffect(() => {
@@ -154,15 +110,6 @@ function AuthContent() {
       }
     }
   }, [session, router]);
-
-  // Auto-rotate testimonials
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000); // Change every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [testimonials.length]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -411,136 +358,9 @@ function AuthContent() {
 
   return (
     <main className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="w-full flex flex-col lg:flex-row">
-        {/* Left Side - Header/Logo Section */}
-        <div className="lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
-          {/* Abstract Circuit Background */}
-          <div className="absolute inset-0 opacity-20">
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="circuit-pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                  {/* Circuit lines */}
-                  <path d="M0 50 L25 50 L25 25 L50 25" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                  <path d="M50 25 L75 25 L75 50 L100 50" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                  <path d="M50 75 L50 50 L75 50" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                  <path d="M25 75 L50 75 L50 100" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                  <path d="M0 25 L25 25 L25 0" stroke="white" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                  
-                  {/* Circuit nodes */}
-                  <circle cx="25" cy="25" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="50" cy="25" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="75" cy="25" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="25" cy="50" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="50" cy="50" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="75" cy="50" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="25" cy="75" r="3" fill="white" opacity="0.8"/>
-                  <circle cx="50" cy="75" r="3" fill="white" opacity="0.8"/>
-                  
-                  {/* Microchip elements */}
-                  <rect x="35" y="35" width="30" height="30" stroke="white" strokeWidth="1.5" fill="none" opacity="0.5" rx="2"/>
-                  <line x1="35" y1="42" x2="30" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
-                  <line x1="35" y1="50" x2="30" y2="50" stroke="white" strokeWidth="1" opacity="0.5"/>
-                  <line x1="35" y1="58" x2="30" y2="58" stroke="white" strokeWidth="1" opacity="0.5"/>
-                  <line x1="65" y1="42" x2="70" y2="42" stroke="white" strokeWidth="1" opacity="0.5"/>
-                  <line x1="65" y1="50" x2="70" y2="50" stroke="white" strokeWidth="1" opacity="0.5"/>
-                  <line x1="65" y1="58" x2="70" y2="58" stroke="white" strokeWidth="1" opacity="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#circuit-pattern)"/>
-            </svg>
-          </div>
-          
-          <div className="max-w-lg text-center lg:text-left relative z-10">
-            {authMode === "professional" && (
-              <div className="text-6xl mb-6">{professionalInfo.icon}</div>
-            )}
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
-              <h1 className="text-4xl lg:text-5xl font-bold text-white">
-                <span className="text-white">TechPick</span>Hub
-              </h1>
-              <Image
-                src="/image/TechLogo.png"
-                alt="TechPickHub Logo"
-                width={60}
-                height={60}
-                className="object-contain"
-              />
-            </div>
-            <p className="text-blue-100 text-lg mb-8">
-              {authMode === "professional" 
-                ? professionalInfo.subtitle
-                : "Your gateway to freelance tech projects—find pick projects, pick devs, and pick agencies to grow your business."
-              }
-            </p>
-
-            {/* Testimonial Carousel */}
-            <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-              <div className="relative">
-                {/* Testimonial Content */}
-                <div className="transition-all duration-500 ease-in-out">
-                  <div className="flex items-start gap-4 mb-4">
-                    {/* Avatar */}
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm border-2 border-white/30">
-                      {testimonials[currentTestimonial]?.avatar}
-                    </div>
-                    
-                    {/* Name and Role */}
-                    <div className="flex-1">
-                      <h4 className="text-white font-semibold text-base">
-                        {testimonials[currentTestimonial]?.name}
-                      </h4>
-                      <p className="text-blue-100 text-sm">
-                        {testimonials[currentTestimonial]?.role}
-                      </p>
-                      <span className="inline-block mt-1 px-2 py-0.5 bg-white/20 rounded-full text-xs text-white">
-                        {testimonials[currentTestimonial]?.type}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Rating Stars */}
-                  <div className="flex gap-1 mb-3">
-                    {Array.from({ length: testimonials[currentTestimonial]?.rating ?? 5 }).map((_, i) => (
-                      <svg
-                        key={i}
-                        className="w-4 h-4 text-yellow-400 fill-current"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                      </svg>
-                    ))}
-                  </div>
-
-                  {/* Feedback Text */}
-                  <p className="text-white/90 text-sm leading-relaxed italic">
-                    &ldquo;{testimonials[currentTestimonial]?.feedback}&rdquo;
-                  </p>
-                </div>
-
-                {/* Navigation Dots */}
-                <div className="flex justify-center gap-2 mt-6">
-                  {testimonials.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentTestimonial(index)}
-                      className={`transition-all duration-300 rounded-full ${
-                        index === currentTestimonial
-                          ? 'w-8 h-2 bg-white'
-                          : 'w-2 h-2 bg-white/40 hover:bg-white/60'
-                      }`}
-                      aria-label={`Go to testimonial ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side - Auth Form */}
-        <div className="lg:w-1/2 flex items-center justify-center">
-          <div className={`w-full ${authMode === "professional" ? "max-w-2xl" : "max-w-md"}`}>
-            <div className="bg-white rounded-2xl p-8">
+      <div className="w-full flex mt-16 justify-center py-12 px-4">
+        <div className={`w-full ${authMode === "professional" ? "max-w-2xl" : "max-w-md"}`}>
+            <div>
 
               {/* Sign In Header - only show for signin mode */}
               {authMode === "signin" && (
@@ -548,7 +368,6 @@ function AuthContent() {
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
                     Sign In
                   </h2>
-                  <p className="text-gray-600">Welcome back! Please sign in to continue</p>
                 </div>
               )}
 
@@ -1104,7 +923,6 @@ function AuthContent() {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </main>
   );
