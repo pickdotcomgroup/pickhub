@@ -58,6 +58,21 @@ interface Task {
   updatedAt: string;
 }
 
+interface Milestone {
+  id: string;
+  title: string;
+  description: string | null;
+  amount: number;
+  startDate: string;
+  endDate: string;
+  status: string;
+  projectId: string;
+  createdBy: string;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface Project {
   id: string;
   title: string;
@@ -97,10 +112,31 @@ export default function ManageProjectPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
 
+  // Milestone management state
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [isMilestonesLoading, setIsMilestonesLoading] = useState(false);
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+  const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
+  const [milestoneFormData, setMilestoneFormData] = useState({
+    title: "",
+    description: "",
+    amount: "",
+    startDate: "",
+    endDate: "",
+  });
+
   // Fetch tasks when Kanban tab is active
   useEffect(() => {
     if (activeTab === "kanban" && project && !isTasksLoading && tasks.length === 0) {
       void fetchTasks();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, project]);
+
+  // Fetch milestones when Milestones tab is active
+  useEffect(() => {
+    if (activeTab === "milestones" && project && !isMilestonesLoading && milestones.length === 0) {
+      void fetchMilestones();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, project]);
@@ -115,6 +151,19 @@ export default function ManageProjectPage() {
       console.error("Error fetching tasks:", error);
     } finally {
       setIsTasksLoading(false);
+    }
+  };
+
+  const fetchMilestones = async () => {
+    try {
+      setIsMilestonesLoading(true);
+      const response = await fetch(`/api/milestones?projectId=${projectId}`);
+      const data = await response.json() as { milestones: Milestone[] };
+      setMilestones(data.milestones ?? []);
+    } catch (error) {
+      console.error("Error fetching milestones:", error);
+    } finally {
+      setIsMilestonesLoading(false);
     }
   };
 
@@ -262,6 +311,154 @@ export default function ManageProjectPage() {
     setTaskFormData({ title: "", description: "", priority: "medium", dueDate: "" });
   };
 
+  // Milestone handlers
+  const handleCreateMilestone = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!milestoneFormData.title.trim() || !milestoneFormData.amount || !milestoneFormData.startDate || !milestoneFormData.endDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch("/api/milestones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectId,
+          title: milestoneFormData.title,
+          description: milestoneFormData.description || null,
+          amount: parseFloat(milestoneFormData.amount),
+          startDate: milestoneFormData.startDate,
+          endDate: milestoneFormData.endDate,
+        }),
+      });
+
+      const data = await response.json() as { milestone: Milestone; error?: string };
+
+      if (response.ok) {
+        setMilestones([...milestones, data.milestone]);
+        setShowMilestoneModal(false);
+        setMilestoneFormData({ title: "", description: "", amount: "", startDate: "", endDate: "" });
+        toast.success("Milestone created successfully!");
+      } else {
+        toast.error(`Failed to create milestone: ${data.error ?? "Unknown error"}`);
+      }
+    } catch {
+      toast.error("Error creating milestone. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditMilestone = (milestone: Milestone) => {
+    setEditingMilestone(milestone);
+    setMilestoneFormData({
+      title: milestone.title,
+      description: milestone.description ?? "",
+      amount: milestone.amount.toString(),
+      startDate: new Date(milestone.startDate).toISOString().split('T')[0] ?? "",
+      endDate: new Date(milestone.endDate).toISOString().split('T')[0] ?? "",
+    });
+    setShowMilestoneModal(true);
+  };
+
+  const handleUpdateMilestone = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMilestone || !milestoneFormData.title.trim()) return;
+
+    try {
+      setIsSubmitting(true);
+
+      const response = await fetch("/api/milestones", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          milestoneId: editingMilestone.id,
+          title: milestoneFormData.title,
+          description: milestoneFormData.description || null,
+          amount: parseFloat(milestoneFormData.amount),
+          startDate: milestoneFormData.startDate,
+          endDate: milestoneFormData.endDate,
+        }),
+      });
+
+      const data = await response.json() as { milestone: Milestone; error?: string };
+
+      if (response.ok) {
+        setMilestones(milestones.map(m => 
+          m.id === editingMilestone.id ? data.milestone : m
+        ));
+        setShowMilestoneModal(false);
+        setEditingMilestone(null);
+        setMilestoneFormData({ title: "", description: "", amount: "", startDate: "", endDate: "" });
+        toast.success("Milestone updated successfully!");
+      } else {
+        toast.error(`Failed to update milestone: ${data.error ?? "Unknown error"}`);
+      }
+    } catch {
+      toast.error("Error updating milestone. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteMilestone = async (milestoneId: string) => {
+    if (!confirm("Are you sure you want to delete this milestone?")) return;
+
+    try {
+      const response = await fetch(`/api/milestones?milestoneId=${milestoneId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setMilestones(milestones.filter(m => m.id !== milestoneId));
+        toast.success("Milestone deleted successfully!");
+      } else {
+        toast.error("Failed to delete milestone");
+      }
+    } catch (error) {
+      console.error("Error deleting milestone:", error);
+      toast.error("Error deleting milestone. Please try again.");
+    }
+  };
+
+  const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
+    try {
+      const response = await fetch("/api/milestones", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ milestoneId, status: newStatus }),
+      });
+
+      if (response.ok) {
+        const data = await response.json() as { milestone: Milestone };
+        setMilestones(milestones.map(m => 
+          m.id === milestoneId ? data.milestone : m
+        ));
+        toast.success("Milestone status updated!");
+      }
+    } catch (error) {
+      console.error("Error updating milestone status:", error);
+    }
+  };
+
+  const handleCloseMilestoneModal = () => {
+    setShowMilestoneModal(false);
+    setEditingMilestone(null);
+    setMilestoneFormData({ title: "", description: "", amount: "", startDate: "", endDate: "" });
+  };
+
+  const getMilestoneStatusColor = (status: string) => {
+    switch (status) {
+      case "pending": return "bg-yellow-100 text-yellow-700 border-yellow-300";
+      case "in_progress": return "bg-blue-100 text-blue-700 border-blue-300";
+      case "completed": return "bg-green-100 text-green-700 border-green-300";
+      default: return "bg-gray-100 text-gray-700 border-gray-300";
+    }
+  };
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return "bg-red-100 text-red-700 border-red-300";
@@ -283,26 +480,47 @@ export default function ManageProjectPage() {
       return;
     }
 
-    if (session.user.role !== "client") {
-      router.push("/client/dashboard");
+    if (session.user.role !== "client" && session.user.role !== "talent") {
+      // Redirect based on role
+      if (session.user.role === "agency") {
+        router.push("/agency/dashboard");
+      } else {
+        router.push("/talent/dashboard");
+      }
       return;
     }
 
     const fetchProject = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/projects?clientId=${session.user.id}`);
-        const data = await response.json() as { error?: string; projects: Project[] };
+        
+        // For talents, fetch their applications to find the project
+        // For clients, fetch their projects directly
+        let foundProject: Project | undefined;
+        
+        if (session.user.role === "talent") {
+          // Fetch talent's applications
+          const appResponse = await fetch(`/api/applications?talentId=${session.user.id}`);
+          const appData = await appResponse.json() as { applications: Array<{ project: Project }> };
+          
+          // Find the project from applications
+          const application = appData.applications?.find(app => app.project.id === projectId);
+          foundProject = application?.project;
+        } else {
+          // Fetch client's projects
+          const response = await fetch(`/api/projects?clientId=${session.user.id}`);
+          const data = await response.json() as { error?: string; projects: Project[] };
 
-        if (!response.ok) {
-          setError(data.error ?? "Failed to fetch project");
-          return;
+          if (!response.ok) {
+            setError(data.error ?? "Failed to fetch project");
+            return;
+          }
+
+          foundProject = data.projects.find(p => p.id === projectId);
         }
 
-        const foundProject = data.projects.find(p => p.id === projectId);
-
         if (!foundProject) {
-          setError("Project not found");
+          setError("Project not found or you don't have access to this project");
           return;
         }
 
@@ -418,11 +636,13 @@ export default function ManageProjectPage() {
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || (session.user.role !== "client" && session.user.role !== "talent")) {
     return null;
   }
 
   if (error || !project) {
+    const backLink = session.user.role === "talent" ? "/talent/projects" : "/client/projects";
+    
     return (
       <main className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -433,7 +653,7 @@ export default function ManageProjectPage() {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Project</h3>
             <p className="text-red-600 mb-6">{error !== "" ? error : "Project not found"}</p>
             <Link
-              href="/client/projects"
+              href={backLink}
               className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -532,28 +752,12 @@ export default function ManageProjectPage() {
                     <span>Kanban Board</span>
                   </button>
                 </li>
-                <li>
-                  <button
-                    onClick={() => setActiveTab("settings")}
-                    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === "settings"
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50 border border-transparent"
-                      }`}
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span>Settings</span>
-                  </button>
-                </li>
               </ul>
             </nav>
           </aside>
 
           {/* Main Content Area */}
           <div className="flex-1 min-w-0">
-
             {/* Tab Content */}
             {activeTab === "overview" && (
               <div className="space-y-6">
@@ -659,7 +863,12 @@ export default function ManageProjectPage() {
 
             {activeTab === "developers" && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Developer</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">Developers</h2>
+                  <div className="text-sm text-gray-600">
+                    Manage your project team and onboard developers
+                  </div>
+                </div>
 
                 {!project.applications || project.applications.length === 0 ? (
                   <div className="text-center py-12">
@@ -734,8 +943,11 @@ export default function ManageProjectPage() {
             {activeTab === "milestones" && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Project Milestones</h2>
-                  <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2">
+                  <h2 className="text-xl font-bold text-gray-900">Project Milestones Timeline</h2>
+                  <button 
+                    onClick={() => setShowMilestoneModal(true)}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2"
+                  >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -743,70 +955,11 @@ export default function ManageProjectPage() {
                   </button>
                 </div>
 
-                {/* Milestone Creation Form */}
-                <div className="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">New Milestone</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Milestone Title
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g., Design Phase Complete"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        rows={3}
-                        placeholder="Describe what needs to be accomplished..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Due Date
-                        </label>
-                        <input
-                          type="date"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Payment Amount
-                        </label>
-                        <input
-                          type="number"
-                          placeholder="0.00"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end space-x-3">
-                      <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300">
-                        Cancel
-                      </button>
-                      <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-                        Save Milestone
-                      </button>
-                    </div>
+                {isMilestonesLoading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                   </div>
-                </div>
-
-                {/* Milestones List */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Existing Milestones</h3>
-
-                  {/* Empty State */}
+                ) : milestones.length === 0 ? (
                   <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
                     <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -814,7 +967,212 @@ export default function ManageProjectPage() {
                     <p className="text-gray-600 mb-2">No milestones created yet</p>
                     <p className="text-sm text-gray-500">Create your first milestone to track project progress</p>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <div className="overflow-x-auto">
+                      {/* Timeline Table */}
+                      <div className="min-w-full">
+                        {(() => {
+                        // Calculate the date range based on all milestones
+                        let earliestDate = new Date();
+                        let latestDate = new Date();
+                        
+                        if (milestones.length > 0) {
+                          const allDates = milestones.flatMap(m => [
+                            new Date(m.startDate),
+                            new Date(m.endDate)
+                          ]);
+                          earliestDate = new Date(Math.min(...allDates.map(d => d.getTime())));
+                          latestDate = new Date(Math.max(...allDates.map(d => d.getTime())));
+                        }
+                        
+                        // Add 1 month buffer on each side
+                        const startMonth = new Date(earliestDate.getFullYear(), earliestDate.getMonth() - 1, 1);
+                        const endMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 1);
+                        
+                        // Calculate total months to display
+                        const totalMonths = (endMonth.getFullYear() - startMonth.getFullYear()) * 12 + 
+                                          (endMonth.getMonth() - startMonth.getMonth()) + 1;
+                        
+                        // Generate month headers
+                        const months: Date[] = [];
+                        for (let i = 0; i < totalMonths; i++) {
+                          const date = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
+                          months.push(date);
+                        }
+                        
+                        // Each month column should be at least 80px wide
+                        const monthWidth = 80;
+                        
+                        return (
+                          <>
+                            {/* Header with columns */}
+                            <div className="flex border-b-2 border-gray-300">
+                              <div className="w-64 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-0 z-10">
+                                Milestone Name
+                              </div>
+                              <div className="w-28 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-64 z-10">
+                                Amount
+                              </div>
+                              <div className="flex" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
+                                {months.map((month, idx) => (
+                                  <div 
+                                    key={idx} 
+                                    className="p-2 text-center text-xs font-semibold text-gray-600 bg-gray-50 border-l border-gray-200"
+                                    style={{ width: `${monthWidth}px` }}
+                                  >
+                                    <div>{month.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                    <div className="text-gray-400">{month.getFullYear()}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Milestone rows */}
+                            {milestones.map((milestone) => {
+                              const milestoneStartDate = new Date(milestone.startDate);
+                              const milestoneEndDate = new Date(milestone.endDate);
+                              
+                              // Calculate positions for start and end dates
+                              const startMonthsDiff = (milestoneStartDate.getFullYear() - startMonth.getFullYear()) * 12 + 
+                                                     (milestoneStartDate.getMonth() - startMonth.getMonth());
+                              const endMonthsDiff = (milestoneEndDate.getFullYear() - startMonth.getFullYear()) * 12 + 
+                                                   (milestoneEndDate.getMonth() - startMonth.getMonth());
+                              const startPosition = Math.max(0, Math.min(totalMonths - 1, startMonthsDiff));
+                              const endPosition = Math.max(0, Math.min(totalMonths - 1, endMonthsDiff));
+                              
+                              return (
+                                <div key={milestone.id} className="flex border-b border-gray-200 hover:bg-gray-50 transition">
+                                  {/* Milestone Name Column */}
+                                  <div className="w-64 flex-shrink-0 p-3 border-r border-gray-200 sticky left-0 bg-white z-10">
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1 min-w-0 pr-2">
+                                  <h3 className="font-semibold text-gray-900 text-sm truncate">{milestone.title}</h3>
+                                  {milestone.description && (
+                                    <p className="text-xs text-gray-500 line-clamp-2 mt-1">{milestone.description}</p>
+                                  )}
+                                </div>
+                                <div className="flex items-center space-x-1">
+                                  <button
+                                    onClick={() => handleEditMilestone(milestone)}
+                                    className="p-1 text-gray-400 hover:text-blue-600 transition"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteMilestone(milestone.id)}
+                                    className="p-1 text-gray-400 hover:text-red-600 transition"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
+                                  </div>
+
+                                  {/* Amount Column */}
+                                  <div className="w-28 flex-shrink-0 p-3 border-r border-gray-200 flex items-center justify-center sticky left-64 bg-white z-10">
+                                    <span className="text-sm text-blue-600 font-semibold">${milestone.amount.toLocaleString()}</span>
+                                  </div>
+
+                                  {/* Timeline Columns */}
+                                  <div className="flex relative" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
+                                    {months.map((_, idx) => {
+                                      const isInRange = idx >= startPosition && idx <= endPosition;
+                                      const isStart = idx === startPosition;
+                                      const isEnd = idx === endPosition;
+                                      
+                                      return (
+                                        <div 
+                                          key={idx} 
+                                          className="border-l border-gray-200 relative"
+                                          style={{ width: `${monthWidth}px` }}
+                                        >
+                                          {/* Horizontal line spanning from start to end */}
+                                          {isInRange && (
+                                            <div className="absolute inset-0 flex items-center">
+                                              <div className={`h-1 w-full ${
+                                                milestone.status === 'completed' 
+                                                  ? 'bg-green-500' 
+                                                  : milestone.status === 'in_progress'
+                                                  ? 'bg-blue-500'
+                                                  : 'bg-gray-400'
+                                              }`}></div>
+                                            </div>
+                                          )}
+                                          
+                                          {/* Start date marker with tooltip */}
+                                          {isStart && (
+                                            <div className="absolute inset-0 flex items-center justify-start">
+                                              <div className="relative group">
+                                                <div className={`w-3 h-3 rounded-full ${
+                                                  milestone.status === 'completed' 
+                                                    ? 'bg-green-500' 
+                                                    : milestone.status === 'in_progress'
+                                                    ? 'bg-blue-500'
+                                                    : 'bg-gray-400'
+                                                } z-10`}></div>
+                                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
+                                                  <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                                    Start: {formatDate(milestone.startDate)}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                          
+                                          {/* End date marker with tooltip */}
+                                          {isEnd && (
+                                            <div className="absolute inset-0 flex items-center justify-end">
+                                              <div className="relative group">
+                                                <div className={`w-3 h-3 rounded-full ${
+                                                  milestone.status === 'completed' 
+                                                    ? 'bg-green-500' 
+                                                    : milestone.status === 'in_progress'
+                                                    ? 'bg-blue-500'
+                                                    : 'bg-gray-400'
+                                                } z-10`}></div>
+                                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
+                                                  <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                                    End: {formatDate(milestone.endDate)}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </>
+                        );
+                      })()}
+                      </div>
+                    </div>
+
+                    {/* Legend */}
+                    <div className="mt-6 flex items-center justify-center space-x-6 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="h-1 w-8 bg-gray-400"></div>
+                        <span className="text-gray-600">Pending</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="h-1 w-8 bg-blue-500"></div>
+                        <span className="text-gray-600">In Progress</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="h-1 w-8 bg-green-500"></div>
+                        <span className="text-gray-600">Completed</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1049,16 +1407,121 @@ export default function ManageProjectPage() {
                 )}
               </div>
             )}
-
-            {activeTab === "settings" && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Project Settings</h2>
-                <p className="text-gray-600">Project settings and management options coming soon...</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
+
+      {/* Milestone Creation/Edit Modal */}
+      {showMilestoneModal && (
+        <div className="fixed inset-0 bg-black/15 bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">
+                {editingMilestone ? "Edit Milestone" : "Create New Milestone"}
+              </h3>
+              <button
+                onClick={handleCloseMilestoneModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={editingMilestone ? handleUpdateMilestone : handleCreateMilestone} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Milestone Title *
+                </label>
+                <input
+                  type="text"
+                  value={milestoneFormData.title}
+                  onChange={(e) => setMilestoneFormData({ ...milestoneFormData, title: e.target.value })}
+                  placeholder="e.g., Design Phase Complete"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={milestoneFormData.description}
+                  onChange={(e) => setMilestoneFormData({ ...milestoneFormData, description: e.target.value })}
+                  placeholder="Describe what needs to be accomplished (optional)"
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Payment Amount *
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={milestoneFormData.amount}
+                  onChange={(e) => setMilestoneFormData({ ...milestoneFormData, amount: e.target.value })}
+                  placeholder="0.00"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Start Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={milestoneFormData.startDate}
+                    onChange={(e) => setMilestoneFormData({ ...milestoneFormData, startDate: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    End Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={milestoneFormData.endDate}
+                    onChange={(e) => setMilestoneFormData({ ...milestoneFormData, endDate: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleCloseMilestoneModal}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition border border-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting 
+                    ? (editingMilestone ? "Updating..." : "Creating...") 
+                    : (editingMilestone ? "Update Milestone" : "Create Milestone")
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Task Creation/Edit Modal */}
       {showTaskModal && (

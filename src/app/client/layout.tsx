@@ -21,11 +21,10 @@ export default function ClientLayout({
       return;
     }
 
-    // Redirect to appropriate dashboard if not a client
-    if (session.user.role !== "client") {
-      if (session.user.role === "talent") {
-        router.push("/talent");
-      } else if (session.user.role === "agency") {
+    // Redirect to appropriate dashboard if not a client or talent
+    // Talents need access to view project management pages they're onboarded to
+    if (session.user.role !== "client" && session.user.role !== "talent") {
+      if (session.user.role === "agency") {
         router.push("/agency");
       } else {
         router.push("/dashboard");
@@ -44,7 +43,8 @@ export default function ClientLayout({
   }
 
   // Don't render if not authenticated or wrong role
-  if (!session || session.user.role !== "client") {
+  // Allow both clients and talents to access this layout
+  if (!session || (session.user.role !== "client" && session.user.role !== "talent")) {
     return null;
   }
 

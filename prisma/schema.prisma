@@ -208,6 +208,7 @@ model Project {
   hourlyRate        Float?
   applications      Application[]
   tasks             Task[]
+  milestones        Milestone[]
   client            User          @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([clientId])
@@ -226,6 +227,26 @@ model Task {
   assigneeId  String?
   createdBy   String
   projectId   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([status])
+  @@index([createdBy])
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  amount      Float
+  startDate   DateTime
+  endDate     DateTime
+  status      String    @default("pending")
+  projectId   String
+  createdBy   String
+  completedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
