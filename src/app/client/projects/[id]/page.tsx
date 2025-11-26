@@ -97,7 +97,7 @@ export default function ManageProjectPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"overview" | "developers" | "milestones" | "kanban" | "settings">("overview");
-  
+
   // Task management state
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isTasksLoading, setIsTasksLoading] = useState(false);
@@ -213,7 +213,7 @@ export default function ManageProjectPage() {
       });
 
       if (response.ok) {
-        setTasks(tasks.map(task => 
+        setTasks(tasks.map(task =>
           task.id === taskId ? { ...task, status: newStatus } : task
         ));
       }
@@ -232,7 +232,7 @@ export default function ManageProjectPage() {
 
   const handleDrop = async (newStatus: string) => {
     if (!draggedTask) return;
-    
+
     await handleUpdateTaskStatus(draggedTask, newStatus);
     setDraggedTask(null);
   };
@@ -270,7 +270,7 @@ export default function ManageProjectPage() {
       const data = await response.json() as { task: Task; error?: string };
 
       if (response.ok) {
-        setTasks(tasks.map(task => 
+        setTasks(tasks.map(task =>
           task.id === editingTask.id ? data.task : task
         ));
         setShowTaskModal(false);
@@ -387,7 +387,7 @@ export default function ManageProjectPage() {
       const data = await response.json() as { milestone: Milestone; error?: string };
 
       if (response.ok) {
-        setMilestones(milestones.map(m => 
+        setMilestones(milestones.map(m =>
           m.id === editingMilestone.id ? data.milestone : m
         ));
         setShowMilestoneModal(false);
@@ -434,7 +434,7 @@ export default function ManageProjectPage() {
 
       if (response.ok) {
         const data = await response.json() as { milestone: Milestone };
-        setMilestones(milestones.map(m => 
+        setMilestones(milestones.map(m =>
           m.id === milestoneId ? data.milestone : m
         ));
         toast.success("Milestone status updated!");
@@ -493,16 +493,16 @@ export default function ManageProjectPage() {
     const fetchProject = async () => {
       try {
         setIsLoading(true);
-        
+
         // For talents, fetch their applications to find the project
         // For clients, fetch their projects directly
         let foundProject: Project | undefined;
-        
+
         if (session.user.role === "talent") {
           // Fetch talent's applications
           const appResponse = await fetch(`/api/applications?talentId=${session.user.id}`);
           const appData = await appResponse.json() as { applications: Array<{ project: Project }> };
-          
+
           // Find the project from applications
           const application = appData.applications?.find(app => app.project.id === projectId);
           foundProject = application?.project;
@@ -642,7 +642,7 @@ export default function ManageProjectPage() {
 
   if (error || !project) {
     const backLink = session.user.role === "talent" ? "/talent/projects" : "/client/projects";
-    
+
     return (
       <main className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -679,6 +679,8 @@ export default function ManageProjectPage() {
               <div className="mb-6 pb-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h1 className="text-lg font-bold text-gray-900 mb-2 break-words">{project.title}</h1>
+                </div>
+                <div>
                   <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(project.status)}`}>
                     {project.status.replace("_", " ").toUpperCase()}
                   </span>
@@ -695,8 +697,8 @@ export default function ManageProjectPage() {
                   <button
                     onClick={() => setActiveTab("overview")}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === "overview"
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50 border border-transparent"
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "text-gray-700 hover:bg-gray-50 border border-transparent"
                       }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -709,8 +711,8 @@ export default function ManageProjectPage() {
                   <button
                     onClick={() => setActiveTab("developers")}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === "developers"
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50 border border-transparent"
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "text-gray-700 hover:bg-gray-50 border border-transparent"
                       }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -728,8 +730,8 @@ export default function ManageProjectPage() {
                   <button
                     onClick={() => setActiveTab("milestones")}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === "milestones"
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50 border border-transparent"
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "text-gray-700 hover:bg-gray-50 border border-transparent"
                       }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -742,8 +744,8 @@ export default function ManageProjectPage() {
                   <button
                     onClick={() => setActiveTab("kanban")}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === "kanban"
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-gray-700 hover:bg-gray-50 border border-transparent"
+                      ? "bg-blue-50 text-blue-700 border border-blue-200"
+                      : "text-gray-700 hover:bg-gray-50 border border-transparent"
                       }`}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -911,10 +913,10 @@ export default function ManageProjectPage() {
                                   : application.talent.name ?? 'Applicant'}
                               </h4>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${application.status === 'pending'
-                                  ? 'bg-yellow-100 text-yellow-700'
-                                  : application.status === 'accepted'
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-red-100 text-red-700'
+                                ? 'bg-yellow-100 text-yellow-700'
+                                : application.status === 'accepted'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-red-100 text-red-700'
                                 }`}>
                                 {application.status.toUpperCase()}
                               </span>
@@ -944,7 +946,7 @@ export default function ManageProjectPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Project Milestones Timeline</h2>
-                  <button 
+                  <button
                     onClick={() => setShowMilestoneModal(true)}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2"
                   >
@@ -973,186 +975,183 @@ export default function ManageProjectPage() {
                       {/* Timeline Table */}
                       <div className="min-w-full">
                         {(() => {
-                        // Calculate the date range based on all milestones
-                        let earliestDate = new Date();
-                        let latestDate = new Date();
-                        
-                        if (milestones.length > 0) {
-                          const allDates = milestones.flatMap(m => [
-                            new Date(m.startDate),
-                            new Date(m.endDate)
-                          ]);
-                          earliestDate = new Date(Math.min(...allDates.map(d => d.getTime())));
-                          latestDate = new Date(Math.max(...allDates.map(d => d.getTime())));
-                        }
-                        
-                        // Add 1 month buffer on each side
-                        const startMonth = new Date(earliestDate.getFullYear(), earliestDate.getMonth() - 1, 1);
-                        const endMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 1);
-                        
-                        // Calculate total months to display
-                        const totalMonths = (endMonth.getFullYear() - startMonth.getFullYear()) * 12 + 
-                                          (endMonth.getMonth() - startMonth.getMonth()) + 1;
-                        
-                        // Generate month headers
-                        const months: Date[] = [];
-                        for (let i = 0; i < totalMonths; i++) {
-                          const date = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
-                          months.push(date);
-                        }
-                        
-                        // Each month column should be at least 80px wide
-                        const monthWidth = 80;
-                        
-                        return (
-                          <>
-                            {/* Header with columns */}
-                            <div className="flex border-b-2 border-gray-300">
-                              <div className="w-64 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-0 z-10">
-                                Milestone Name
-                              </div>
-                              <div className="w-28 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-64 z-10">
-                                Amount
-                              </div>
-                              <div className="flex" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
-                                {months.map((month, idx) => (
-                                  <div 
-                                    key={idx} 
-                                    className="p-2 text-center text-xs font-semibold text-gray-600 bg-gray-50 border-l border-gray-200"
-                                    style={{ width: `${monthWidth}px` }}
-                                  >
-                                    <div>{month.toLocaleDateString('en-US', { month: 'short' })}</div>
-                                    <div className="text-gray-400">{month.getFullYear()}</div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+                          // Calculate the date range based on all milestones
+                          let earliestDate = new Date();
+                          let latestDate = new Date();
 
-                            {/* Milestone rows */}
-                            {milestones.map((milestone) => {
-                              const milestoneStartDate = new Date(milestone.startDate);
-                              const milestoneEndDate = new Date(milestone.endDate);
-                              
-                              // Calculate positions for start and end dates
-                              const startMonthsDiff = (milestoneStartDate.getFullYear() - startMonth.getFullYear()) * 12 + 
-                                                     (milestoneStartDate.getMonth() - startMonth.getMonth());
-                              const endMonthsDiff = (milestoneEndDate.getFullYear() - startMonth.getFullYear()) * 12 + 
-                                                   (milestoneEndDate.getMonth() - startMonth.getMonth());
-                              const startPosition = Math.max(0, Math.min(totalMonths - 1, startMonthsDiff));
-                              const endPosition = Math.max(0, Math.min(totalMonths - 1, endMonthsDiff));
-                              
-                              return (
-                                <div key={milestone.id} className="flex border-b border-gray-200 hover:bg-gray-50 transition">
-                                  {/* Milestone Name Column */}
-                                  <div className="w-64 flex-shrink-0 p-3 border-r border-gray-200 sticky left-0 bg-white z-10">
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1 min-w-0 pr-2">
-                                  <h3 className="font-semibold text-gray-900 text-sm truncate">{milestone.title}</h3>
-                                  {milestone.description && (
-                                    <p className="text-xs text-gray-500 line-clamp-2 mt-1">{milestone.description}</p>
-                                  )}
+                          if (milestones.length > 0) {
+                            const allDates = milestones.flatMap(m => [
+                              new Date(m.startDate),
+                              new Date(m.endDate)
+                            ]);
+                            earliestDate = new Date(Math.min(...allDates.map(d => d.getTime())));
+                            latestDate = new Date(Math.max(...allDates.map(d => d.getTime())));
+                          }
+
+                          // Add 1 month buffer on each side
+                          const startMonth = new Date(earliestDate.getFullYear(), earliestDate.getMonth() - 1, 1);
+                          const endMonth = new Date(latestDate.getFullYear(), latestDate.getMonth() + 1, 1);
+
+                          // Calculate total months to display
+                          const totalMonths = (endMonth.getFullYear() - startMonth.getFullYear()) * 12 +
+                            (endMonth.getMonth() - startMonth.getMonth()) + 1;
+
+                          // Generate month headers
+                          const months: Date[] = [];
+                          for (let i = 0; i < totalMonths; i++) {
+                            const date = new Date(startMonth.getFullYear(), startMonth.getMonth() + i, 1);
+                            months.push(date);
+                          }
+
+                          // Each month column should be at least 80px wide
+                          const monthWidth = 80;
+
+                          return (
+                            <>
+                              {/* Header with columns */}
+                              <div className="flex border-b-2 border-gray-300">
+                                <div className="w-64 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-0 z-10">
+                                  Milestone Name
                                 </div>
-                                <div className="flex items-center space-x-1">
-                                  <button
-                                    onClick={() => handleEditMilestone(milestone)}
-                                    className="p-1 text-gray-400 hover:text-blue-600 transition"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteMilestone(milestone.id)}
-                                    className="p-1 text-gray-400 hover:text-red-600 transition"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                  </button>
+                                <div className="w-28 flex-shrink-0 p-3 font-semibold text-gray-700 bg-gray-50 border-r border-gray-200 sticky left-64 z-10">
+                                  Amount
+                                </div>
+                                <div className="flex" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
+                                  {months.map((month, idx) => (
+                                    <div
+                                      key={idx}
+                                      className="p-2 text-center text-xs font-semibold text-gray-600 bg-gray-50 border-l border-gray-200"
+                                      style={{ width: `${monthWidth}px` }}
+                                    >
+                                      <div>{month.toLocaleDateString('en-US', { month: 'short' })}</div>
+                                      <div className="text-gray-400">{month.getFullYear()}</div>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
-                                  </div>
 
-                                  {/* Amount Column */}
-                                  <div className="w-28 flex-shrink-0 p-3 border-r border-gray-200 flex items-center justify-center sticky left-64 bg-white z-10">
-                                    <span className="text-sm text-blue-600 font-semibold">${milestone.amount.toLocaleString()}</span>
-                                  </div>
+                              {/* Milestone rows */}
+                              {milestones.map((milestone) => {
+                                const milestoneStartDate = new Date(milestone.startDate);
+                                const milestoneEndDate = new Date(milestone.endDate);
 
-                                  {/* Timeline Columns */}
-                                  <div className="flex relative" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
-                                    {months.map((_, idx) => {
-                                      const isInRange = idx >= startPosition && idx <= endPosition;
-                                      const isStart = idx === startPosition;
-                                      const isEnd = idx === endPosition;
-                                      
-                                      return (
-                                        <div 
-                                          key={idx} 
-                                          className="border-l border-gray-200 relative"
-                                          style={{ width: `${monthWidth}px` }}
-                                        >
-                                          {/* Horizontal line spanning from start to end */}
-                                          {isInRange && (
-                                            <div className="absolute inset-0 flex items-center">
-                                              <div className={`h-1 w-full ${
-                                                milestone.status === 'completed' 
-                                                  ? 'bg-green-500' 
-                                                  : milestone.status === 'in_progress'
-                                                  ? 'bg-blue-500'
-                                                  : 'bg-gray-400'
-                                              }`}></div>
-                                            </div>
-                                          )}
-                                          
-                                          {/* Start date marker with tooltip */}
-                                          {isStart && (
-                                            <div className="absolute inset-0 flex items-center justify-start">
-                                              <div className="relative group">
-                                                <div className={`w-3 h-3 rounded-full ${
-                                                  milestone.status === 'completed' 
-                                                    ? 'bg-green-500' 
-                                                    : milestone.status === 'in_progress'
-                                                    ? 'bg-blue-500'
-                                                    : 'bg-gray-400'
-                                                } z-10`}></div>
-                                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
-                                                  <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                                                    Start: {formatDate(milestone.startDate)}
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          )}
-                                          
-                                          {/* End date marker with tooltip */}
-                                          {isEnd && (
-                                            <div className="absolute inset-0 flex items-center justify-end">
-                                              <div className="relative group">
-                                                <div className={`w-3 h-3 rounded-full ${
-                                                  milestone.status === 'completed' 
-                                                    ? 'bg-green-500' 
-                                                    : milestone.status === 'in_progress'
-                                                    ? 'bg-blue-500'
-                                                    : 'bg-gray-400'
-                                                } z-10`}></div>
-                                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
-                                                  <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
-                                                    End: {formatDate(milestone.endDate)}
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
+                                // Calculate positions for start and end dates
+                                const startMonthsDiff = (milestoneStartDate.getFullYear() - startMonth.getFullYear()) * 12 +
+                                  (milestoneStartDate.getMonth() - startMonth.getMonth());
+                                const endMonthsDiff = (milestoneEndDate.getFullYear() - startMonth.getFullYear()) * 12 +
+                                  (milestoneEndDate.getMonth() - startMonth.getMonth());
+                                const startPosition = Math.max(0, Math.min(totalMonths - 1, startMonthsDiff));
+                                const endPosition = Math.max(0, Math.min(totalMonths - 1, endMonthsDiff));
+
+                                return (
+                                  <div key={milestone.id} className="flex border-b border-gray-200 hover:bg-gray-50 transition">
+                                    {/* Milestone Name Column */}
+                                    <div className="w-64 flex-shrink-0 p-3 border-r border-gray-200 sticky left-0 bg-white z-10">
+                                      <div className="flex items-start justify-between">
+                                        <div className="flex-1 min-w-0 pr-2">
+                                          <h3 className="font-semibold text-gray-900 text-sm truncate">{milestone.title}</h3>
+                                          {milestone.description && (
+                                            <p className="text-xs text-gray-500 line-clamp-2 mt-1">{milestone.description}</p>
                                           )}
                                         </div>
-                                      );
-                                    })}
+                                        <div className="flex items-center space-x-1">
+                                          <button
+                                            onClick={() => handleEditMilestone(milestone)}
+                                            className="p-1 text-gray-400 hover:text-blue-600 transition"
+                                          >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                          </button>
+                                          <button
+                                            onClick={() => handleDeleteMilestone(milestone.id)}
+                                            className="p-1 text-gray-400 hover:text-red-600 transition"
+                                          >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Amount Column */}
+                                    <div className="w-28 flex-shrink-0 p-3 border-r border-gray-200 flex items-center justify-center sticky left-64 bg-white z-10">
+                                      <span className="text-sm text-blue-600 font-semibold">${milestone.amount.toLocaleString()}</span>
+                                    </div>
+
+                                    {/* Timeline Columns */}
+                                    <div className="flex relative" style={{ minWidth: `${totalMonths * monthWidth}px` }}>
+                                      {months.map((_, idx) => {
+                                        const isInRange = idx >= startPosition && idx <= endPosition;
+                                        const isStart = idx === startPosition;
+                                        const isEnd = idx === endPosition;
+
+                                        return (
+                                          <div
+                                            key={idx}
+                                            className="border-l border-gray-200 relative"
+                                            style={{ width: `${monthWidth}px` }}
+                                          >
+                                            {/* Horizontal line spanning from start to end */}
+                                            {isInRange && (
+                                              <div className="absolute inset-0 flex items-center">
+                                                <div className={`h-1 w-full ${milestone.status === 'completed'
+                                                    ? 'bg-green-500'
+                                                    : milestone.status === 'in_progress'
+                                                      ? 'bg-blue-500'
+                                                      : 'bg-gray-400'
+                                                  }`}></div>
+                                              </div>
+                                            )}
+
+                                            {/* Start date marker with tooltip */}
+                                            {isStart && (
+                                              <div className="absolute inset-0 flex items-center justify-start">
+                                                <div className="relative group">
+                                                  <div className={`w-3 h-3 rounded-full ${milestone.status === 'completed'
+                                                      ? 'bg-green-500'
+                                                      : milestone.status === 'in_progress'
+                                                        ? 'bg-blue-500'
+                                                        : 'bg-gray-400'
+                                                    } z-10`}></div>
+                                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
+                                                    <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                                      Start: {formatDate(milestone.startDate)}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {/* End date marker with tooltip */}
+                                            {isEnd && (
+                                              <div className="absolute inset-0 flex items-center justify-end">
+                                                <div className="relative group">
+                                                  <div className={`w-3 h-3 rounded-full ${milestone.status === 'completed'
+                                                      ? 'bg-green-500'
+                                                      : milestone.status === 'in_progress'
+                                                        ? 'bg-blue-500'
+                                                        : 'bg-gray-400'
+                                                    } z-10`}></div>
+                                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
+                                                    <div className="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                                                      End: {formatDate(milestone.endDate)}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
-                              );
-                            })}
-                          </>
-                        );
-                      })()}
+                                );
+                              })}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
 
@@ -1180,7 +1179,7 @@ export default function ManageProjectPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Kanban Board</h2>
-                  <button 
+                  <button
                     onClick={() => setShowTaskModal(true)}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2"
                   >
@@ -1207,7 +1206,7 @@ export default function ManageProjectPage() {
                         <span className="text-sm text-gray-500">{todoTasks.length}</span>
                       </div>
 
-                      <div 
+                      <div
                         className="space-y-3 min-h-[400px] max-h-[600px] overflow-y-auto pr-2"
                         onDragOver={handleDragOver}
                         onDrop={() => handleDrop("todo")}
@@ -1216,8 +1215,8 @@ export default function ManageProjectPage() {
                           <div className="text-center py-8 text-gray-400 text-sm">No tasks yet</div>
                         ) : (
                           todoTasks.map(task => (
-                            <div 
-                              key={task.id} 
+                            <div
+                              key={task.id}
                               draggable
                               onDragStart={() => handleDragStart(task.id)}
                               className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-move hover:shadow-md transition"
@@ -1250,7 +1249,7 @@ export default function ManageProjectPage() {
                                 <span className={`text-xs px-2 py-0.5 rounded-full border ${getPriorityColor(task.priority)}`}>
                                   {task.priority}
                                 </span>
-                                <select 
+                                <select
                                   value={task.status}
                                   onChange={(e) => handleUpdateTaskStatus(task.id, e.target.value)}
                                   className="text-xs border border-gray-300 rounded px-2 py-1"
@@ -1276,7 +1275,7 @@ export default function ManageProjectPage() {
                         <span className="text-sm text-gray-500">{inProgressTasks.length}</span>
                       </div>
 
-                      <div 
+                      <div
                         className="space-y-3 min-h-[400px] max-h-[600px] overflow-y-auto pr-2"
                         onDragOver={handleDragOver}
                         onDrop={() => handleDrop("in_progress")}
@@ -1285,8 +1284,8 @@ export default function ManageProjectPage() {
                           <div className="text-center py-8 text-gray-400 text-sm">No tasks yet</div>
                         ) : (
                           inProgressTasks.map(task => (
-                            <div 
-                              key={task.id} 
+                            <div
+                              key={task.id}
                               draggable
                               onDragStart={() => handleDragStart(task.id)}
                               className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm cursor-move hover:shadow-md transition"
@@ -1319,7 +1318,7 @@ export default function ManageProjectPage() {
                                 <span className={`text-xs px-2 py-0.5 rounded-full border ${getPriorityColor(task.priority)}`}>
                                   {task.priority}
                                 </span>
-                                <select 
+                                <select
                                   value={task.status}
                                   onChange={(e) => handleUpdateTaskStatus(task.id, e.target.value)}
                                   className="text-xs border border-gray-300 rounded px-2 py-1"
@@ -1345,7 +1344,7 @@ export default function ManageProjectPage() {
                         <span className="text-sm text-gray-500">{doneTasks.length}</span>
                       </div>
 
-                      <div 
+                      <div
                         className="space-y-3 min-h-[400px] max-h-[600px] overflow-y-auto pr-2"
                         onDragOver={handleDragOver}
                         onDrop={() => handleDrop("done")}
@@ -1354,8 +1353,8 @@ export default function ManageProjectPage() {
                           <div className="text-center py-8 text-gray-400 text-sm">No tasks yet</div>
                         ) : (
                           doneTasks.map(task => (
-                            <div 
-                              key={task.id} 
+                            <div
+                              key={task.id}
                               draggable
                               onDragStart={() => handleDragStart(task.id)}
                               className="bg-white p-3 rounded-lg border border-green-200 shadow-sm cursor-move hover:shadow-md transition"
@@ -1388,7 +1387,7 @@ export default function ManageProjectPage() {
                                 <span className={`text-xs px-2 py-0.5 rounded-full border ${getPriorityColor(task.priority)}`}>
                                   {task.priority}
                                 </span>
-                                <select 
+                                <select
                                   value={task.status}
                                   onChange={(e) => handleUpdateTaskStatus(task.id, e.target.value)}
                                   className="text-xs border border-gray-300 rounded px-2 py-1"
@@ -1512,8 +1511,8 @@ export default function ManageProjectPage() {
                   disabled={isSubmitting}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting 
-                    ? (editingMilestone ? "Updating..." : "Creating...") 
+                  {isSubmitting
+                    ? (editingMilestone ? "Updating..." : "Creating...")
                     : (editingMilestone ? "Update Milestone" : "Create Milestone")
                   }
                 </button>
@@ -1609,8 +1608,8 @@ export default function ManageProjectPage() {
                   disabled={isSubmitting}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting 
-                    ? (editingTask ? "Updating..." : "Creating...") 
+                  {isSubmitting
+                    ? (editingTask ? "Updating..." : "Creating...")
                     : (editingTask ? "Update Task" : "Create Task")
                   }
                 </button>

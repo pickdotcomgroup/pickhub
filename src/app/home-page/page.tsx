@@ -24,6 +24,13 @@ interface Project {
   postedDate?: string;
   category: string;
   createdAt?: string;
+  deadline?: string | Date;
+  projectType?: string;
+  estimatedDuration?: number;
+  projectTemplate?: string;
+  techStack?: string[];
+  visibility?: string;
+  hourlyRate?: number;
 }
 
 interface Talent {
@@ -72,9 +79,12 @@ export default function Home() {
   const itemsPerPage = 10;
   const [projects, setProjects] = useState<Project[]>([]);
   const [talents, setTalents] = useState<Talent[]>([]);
+  const [agencies, setAgencies] = useState<Agency[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
-  // Fetch projects and talents
+  // Fetch projects, talents, and agencies
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -92,6 +102,42 @@ export default function Home() {
         if (talentsRes.ok) {
           const talentsData = await talentsRes.json() as { talents: Talent[] };
           setTalents(talentsData.talents ?? []);
+        }
+
+        // Fetch agencies
+        const agenciesRes = await fetch('/api/agencies');
+        if (agenciesRes.ok) {
+          const agenciesData = await agenciesRes.json() as { agencies: Array<{
+            id: string;
+            name: string | null;
+            email: string | null;
+            image: string | null;
+            profile: {
+              id: string;
+              firstName: string | null;
+              lastName: string | null;
+              agencyName: string | null;
+              description: string | null;
+              teamSize: string | null;
+              skills: string[];
+              website: string | null;
+              location: string | null;
+              foundedYear: number | null;
+            } | null;
+          }> };
+          
+          // Transform agency data to match Agency interface
+          const transformedAgencies: Agency[] = (agenciesData.agencies ?? []).map(agency => ({
+            id: agency.id,
+            name: agency.profile?.agencyName ?? agency.name ?? 'Unknown Agency',
+            description: agency.profile?.description ?? 'No description available',
+            teamSize: agency.profile?.teamSize ?? 'Not specified',
+            skills: agency.profile?.skills ?? [],
+            projectsCompleted: 0, // This would need to be calculated from actual project data
+            rating: 4.5 // This would need to come from a rating system
+          }));
+          
+          setAgencies(transformedAgencies);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -184,35 +230,6 @@ export default function Home() {
   };
 
   const filterOptions = getFilterOptions();
-  const mockAgencies: Agency[] = [
-    {
-      id: "1",
-      name: "Digital Innovations Agency",
-      description: "Full-service digital agency specializing in web development, mobile apps, and digital marketing solutions.",
-      teamSize: "15-25 people",
-      skills: ["React", "Node.js", "Mobile Development", "UI/UX Design"],
-      projectsCompleted: 150,
-      rating: 4.8
-    },
-    {
-      id: "2",
-      name: "CodeCraft Solutions",
-      description: "Expert software development team focused on enterprise solutions and custom web applications.",
-      teamSize: "10-15 people",
-      skills: ["Python", "JavaScript", "AWS", "DevOps"],
-      projectsCompleted: 89,
-      rating: 4.9
-    },
-    {
-      id: "3",
-      name: "Creative Tech Studio",
-      description: "Design-focused agency creating beautiful and functional digital experiences for modern businesses.",
-      teamSize: "8-12 people",
-      skills: ["UI/UX Design", "React", "Branding", "Mobile Design"],
-      projectsCompleted: 120,
-      rating: 4.7
-    }
-  ];
 
   const handleCategoryToggle = (category: string) => {
     setSelectedCategories(prev =>
@@ -247,6 +264,10 @@ export default function Home() {
     client: string;
     postedDate: string;
     category: string;
+    deadline?: string;
+    projectType?: string;
+    estimatedDuration?: number;
+    hourlyRate?: number;
   };
 
   type FilteredTalent = {
@@ -265,16 +286,36 @@ export default function Home() {
 
     switch (activeCategory) {
       case "clients":
-        data = projects.map(p => ({
-          id: p.id,
-          title: p.title,
-          description: p.description,
-          budget: `$${p.budget}`,
-          skills: p.skills,
-          client: p.client?.name ?? 'Unknown Client',
-          postedDate: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recently',
-          category: p.category
-        }));
+        data = projects.map(p => {
+          let formattedDeadline: string | undefined = undefined;
+          if (p.deadline) {
+            try {
+              // Handle both string and Date object
+              const deadlineDate = typeof p.deadline === 'string' ? new Date(p.deadline) : new Date(p.deadline);
+              // Check if date is valid
+              if (!isNaN(deadlineDate.getTime())) {
+                formattedDeadline = deadlineDate.toLocaleDateString();
+              }
+            } catch (error) {
+              console.error('Error formatting deadline:', error);
+            }
+          }
+          
+          return {
+            id: p.id,
+            title: p.title,
+            description: p.description,
+            budget: `$${p.budget}`,
+            skills: p.skills,
+            client: p.client?.name ?? 'Unknown Client',
+            postedDate: p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recently',
+            category: p.category,
+            deadline: formattedDeadline,
+            projectType: p.projectType,
+            estimatedDuration: p.estimatedDuration,
+            hourlyRate: p.hourlyRate
+          };
+        });
         break;
       case "developer":
         data = talents.map(t => ({
@@ -289,7 +330,7 @@ export default function Home() {
         }));
         break;
       case "agencies":
-        data = mockAgencies;
+        data = agencies;
         break;
     }
 
@@ -340,11 +381,38 @@ export default function Home() {
     return data;
   };
 
-  // Pagination logic
+  // Infinite scroll logic
   const allFilteredData = filteredData();
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedData = allFilteredData.slice(startIndex, endIndex);
+  const displayedItemsCount = currentPage * itemsPerPage;
+  const paginatedData = allFilteredData.slice(0, displayedItemsCount);
+  
+  // Infinite scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loadingMore || !hasMore || dataLoading) return;
+
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+
+      // Load more when user is 300px from bottom
+      if (scrollTop + clientHeight >= scrollHeight - 300) {
+        setLoadingMore(true);
+        setTimeout(() => {
+          setCurrentPage(prev => prev + 1);
+          setLoadingMore(false);
+        }, 500);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadingMore, hasMore, dataLoading]);
+
+  // Update hasMore when data changes
+  useEffect(() => {
+    setHasMore(displayedItemsCount < allFilteredData.length);
+  }, [displayedItemsCount, allFilteredData.length]);
 
   // Reset to page 1 when filters change
   const handleCategoryChange = (category: BrowseCategory) => {
@@ -411,7 +479,7 @@ export default function Home() {
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {/* Client Professional Signup */}
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 flex flex-col">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">🏢</div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Client</h3>
@@ -419,7 +487,7 @@ export default function Home() {
                     Post projects and hire top Developers for your business needs
                   </p>
                 </div>
-                <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6 flex-grow">
                   <li>• Post unlimited projects</li>
                   <li>• Access to verified professionals</li>
                   <li>• Project management tools</li>
@@ -427,14 +495,14 @@ export default function Home() {
                 </ul>
                 <Link
                   href="/auth?type=client"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center mt-auto"
                 >
                   Sign Up as Client
                 </Link>
               </div>
 
               {/* Talent Professional Signup */}
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300 flex flex-col">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">👨‍💻</div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Developer</h3>
@@ -442,7 +510,7 @@ export default function Home() {
                     Showcase your skills and find exciting freelance opportunities
                   </p>
                 </div>
-                <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6 flex-grow">
                   <li>• Create professional profile</li>
                   <li>• Bid on quality projects</li>
                   <li>• Build your reputation</li>
@@ -450,14 +518,14 @@ export default function Home() {
                 </ul>
                 <Link
                   href="/auth?type=talent"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center mt-auto"
                 >
                   Sign Up as Developer
                 </Link>
               </div>
 
               {/* Agency Professional Signup */}
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300 flex flex-col">
                 <div className="text-center mb-4">
                   <div className="text-4xl mb-3">🏛️</div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Agency</h3>
@@ -465,7 +533,7 @@ export default function Home() {
                     Scale your business and manage multiple client relationships
                   </p>
                 </div>
-                <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6 flex-grow">
                   <li>• Team collaboration tools</li>
                   <li>• Multi-project management</li>
                   <li>• Client relationship tools</li>
@@ -473,7 +541,7 @@ export default function Home() {
                 </ul>
                 <Link
                   href="/auth?type=agency"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center mt-auto"
                 >
                   Sign Up as Agency
                 </Link>
@@ -514,7 +582,6 @@ export default function Home() {
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-base sm:text-md md:text-md text-gray-600 mb-6 sm:mb-8">
-            {/* Whether you&apos;re a Client seeking top Developers, a Developer looking for exciting projects, or an Agency ready to scale, <br className="hidden sm:block" />browse the latest opportunities and pick your next collaboration! */}
             The modern freelance platform where developers choose projects and clients choose from interested developers.
           </p>
 
@@ -627,7 +694,9 @@ export default function Home() {
                 </div>
               ) : paginatedData.map((item) => {
                 if (activeCategory === "clients") {
+                  
                   const project = item as FilteredProject;
+
                   return (
                     <div
                       key={item.id}
@@ -646,47 +715,72 @@ export default function Home() {
                                   {project.client}
                                 </span>
                               </span>
+                              {project.projectType && (
+                                <span className="flex items-center gap-1">
+                                  <span className="text-gray-600">•</span>
+                                  <span className="text-gray-600">
+                                    <span className="font-semibold text-gray-900">Type:</span> {project.projectType}
+                                  </span>
+                                </span>
+                              )}
+                              {project.estimatedDuration && project.estimatedDuration > 0 && (
+                                <span className="flex items-center gap-1">
+                                  <span className="text-gray-600">•</span>
+                                  <span className="text-gray-600">
+                                    <span className="font-semibold text-gray-900">Duration:</span> {project.estimatedDuration} months
+                                  </span>
+                                </span>
+                              )}
                               <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span className="text-green-400">Payment verified</span>
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                </svg>
-                                Remote
-                              </span>
-                              <span className="bg-blue-100 px-3 py-1 rounded-full text-blue-700">
-                                120 applicants
+                                <span className="text-gray-600">•</span>
+                                <span className="font-semibold text-gray-900">
+                                  Budget: {project.budget}
+                                </span>
                               </span>
                             </div>
                             <p className="text-sm sm:text-base text-gray-600 mb-4">{project.description}</p>
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {project.skills.map((skill: string) => (
-                                <span
-                                  key={skill}
-                                  className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
-                                >
-                                  {skill}
-                                </span>
-                              ))}
-                            </div>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
-                              <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {project.budget}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                25 proposal
-                              </span>
-                            </div>
+                            
+                            {/* Additional Project Details */}
+                            {(project.deadline ?? (project.hourlyRate && project.projectType !== 'Fixed')) && (
+                              <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-gray-600">
+                                {project.deadline && (
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span className="text-gray-600">
+                                      <span className="font-semibold text-gray-900">Deadline:</span> {project.deadline}
+                                    </span>
+                                  </div>
+                                )}
+                                {project.hourlyRate && project.hourlyRate > 0 && project.projectType !== 'Fixed' && (
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="text-gray-600">
+                                      <span className="font-semibold text-gray-900">Rate:</span> ${project.hourlyRate}/hr
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {project.skills.length > 0 && (
+                              <div className="mb-4">
+                                <h4 className="text-sm font-semibold text-gray-900 mb-2">Required Skills:</h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {project.skills.map((skill: string) => (
+                                    <span
+                                      key={skill}
+                                      className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
+                                    >
+                                      {skill}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <button
@@ -715,14 +809,14 @@ export default function Home() {
                             <p className="text-gray-600 mb-3">{talent.title}</p>
                             <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                               <span className="flex items-center gap-1">
-                                {renderStars(talent.rating || 4.5)}
-                                <span className="ml-1 font-semibold text-gray-900">{talent.rating || 4.5}</span>
+                                {renderStars(talent.rating ?? 4.5)}
+                                <span className="ml-1 font-semibold text-gray-900">{talent.rating ?? 4.5}</span>
                               </span>
-                              <span>{talent.experience || 'Not specified'} experience</span>
-                              <span className="font-semibold text-gray-900">{talent.hourlyRate || 'Not specified'}</span>
+                              <span>{talent.experience ?? 'Not specified'} experience</span>
+                              <span className="font-semibold text-gray-900">{talent.hourlyRate ?? 'Not specified'}</span>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                              {(talent.skills || []).map((skill: string) => (
+                              {(talent.skills ?? []).map((skill: string) => (
                                 <span
                                   key={skill}
                                   className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md text-sm font-medium"
@@ -789,6 +883,20 @@ export default function Home() {
                 }
               })}
 
+              {/* Loading More Indicator */}
+              {loadingMore && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                  <span className="ml-3 text-gray-600">Loading more...</span>
+                </div>
+              )}
+
+              {/* End of Results Message */}
+              {!hasMore && paginatedData.length > 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  You&apos;ve reached the end of the results
+                </div>
+              )}
             </div>
           </div>
 
