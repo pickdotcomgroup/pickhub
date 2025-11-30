@@ -15,6 +15,7 @@ export const env = createEnv({
     AUTH_TRUST_HOST: z.string().optional(),
     // DATABASE_URL: z.string().url(),
     SUPABASE_URL: z.string().url(),
+    DIRECT_URL: z.string().url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -39,6 +40,7 @@ export const env = createEnv({
     AUTH_TRUST_HOST: process.env.AUTH_TRUST_HOST,
     // DATABASE_URL: process.env.DATABASE_URL,
     SUPABASE_URL: process.env.SUPABASE_URL,
+    DIRECT_URL: process.env.DIRECT_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**
