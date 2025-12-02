@@ -282,7 +282,7 @@ export default function Header() {
             </button>
           )}
 
-          <div className="flex items-center">
+          <div className={`flex items-center ${!session?.user && pathname === "/wait-list" ? "flex-1" : ""}`}>
             <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-900">
               <Image
                 src="/image/TechLogo.png"
@@ -297,7 +297,7 @@ export default function Header() {
             </Link>
 
             {/* Public Navigation Links - Only show when not authenticated */}
-            {!session?.user && (
+            {!session?.user && pathname !== "/wait-list" && (
               <nav className="hidden md:flex items-center space-x-1 ml-8">
                 <Link
                   href="/how-it-works"
@@ -326,6 +326,36 @@ export default function Header() {
               </nav>
             )}
           </div>
+
+          {/* Public Navigation Links on Right - Only show on wait-list page when not authenticated */}
+          {!session?.user && pathname === "/wait-list" && (
+            <nav className="hidden md:flex items-center space-x-1">
+              <Link
+                href="/how-it-works"
+                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+              >
+                How It Works
+              </Link>
+              <Link
+                href="/pricing"
+                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/blog"
+                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/about"
+                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+              >
+                About Us
+              </Link>
+            </nav>
+          )}
 
           {/* Quick Actions Navigation */}
           {session?.user && (
