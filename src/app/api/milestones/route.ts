@@ -30,7 +30,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    if (project.clientId !== session.user.id) {
+    // Allow access if user is the client OR has an accepted application for this project
+    const hasAccess = project.clientId === session.user.id ||
+      await db.application.findFirst({
+        where: {
+          projectId,
+          talentId: session.user.id,
+          status: "accepted"
+        }
+      });
+
+    if (!hasAccess) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
