@@ -4,6 +4,13 @@ const createPrismaClient = () =>
   new PrismaClient({
     log:
       process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL?.includes('?')
+          ? `${process.env.DATABASE_URL}&pgbouncer=true&connect_timeout=15&prepared_statements=false`
+          : `${process.env.DATABASE_URL}?pgbouncer=true&connect_timeout=15&prepared_statements=false`,
+      },
+    },
   });
 
 const globalForPrisma = globalThis as unknown as {
