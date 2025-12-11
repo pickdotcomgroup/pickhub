@@ -62,17 +62,6 @@ export default function LandingPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            {/* Logo */}
-            <div className="flex justify-center mb-8">
-              <Image
-                src="/image/TechLogo.png"
-                alt="TechPickHub Logo"
-                width={120}
-                height={120}
-                className="object-contain"
-              />
-            </div>
-
             {/* Main Heading */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Connecting Clients, Developers,

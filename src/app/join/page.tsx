@@ -23,7 +23,7 @@ export default function JoinPage() {
             <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm flex flex-col">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">🏢</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Client</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Employer</h3>
                 <p className="text-gray-600 text-sm mb-4">
                   Post projects and hire top talent for your business needs
                 </p>
@@ -41,7 +41,7 @@ export default function JoinPage() {
                   href="/signup?type=client"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
-                  Sign Up as Client
+                  Sign Up as Employer
                 </Link>
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function JoinPage() {
             <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300 shadow-sm flex flex-col">
               <div className="text-center mb-4">
                 <div className="text-4xl mb-3">🏛️</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Agency</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Trainer</h3>
                 <p className="text-gray-600 text-sm mb-4">
                   Scale your business and manage multiple client relationships
                 </p>
@@ -96,7 +96,7 @@ export default function JoinPage() {
                   href="/signup?type=agency"
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
-                  Sign Up as Agency
+                  Sign Up as Trainer
                 </Link>
               </div>
             </div>

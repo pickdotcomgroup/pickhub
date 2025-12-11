@@ -375,16 +375,16 @@ export default function Header() {
                     <span>Browse Agencies</span>
                   </Link>
                   <Link
-                    href="/client/projects/new"
-                    className={`${getNavLinkClasses("/client/projects/new")} flex items-center gap-2`}
-                  >
-                    <span>Post a Project</span>
-                  </Link>
-                  <Link
                     href="/client/projects"
                     className={`${getNavLinkClasses("/client/projects")} flex items-center gap-2`}
                   >
                     <span>My Projects</span>
+                  </Link>
+                  <Link
+                    href="/client/projects/new"
+                    className="px-4 py-2 text-sm transition border-2 border-blue-600 rounded-lg text-blue-600 font-semibold flex items-center gap-2 hover:bg-blue-50"
+                  >
+                    <span>Post a Project</span>
                   </Link>
                   <Link
                     href="/client/messages"
@@ -942,7 +942,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/client/projects/new"
-                    className={`${getMobileNavLinkClasses("/client/projects/new")} flex items-center`}
+                    className="px-4 py-3 text-sm rounded-lg transition bg-blue-600 text-white font-semibold flex items-center"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -118,7 +118,7 @@ export default function TalentProjectsPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Projects</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Picked Projects</h1>
             <p className="text-gray-600">Track your applications and active projects</p>
           </div>
         </div>
