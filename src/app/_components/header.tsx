@@ -26,17 +26,20 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationCount, setNotificationCount] = useState(0);
-  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Array<{
-    id: string;
-    type: string;
-    title: string;
-    message: string;
-    isRead: boolean;
-    createdAt: string;
-    relatedProjectId?: string | null;
-    relatedApplicationId?: string | null;
-  }>>([]);
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
+    useState(false);
+  const [notifications, setNotifications] = useState<
+    Array<{
+      id: string;
+      type: string;
+      title: string;
+      message: string;
+      isRead: boolean;
+      createdAt: string;
+      relatedProjectId?: string | null;
+      relatedApplicationId?: string | null;
+    }>
+  >([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const notificationDropdownRef = useRef<HTMLDivElement>(null);
@@ -50,7 +53,8 @@ export default function Header() {
   const getNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-2 text-sm transition border-b-2";
     const activeClasses = "text-blue-600 border-b-blue-600 font-semibold";
-    const inactiveClasses = "text-gray-700 hover:text-gray-900 border-b-transparent hover:border-b-gray-300";
+    const inactiveClasses =
+      "text-gray-700 hover:text-gray-900 border-b-transparent hover:border-b-gray-300";
 
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
@@ -59,7 +63,8 @@ export default function Header() {
   const getMobileNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-3 text-sm rounded-lg transition";
     const activeClasses = "bg-blue-600 text-white font-semibold";
-    const inactiveClasses = "text-gray-700 hover:text-gray-900 hover:bg-gray-100";
+    const inactiveClasses =
+      "text-gray-700 hover:text-gray-900 hover:bg-gray-100";
 
     return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
   };
@@ -137,7 +142,7 @@ export default function Header() {
               createdAt: string;
               relatedProjectId?: string | null;
               relatedApplicationId?: string | null;
-            }>
+            }>;
           };
           console.log("Fetched notifications:", data.notifications);
           setNotifications(data.notifications ?? []);
@@ -156,13 +161,22 @@ export default function Header() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
         setIsMobileMenuOpen(false);
       }
-      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target as Node)) {
+      if (
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(event.target as Node)
+      ) {
         setIsNotificationDropdownOpen(false);
       }
     };
@@ -175,7 +189,7 @@ export default function Header() {
     try {
       await signOut({ callbackUrl: "/signin" });
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
@@ -200,12 +214,12 @@ export default function Header() {
 
       if (response.ok) {
         // Update local state
-        setNotifications(prev =>
-          prev.map(notif =>
-            notif.id === notificationId ? { ...notif, isRead: true } : notif
-          )
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === notificationId ? { ...notif, isRead: true } : notif,
+          ),
         );
-        setNotificationCount(prev => Math.max(0, prev - 1));
+        setNotificationCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -222,7 +236,9 @@ export default function Header() {
       });
 
       if (response.ok) {
-        setNotifications(prev => prev.map(notif => ({ ...notif, isRead: true })));
+        setNotifications((prev) =>
+          prev.map((notif) => ({ ...notif, isRead: true })),
+        );
         setNotificationCount(0);
       }
     } catch (error) {
@@ -248,17 +264,17 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Mobile Menu Button */}
           {session?.user && (
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+              className="rounded-lg p-2 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900 md:hidden"
               aria-label="Toggle mobile menu"
             >
               <svg
-                className="w-6 h-6"
+                className="h-6 w-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -282,8 +298,13 @@ export default function Header() {
             </button>
           )}
 
-          <div className={`flex items-center ${!session?.user && pathname === "/wait-list" ? "flex-1" : ""}`}>
-            <Link href="/" className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-gray-900">
+          <div
+            className={`flex items-center ${!session?.user && pathname === "/wait-list" ? "flex-1" : ""}`}
+          >
+            <Link
+              href="/"
+              className="flex items-center space-x-2 text-xl font-bold text-gray-900 sm:text-2xl"
+            >
               <Image
                 src="/image/TechLogo.png"
                 alt="TechPickHub Logo"
@@ -298,28 +319,28 @@ export default function Header() {
 
             {/* Public Navigation Links - Only show when not authenticated */}
             {!session?.user && pathname !== "/wait-list" && (
-              <nav className="hidden md:flex items-center space-x-1 ml-8">
+              <nav className="ml-8 hidden items-center space-x-1 md:flex">
                 <Link
                   href="/how-it-works"
-                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
                 >
                   How It Works
                 </Link>
                 <Link
                   href="/pricing"
-                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/blog"
-                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
                 >
                   Blog
                 </Link>
                 <Link
                   href="/about"
-                  className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
                 >
                   About Us
                 </Link>
@@ -329,28 +350,28 @@ export default function Header() {
 
           {/* Public Navigation Links on Right - Only show on wait-list page when not authenticated */}
           {!session?.user && pathname === "/wait-list" && (
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden items-center space-x-1 md:flex">
               <Link
                 href="/how-it-works"
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
               >
                 How It Works
               </Link>
               <Link
                 href="/pricing"
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
               >
                 Pricing
               </Link>
               <Link
                 href="/blog"
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
               >
                 Blog
               </Link>
               <Link
                 href="/about"
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border-b-2 border-b-transparent hover:border-b-gray-300 transition"
+                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
               >
                 About Us
               </Link>
@@ -359,7 +380,7 @@ export default function Header() {
 
           {/* Quick Actions Navigation */}
           {session?.user && (
-            <nav className="hidden md:flex items-center space-x-1 ml-auto mr-4">
+            <nav className="mr-4 ml-auto hidden items-center space-x-1 md:flex">
               {session.user.role === "client" ? (
                 <>
                   <Link
@@ -382,7 +403,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/client/projects/new"
-                    className="px-4 py-2 text-sm transition border-2 border-blue-600 rounded-lg text-blue-600 font-semibold flex items-center gap-2 hover:bg-blue-50"
+                    className="flex items-center gap-2 rounded-lg border-2 border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
                   >
                     <span>Post a Project</span>
                   </Link>
@@ -398,23 +419,29 @@ export default function Header() {
               ) : session.user.role === "talent" ? (
                 <>
                   <Link
+                    href="/developer/trainings"
+                    className={`${getNavLinkClasses("/developer/trainings")} flex items-center gap-2`}
+                  >
+                    Trainings
+                  </Link>
+                  <Link
+                    href="/developer/jobs"
+                    className={`${getNavLinkClasses("/developer/jobs")} flex items-center gap-2`}
+                  >
+                    Browse Job
+                  </Link>
+                  <Link
                     href="/talent/browse"
                     className={`${getNavLinkClasses("/talent/browse")} flex items-center gap-2`}
                   >
-                    Browse Projects
-                  </Link>
-                  <Link
-                    href="/talent/projects"
-                    className={`${getNavLinkClasses("/talent/projects")} flex items-center gap-2`}
-                  >
-                    Pick Projects
+                    Browse Project
                   </Link>
                   <Link
                     href="/talent/messages"
                     className={`relative ${getNavLinkClasses("/talent/messages")}`}
                     aria-label="Messages"
                   >
-                    <span>Messages</span>
+                    <span>Message</span>
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
@@ -472,12 +499,14 @@ export default function Header() {
                 {/* Notification Bell */}
                 <div className="relative" ref={notificationDropdownRef}>
                   <button
-                    onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}
-                    className="relative p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                    onClick={() =>
+                      setIsNotificationDropdownOpen(!isNotificationDropdownOpen)
+                    }
+                    className="relative rounded-lg p-2 text-gray-700 transition hover:bg-gray-100 hover:text-gray-900"
                     aria-label="Notifications"
                   >
                     <svg
-                      className="w-6 h-6"
+                      className="h-6 w-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -494,14 +523,16 @@ export default function Header() {
 
                   {/* Notification Dropdown */}
                   {isNotificationDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-[100] max-h-[500px] overflow-hidden flex flex-col">
+                    <div className="absolute right-0 z-[100] mt-2 flex max-h-[500px] w-80 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl sm:w-96">
                       {/* Header */}
-                      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                        <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                      <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+                        <h3 className="text-sm font-semibold text-gray-900">
+                          Notifications
+                        </h3>
                         {notificationCount > 0 && (
                           <button
                             onClick={markAllNotificationsAsRead}
-                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                            className="text-xs font-medium text-blue-600 hover:text-blue-700"
                           >
                             Mark all as read
                           </button>
@@ -509,11 +540,11 @@ export default function Header() {
                       </div>
 
                       {/* Notifications List */}
-                      <div className="overflow-y-auto flex-1">
+                      <div className="flex-1 overflow-y-auto">
                         {notifications.length === 0 ? (
                           <div className="px-4 py-8 text-center text-gray-500">
                             <svg
-                              className="w-12 h-12 mx-auto mb-2 text-gray-400"
+                              className="mx-auto mb-2 h-12 w-12 text-gray-400"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -531,8 +562,9 @@ export default function Header() {
                           notifications.map((notification) => (
                             <div
                               key={notification.id}
-                              className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition cursor-pointer ${!notification.isRead ? "bg-blue-50" : ""
-                                }`}
+                              className={`cursor-pointer border-b border-gray-100 px-4 py-3 transition hover:bg-gray-50 ${
+                                !notification.isRead ? "bg-blue-50" : ""
+                              }`}
                               onClick={() => {
                                 if (!notification.isRead) {
                                   void markNotificationAsRead(notification.id);
@@ -547,9 +579,9 @@ export default function Header() {
                               <div className="flex items-start space-x-3">
                                 <div className="flex-shrink-0">
                                   {notification.type === "project_picked" ? (
-                                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                                       <svg
-                                        className="w-5 h-5 text-green-600"
+                                        className="h-5 w-5 text-green-600"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -562,10 +594,11 @@ export default function Header() {
                                         />
                                       </svg>
                                     </div>
-                                  ) : notification.type === "new_application" ? (
-                                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                  ) : notification.type ===
+                                    "new_application" ? (
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
                                       <svg
-                                        className="w-5 h-5 text-purple-600"
+                                        className="h-5 w-5 text-purple-600"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -579,9 +612,9 @@ export default function Header() {
                                       </svg>
                                     </div>
                                   ) : (
-                                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
                                       <svg
-                                        className="w-5 h-5 text-blue-600"
+                                        className="h-5 w-5 text-blue-600"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -596,20 +629,22 @@ export default function Header() {
                                     </div>
                                   )}
                                 </div>
-                                <div className="flex-1 min-w-0">
+                                <div className="min-w-0 flex-1">
                                   <p className="text-sm font-medium text-gray-900">
                                     {notification.title}
                                   </p>
-                                  <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                                  <p className="mt-1 line-clamp-2 text-xs text-gray-600">
                                     {notification.message}
                                   </p>
-                                  <p className="text-xs text-gray-500 mt-1">
-                                    {formatNotificationTime(notification.createdAt)}
+                                  <p className="mt-1 text-xs text-gray-500">
+                                    {formatNotificationTime(
+                                      notification.createdAt,
+                                    )}
                                   </p>
                                 </div>
                                 {!notification.isRead && (
                                   <div className="flex-shrink-0">
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                                    <div className="h-2 w-2 rounded-full bg-blue-600"></div>
                                   </div>
                                 )}
                               </div>
@@ -625,14 +660,15 @@ export default function Header() {
                   {/* User Avatar Button */}
                   <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center space-x-2 sm:space-x-3 focus:outline-none group"
+                    className="group flex items-center space-x-2 focus:outline-none sm:space-x-3"
                   >
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm group-hover:ring-2 group-hover:ring-blue-400 transition">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm font-semibold text-white transition group-hover:ring-2 group-hover:ring-blue-400 sm:h-10 sm:w-10">
                       {getUserInitials(session.user.name)}
                     </div>
                     <svg
-                      className={`hidden sm:block w-4 h-4 text-gray-700 transition-transform ${isDropdownOpen ? "rotate-180" : ""
-                        }`}
+                      className={`hidden h-4 w-4 text-gray-700 transition-transform sm:block ${
+                        isDropdownOpen ? "rotate-180" : ""
+                      }`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -648,17 +684,17 @@ export default function Header() {
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-[100]">
+                    <div className="absolute right-0 z-[100] mt-2 w-56 rounded-lg border border-gray-200 bg-white py-2 shadow-xl">
                       {/* User Info */}
-                      <div className="px-4 py-3 border-b border-gray-200">
+                      <div className="border-b border-gray-200 px-4 py-3">
                         <p className="text-sm font-semibold text-gray-900">
                           {session.user.name ?? "User"}
                         </p>
-                        <p className="text-xs text-gray-600 truncate">
+                        <p className="truncate text-xs text-gray-600">
                           {session.user.email}
                         </p>
                         {session.user.role && (
-                          <p className="text-xs text-blue-600 mt-1 capitalize">
+                          <p className="mt-1 text-xs text-blue-600 capitalize">
                             {session.user.role}
                           </p>
                         )}
@@ -670,11 +706,11 @@ export default function Header() {
                         {session.user.role === "client" && (
                           <Link
                             href="/client/dashboard"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -693,11 +729,11 @@ export default function Header() {
                         {session.user.role === "talent" && (
                           <Link
                             href="/talent/dashboard"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -716,11 +752,11 @@ export default function Header() {
                         {session.user.role === "agency" && (
                           <Link
                             href="/agency/dashboard"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -739,11 +775,11 @@ export default function Header() {
                         {session.user.role === "admin" && (
                           <Link
                             href="/admin/dashboard"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -763,11 +799,11 @@ export default function Header() {
                         {session.user.role === "client" && (
                           <Link
                             href="/client/account"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -786,11 +822,11 @@ export default function Header() {
                         {session.user.role === "talent" && (
                           <Link
                             href="/talent/account"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -809,11 +845,11 @@ export default function Header() {
                         {session.user.role === "agency" && (
                           <Link
                             href="/agency/account"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             <svg
-                              className="w-4 h-4 mr-3"
+                              className="mr-3 h-4 w-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -860,10 +896,10 @@ export default function Header() {
                         {/* Logout Button - Available for all roles */}
                         <button
                           onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition"
+                          className="flex w-full items-center px-4 py-2 text-sm text-red-600 transition hover:bg-gray-100"
                         >
                           <svg
-                            className="w-4 h-4 mr-3"
+                            className="mr-3 h-4 w-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -889,8 +925,8 @@ export default function Header() {
                     href="/signin"
                     className={
                       pathname === "/join"
-                        ? "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-3 sm:px-5 text-sm sm:text-base rounded-lg transition"
-                        : "text-gray-700 hover:text-gray-900 font-semibold py-2 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-100 transition"
+                        ? "rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
+                        : "rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900 sm:px-4 sm:text-base"
                     }
                   >
                     Sign In
@@ -899,7 +935,7 @@ export default function Header() {
                 {pathname !== "/join" && (
                   <Link
                     href="/join"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-3 sm:px-5 text-sm sm:text-base rounded-lg transition"
+                    className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
                   >
                     Join Us
                   </Link>
@@ -913,7 +949,7 @@ export default function Header() {
         {session?.user && isMobileMenuOpen && (
           <div
             ref={mobileMenuRef}
-            className="md:hidden mt-4 pb-4 border-t border-gray-200 pt-4"
+            className="mt-4 border-t border-gray-200 pt-4 pb-4 md:hidden"
           >
             <nav className="flex flex-col space-y-2">
               {session.user.role === "client" ? (
@@ -937,16 +973,26 @@ export default function Header() {
                     className={`${getMobileNavLinkClasses("/client/browse-agencies")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Building2 className="w-4 h-4 mr-3" />
+                    <Building2 className="mr-3 h-4 w-4" />
                     Browse Agencies
                   </Link>
                   <Link
                     href="/client/projects/new"
-                    className="px-4 py-3 text-sm rounded-lg transition bg-blue-600 text-white font-semibold flex items-center"
+                    className="flex items-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    <svg
+                      className="mr-3 h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                     Post a Project
                   </Link>
@@ -955,8 +1001,18 @@ export default function Header() {
                     className={`${getMobileNavLinkClasses("/client/projects")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <svg
+                      className="mr-3 h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
                     </svg>
                     My Projects
                   </Link>
@@ -965,7 +1021,7 @@ export default function Header() {
                     className={`relative ${getMobileNavLinkClasses("/client/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <MessageSquare className="w-4 h-4 mr-3" />
+                    <MessageSquare className="mr-3 h-4 w-4" />
                     Messages
                     <NotificationBadge count={unreadCount} />
                   </Link>
@@ -998,7 +1054,7 @@ export default function Header() {
                     className={`relative ${getMobileNavLinkClasses("/talent/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <MessageSquare className="w-4 h-4 mr-3" />
+                    <MessageSquare className="mr-3 h-4 w-4" />
                     Messages
                     <NotificationBadge count={unreadCount} />
                   </Link>
@@ -1014,28 +1070,36 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/agency/browse-clients"
-                    className={getMobileNavLinkClasses("/agency/browse-clients")}
+                    className={getMobileNavLinkClasses(
+                      "/agency/browse-clients",
+                    )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Clients
                   </Link>
                   <Link
                     href="/agency/browse-developers"
-                    className={getMobileNavLinkClasses("/agency/browse-developers")}
+                    className={getMobileNavLinkClasses(
+                      "/agency/browse-developers",
+                    )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Developers
                   </Link>
                   <Link
                     href="/agency/picked-clients"
-                    className={getMobileNavLinkClasses("/agency/picked-clients")}
+                    className={getMobileNavLinkClasses(
+                      "/agency/picked-clients",
+                    )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Picked Clients
                   </Link>
                   <Link
                     href="/agency/picked-developers"
-                    className={getMobileNavLinkClasses("/agency/picked-developers")}
+                    className={getMobileNavLinkClasses(
+                      "/agency/picked-developers",
+                    )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Picked Developers
@@ -1045,7 +1109,7 @@ export default function Header() {
                     className={`relative ${getMobileNavLinkClasses("/agency/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <MessageSquare className="w-4 h-4 mr-3" />
+                    <MessageSquare className="mr-3 h-4 w-4" />
                     Messages
                     <NotificationBadge count={unreadCount} />
                   </Link>
