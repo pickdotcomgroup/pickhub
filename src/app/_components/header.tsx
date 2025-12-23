@@ -348,35 +348,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Public Navigation Links on Right - Only show on wait-list page when not authenticated */}
-          {!session?.user && pathname === "/wait-list" && (
-            <nav className="hidden items-center space-x-1 md:flex">
-              <Link
-                href="/how-it-works"
-                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
-              >
-                How It Works
-              </Link>
-              <Link
-                href="/pricing"
-                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/blog"
-                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
-              >
-                Blog
-              </Link>
-              <Link
-                href="/about"
-                className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
-              >
-                About Us
-              </Link>
-            </nav>
-          )}
 
           {/* Quick Actions Navigation */}
           {session?.user && (
