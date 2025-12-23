@@ -254,25 +254,9 @@ export default function Home() {
         <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float delay-500"></div>
 
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center px-4 py-16 sm:py-20 relative z-10">
+        <div className="flex-1 flex items-center justify-center px-4 py-10 sm:py-10 relative z-10">
           <div className="max-w-6xl w-full">
             <div className="text-center mb-16 opacity-0 animate-fade-in-up">
-              {/* Logo/Brand */}
-              <div className="mb-8">
-                <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-6 tracking-tight" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  <span className="gradient-text">Talent</span>
-                  <span style={{ color: 'var(--color-text-primary)' }}>Bridge</span>
-                </h1>
-                
-                <div className="flex items-center justify-center gap-4 mb-6">
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
-                  <p className="text-xl sm:text-2xl font-semibold tracking-wide" style={{ color: 'var(--color-text-secondary)', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.05em' }}>
-                    Grow Your Skills, Land Your Dream Job
-                  </p>
-                  <div className="h-px w-16 bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
-                </div>
-              </div>
-
               {/* Launch Badge */}
               <div className="inline-flex items-center gap-3 px-8 py-4 glass-effect rounded-full mb-10 opacity-0 animate-fade-in delay-200 shadow-lg">
                 <div className="relative flex h-3 w-3">
@@ -286,11 +270,11 @@ export default function Home() {
 
               {/* Hero Description */}
               <p className="text-lg sm:text-xl md:text-2xl mb-4 max-w-3xl mx-auto leading-relaxed opacity-0 animate-fade-in-up delay-300" style={{ color: 'var(--color-text-primary)', fontWeight: '600' }}>
-                The all-in-one platform that combines personalized skill development with AI-powered job matching to accelerate your career.
+                The ultimate platform connecting job seekers with certified training providers and employers for career transformation.
               </p>
-              
+
               <p className="text-base sm:text-lg max-w-2xl mx-auto leading-relaxed opacity-0 animate-fade-in-up delay-400" style={{ color: 'var(--color-text-secondary)', fontWeight: '500' }}>
-                Join thousands of professionals transforming their careers through targeted learning and smart job matching.
+                Join thousands of job seekers, training providers, and employers building skills, finding talent, and growing careers.
               </p>
             </div>
 
@@ -385,12 +369,12 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-20">
               {/* Feature 1 */}
               <div className="glass-effect rounded-3xl p-10 card-hover shadow-xl opacity-0 animate-scale-in delay-600" style={{ border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-                <div className="text-5xl mb-6">📚</div>
+                <div className="text-5xl mb-6">🎓</div>
                 <h3 className="text-2xl font-bold mb-4 tracking-wide" style={{ color: 'var(--color-text-primary)', fontFamily: "'DM Sans', sans-serif" }}>
-                  Personalized Learning Paths
+                  Training Marketplace
                 </h3>
                 <p className="text-base leading-relaxed font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-                  Access curated courses, interactive workshops, and hands-on projects tailored to your career goals. Build in-demand skills with industry-recognized certifications and real-world experience.
+                  Browse courses from certified training providers. Earn recognized certifications that validate your skills and make your profile stand out to employers.
                 </p>
               </div>
 
@@ -398,10 +382,10 @@ export default function Home() {
               <div className="glass-effect rounded-3xl p-10 card-hover shadow-xl opacity-0 animate-scale-in delay-700" style={{ border: '1px solid rgba(59, 130, 246, 0.1)' }}>
                 <div className="text-5xl mb-6">🎯</div>
                 <h3 className="text-2xl font-bold mb-4 tracking-wide" style={{ color: 'var(--color-text-primary)', fontFamily: "'DM Sans', sans-serif" }}>
-                  AI-Powered Job Matching
+                  Smart Job Matching
                 </h3>
                 <p className="text-base leading-relaxed font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-                  Our intelligent matching system connects you with opportunities that align with your skills, experience, and aspirations. Get personalized job recommendations that fit your career trajectory.
+                  Our intelligent matching algorithm connects job seekers with employers looking for their skills. Get matched to opportunities that fit your career goals.
                 </p>
               </div>
             </div>
@@ -410,18 +394,18 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-12 sm:gap-16 text-center opacity-0 animate-fade-in-up delay-700">
               <div className="group">
                 <div className="text-5xl sm:text-6xl font-bold mb-3 gradient-text transition-transform group-hover:scale-110 duration-300" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  10K+
+                  500+
                 </div>
                 <div className="text-base font-semibold tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
-                  Skills Learned
+                  Training Providers
                 </div>
               </div>
               <div className="group">
                 <div className="text-5xl sm:text-6xl font-bold mb-3 gradient-text transition-transform group-hover:scale-110 duration-300" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  95%
+                  1000+
                 </div>
                 <div className="text-base font-semibold tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>
-                  Match Success Rate
+                  Career Opportunities
                 </div>
               </div>
               <div className="group">

@@ -3,19 +3,19 @@ import Footer from "../_components/footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog | TechPickHub - Insights, Tips & Stories for Freelance Developers",
-  description: "Read the latest insights, tips, and stories from TechPickHub. Learn about freelance development, project management, client communication, and industry trends.",
-  keywords: "freelance blog, developer tips, project management, tech industry, remote work, freelancing advice, developer portfolio",
+  title: "Blog | PickHub - Career Tips, Upskilling Insights & Job Market Trends",
+  description: "Read the latest insights on career development, upskilling, reskilling, and job market trends. Tips for job seekers, training providers, and employers.",
+  keywords: "career blog, upskilling tips, reskilling advice, job search, training courses, career development, job market trends",
   openGraph: {
-    title: "TechPickHub Blog - Freelance Development Insights",
-    description: "Insights, tips, and stories from the world of freelance development and project collaboration.",
+    title: "PickHub Blog - Career Development Insights",
+    description: "Insights, tips, and stories about upskilling, reskilling, and career transformation.",
     type: "website",
-    url: "https://techpickhub.com/blog",
+    url: "https://pickhub.com/blog",
   },
   twitter: {
     card: "summary_large_image",
-    title: "TechPickHub Blog",
-    description: "Latest insights and tips for freelance developers, clients, and agencies.",
+    title: "PickHub Blog",
+    description: "Latest insights for job seekers, training providers, and employers.",
   },
 };
 
@@ -23,88 +23,88 @@ export default function BlogPage() {
   const blogPosts = [
     {
       id: 1,
-      title: "How to Choose the Right Developer for Your Project",
-      excerpt: "Learn the key factors to consider when selecting a developer for your next project, from technical skills to communication style.",
-      category: "For Clients",
-      date: "November 20, 2024",
+      title: "Top 10 In-Demand Skills for 2025",
+      excerpt: "Discover which skills are most sought after by employers and how you can start learning them today to boost your career.",
+      category: "For Job Seekers",
+      date: "December 20, 2024",
       readTime: "5 min read",
       image: "🎯",
     },
     {
       id: 2,
-      title: "Building a Winning Developer Portfolio",
-      excerpt: "Discover the essential elements of a portfolio that attracts clients and showcases your best work effectively.",
-      category: "For Developers",
-      date: "November 18, 2024",
+      title: "How to Build an Effective Online Course",
+      excerpt: "Essential tips for training providers on creating courses that engage learners and deliver real career outcomes.",
+      category: "For Training Providers",
+      date: "December 18, 2024",
       readTime: "7 min read",
-      image: "💼",
+      image: "🎓",
     },
     {
       id: 3,
-      title: "The Future of Remote Work in Tech",
-      excerpt: "Explore how remote work is reshaping the tech industry and what it means for developers and clients alike.",
+      title: "The Future of Workforce Development",
+      excerpt: "Explore how upskilling and reskilling are reshaping the job market and what it means for employers and employees.",
       category: "Industry Insights",
-      date: "November 15, 2024",
+      date: "December 15, 2024",
       readTime: "6 min read",
       image: "🌐",
     },
     {
       id: 4,
-      title: "Effective Project Management for Freelancers",
-      excerpt: "Master the art of managing multiple projects, meeting deadlines, and keeping clients happy as a freelance developer.",
-      category: "For Developers",
-      date: "November 12, 2024",
+      title: "Creating a Standout Professional Profile",
+      excerpt: "Learn how to build a profile that showcases your skills, certifications, and experience to attract top employers.",
+      category: "For Job Seekers",
+      date: "December 12, 2024",
       readTime: "8 min read",
       image: "📊",
     },
     {
       id: 5,
-      title: "Understanding Platform Fees and Pricing",
-      excerpt: "A transparent breakdown of how platform fees work and tips for maximizing your earnings or budget.",
-      category: "Platform Updates",
-      date: "November 10, 2024",
+      title: "Maximizing ROI on Employee Training",
+      excerpt: "A guide for employers on investing in upskilling programs that deliver measurable business results.",
+      category: "For Employers",
+      date: "December 10, 2024",
       readTime: "4 min read",
       image: "💰",
     },
     {
       id: 6,
-      title: "Best Practices for Client-Developer Communication",
-      excerpt: "Learn how to establish clear communication channels and set expectations for successful project collaboration.",
-      category: "For Clients",
-      date: "November 8, 2024",
+      title: "From Career Change to Career Success",
+      excerpt: "Real stories of professionals who successfully reskilled and transitioned to new, fulfilling careers.",
+      category: "Success Stories",
+      date: "December 8, 2024",
       readTime: "6 min read",
       image: "💬",
     },
     {
       id: 7,
-      title: "Scaling Your Agency with TechPickHub",
-      excerpt: "Discover strategies for growing your agency by leveraging our platform to find clients and hire top developers.",
-      category: "For Agencies",
-      date: "November 5, 2024",
+      title: "Growing Your Training Business with PickHub",
+      excerpt: "Strategies for training providers to expand their reach and connect with motivated learners on our platform.",
+      category: "For Training Providers",
+      date: "December 5, 2024",
       readTime: "7 min read",
       image: "🚀",
     },
     {
       id: 8,
-      title: "Security Best Practices for Freelance Projects",
-      excerpt: "Essential security measures every developer should implement to protect client data and maintain trust.",
-      category: "For Developers",
-      date: "November 3, 2024",
+      title: "The Value of Skill Certifications",
+      excerpt: "Why certifications matter in today's job market and how to choose the right ones for your career goals.",
+      category: "For Job Seekers",
+      date: "December 3, 2024",
       readTime: "9 min read",
-      image: "🔒",
+      image: "🏆",
     },
     {
       id: 9,
-      title: "How to Write Compelling Project Descriptions",
-      excerpt: "Tips for clients on crafting project descriptions that attract the right developers and set clear expectations.",
-      category: "For Clients",
-      date: "November 1, 2024",
+      title: "How to Write Job Postings That Attract Top Talent",
+      excerpt: "Tips for employers on crafting job descriptions that appeal to skilled, trained candidates.",
+      category: "For Employers",
+      date: "December 1, 2024",
       readTime: "5 min read",
       image: "✍️",
     },
   ];
 
-  const categories = ["All", "For Clients", "For Developers", "For Agencies", "Industry Insights", "Platform Updates"];
+  const categories = ["All", "For Job Seekers", "For Training Providers", "For Employers", "Industry Insights", "Success Stories"];
 
   return (
     <main className="min-h-screen bg-white">
@@ -125,10 +125,10 @@ export default function BlogPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              TechPickHub <span className="text-blue-600">Blog</span>
+              PickHub <span className="text-blue-600">Blog</span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Insights, tips, and stories from the world of freelance development and project collaboration
+              Insights, tips, and success stories about upskilling, reskilling, and career transformation
             </p>
           </div>
         </div>
@@ -163,21 +163,21 @@ export default function BlogPage() {
                 Featured
               </span>
               <span className="bg-white text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">
-                For Developers
+                For Job Seekers
               </span>
             </div>
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                  Building a Winning Developer Portfolio
+                  Top 10 In-Demand Skills for 2025
                 </h2>
                 <p className="text-lg text-gray-600 mb-6">
-                  Discover the essential elements of a portfolio that attracts clients and showcases your best work effectively. Learn from successful developers who have built thriving freelance careers.
+                  Discover which skills are most sought after by employers and how you can start learning them today. Get ahead of the curve and position yourself for career success.
                 </p>
                 <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
-                  <span>November 18, 2024</span>
+                  <span>December 20, 2024</span>
                   <span>•</span>
-                  <span>7 min read</span>
+                  <span>5 min read</span>
                 </div>
                 <Link
                   href="#"
@@ -187,7 +187,7 @@ export default function BlogPage() {
                 </Link>
               </div>
               <div className="flex items-center justify-center">
-                <div className="text-9xl">💼</div>
+                <div className="text-9xl">🎯</div>
               </div>
             </div>
           </div>

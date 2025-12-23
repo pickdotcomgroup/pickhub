@@ -3,19 +3,19 @@ import Footer from "../_components/footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Us | TechPickHub - Revolutionizing Freelance Collaboration",
-  description: "Learn about TechPickHub's mission to connect clients, developers, and agencies. We're building a three-way marketplace where quality matters and meaningful connections lead to successful projects.",
-  keywords: "about techpickhub, our mission, company story, freelance platform, tech marketplace, our team, our values",
+  title: "About Us | PickHub - Transforming Career Development",
+  description: "Learn about PickHub's mission to connect job seekers with training providers and employers. We're building a platform where upskilling leads to career transformation.",
+  keywords: "about pickhub, our mission, company story, upskilling platform, job matching, training marketplace, our team, our values",
   openGraph: {
-    title: "About TechPickHub - Our Mission & Story",
-    description: "Revolutionizing how clients, developers, and agencies connect and collaborate on projects. Join our growing community.",
+    title: "About PickHub - Our Mission & Story",
+    description: "Transforming how job seekers upskill, reskill, and connect with employers. Join our growing community.",
     type: "website",
-    url: "https://techpickhub.com/about",
+    url: "https://pickhub.com/about",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About TechPickHub",
-    description: "Learn about our mission to revolutionize freelance collaboration and project delivery.",
+    title: "About PickHub",
+    description: "Learn about our mission to transform career development through upskilling and job matching.",
   },
 };
 
@@ -44,40 +44,40 @@ export default function AboutPage() {
   const values = [
     {
       icon: "🎯",
-      title: "Transparency",
-      description: "We believe in clear communication, honest pricing, and open processes. No hidden fees, no surprises.",
+      title: "Accessibility",
+      description: "We believe quality education and career opportunities should be accessible to everyone, everywhere.",
     },
     {
       icon: "🤝",
       title: "Trust",
-      description: "Building trust between clients, developers, and agencies is at the heart of everything we do.",
+      description: "Building trust between job seekers, training providers, and employers is at the heart of everything we do.",
     },
     {
       icon: "⚡",
       title: "Innovation",
-      description: "We continuously improve our platform with cutting-edge features that make collaboration easier.",
+      description: "We use smart matching algorithms and cutting-edge technology to connect the right people with the right opportunities.",
     },
     {
       icon: "🌟",
       title: "Quality",
-      description: "We maintain high standards through verification processes and quality assurance frameworks.",
+      description: "We partner with certified training providers to ensure learners receive valuable, career-relevant education.",
     },
     {
       icon: "💪",
       title: "Empowerment",
-      description: "We empower developers to choose their projects and clients to find the perfect talent.",
+      description: "We empower individuals to take control of their careers through continuous learning and skill development.",
     },
     {
       icon: "🌍",
-      title: "Community",
-      description: "We're building a global community of professionals who support and learn from each other.",
+      title: "Impact",
+      description: "We're committed to closing the skills gap and helping people build meaningful, fulfilling careers.",
     },
   ];
 
   const stats = [
-    { number: "10,000+", label: "Active Users" },
-    { number: "5,000+", label: "Projects Completed" },
-    { number: "50+", label: "Countries" },
+    { number: "10,000+", label: "Active Learners" },
+    { number: "5,000+", label: "Courses Completed" },
+    { number: "500+", label: "Training Providers" },
     { number: "98%", label: "Satisfaction Rate" },
   ];
 
@@ -100,10 +100,10 @@ export default function AboutPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              About <span className="text-blue-600">TechPickHub</span>
+              About <span className="text-blue-600">PickHub</span>
             </h1>
             <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-              We&apos;re on a mission to revolutionize how clients, developers, and agencies connect and collaborate on projects
+              We&apos;re on a mission to transform careers through upskilling, reskilling, and smart job matching
             </p>
           </div>
         </div>
@@ -119,16 +119,16 @@ export default function AboutPage() {
           </div>
           <div className="prose prose-lg max-w-none text-gray-600">
             <p className="text-lg leading-relaxed mb-6">
-              TechPickHub was born from a simple observation: the traditional freelance marketplace model wasn&apos;t working for everyone. Developers were overwhelmed with proposals, clients struggled to find the right talent, and agencies needed better ways to scale their operations.
+              PickHub was born from a simple observation: the gap between education and employment was growing wider. Job seekers struggled to find affordable, quality training, while employers couldn&apos;t find candidates with the right skills.
             </p>
             <p className="text-lg leading-relaxed mb-6">
-              We asked ourselves: what if developers could choose the projects they&apos;re passionate about? What if clients could post projects and let talent come to them? What if agencies could seamlessly browse projects and hire developers?
+              We asked ourselves: what if there was a platform where job seekers could upskill and reskill with certified training providers? What if employers could find candidates who have proven, verified skills? What if training providers could reach learners who are motivated to succeed?
             </p>
             <p className="text-lg leading-relaxed mb-6">
-              That&apos;s how TechPickHub was created—a three-way marketplace that puts power in the hands of developers while giving clients and agencies the tools they need to succeed. We&apos;ve built a platform where quality matters more than quantity, and where meaningful connections lead to successful projects.
+              That&apos;s how PickHub was created—a three-way marketplace connecting job seekers, training providers, and employers. We&apos;ve built a platform where learning leads to earning, and where skill development transforms into career advancement.
             </p>
             <p className="text-lg leading-relaxed">
-              Today, we&apos;re proud to serve thousands of professionals across the globe, facilitating successful collaborations and helping build amazing projects every day.
+              Today, we&apos;re proud to serve thousands of learners, training providers, and employers across the globe, helping close the skills gap and building successful careers every day.
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ export default function AboutPage() {
               Meet Our Team
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Passionate professionals dedicated to building the future of freelance collaboration
+              Passionate professionals dedicated to transforming career development through technology
             </p>
           </div>
 
@@ -226,7 +226,7 @@ export default function AboutPage() {
             Our Mission
           </h2>
           <p className="text-xl text-gray-700 leading-relaxed mb-8">
-            To create a world where talented developers have the freedom to choose meaningful work, where clients can easily find the perfect talent, and where agencies can scale their operations efficiently—all while maintaining the highest standards of quality and trust.
+            To create a world where everyone has access to quality education and meaningful employment. We connect job seekers with certified training providers to build in-demand skills, and match them with employers who value continuous learning—all while maintaining the highest standards of quality and trust.
           </p>
           <div className="inline-block bg-blue-600 text-white px-8 py-3 rounded-full font-semibold">
             Building the Future Together
@@ -241,7 +241,7 @@ export default function AboutPage() {
             Join Our Growing Community
           </h2>
           <p className="text-lg text-gray-600 mb-8">
-            Whether you&apos;re a client looking for talent, a developer seeking projects, or an agency ready to scale, TechPickHub is here to help you succeed.
+            Whether you&apos;re a job seeker looking to upskill, a training provider expanding your reach, or an employer searching for skilled talent, PickHub is here to help you succeed.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -277,8 +277,8 @@ export default function AboutPage() {
               <div className="text-4xl mb-4">📧</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
               <p className="text-gray-600 text-sm mb-3">For general inquiries</p>
-              <a href="mailto:hello@techpickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                hello@techpickhub.com
+              <a href="mailto:hello@pickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
+                hello@pickhub.com
               </a>
             </div>
 
@@ -286,8 +286,8 @@ export default function AboutPage() {
               <div className="text-4xl mb-4">💬</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Support</h3>
               <p className="text-gray-600 text-sm mb-3">Need help? We&apos;re here 24/7</p>
-              <a href="mailto:support@techpickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                support@techpickhub.com
+              <a href="mailto:support@pickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
+                support@pickhub.com
               </a>
             </div>
 
@@ -295,8 +295,8 @@ export default function AboutPage() {
               <div className="text-4xl mb-4">🏢</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Partnerships</h3>
               <p className="text-gray-600 text-sm mb-3">Interested in partnering?</p>
-              <a href="mailto:partners@techpickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                partners@techpickhub.com
+              <a href="mailto:partners@pickhub.com" className="text-blue-600 hover:text-blue-700 font-medium">
+                partners@pickhub.com
               </a>
             </div>
           </div>

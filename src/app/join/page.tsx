@@ -9,94 +9,94 @@ export default function JoinPage() {
         {/* Page Title */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Join TechPickHub
+            Join PickHub
           </h1>
           <p className="text-md text-gray-600 max-w-2xl mx-auto">
-            Connect, collaborate, and grow—whether you&apos;re a client seeking talent, a developer looking for projects, or an agency ready to scale.
+            Transform your career journey—whether you&apos;re a job seeker looking to upskill, a training provider offering courses, or an employer searching for skilled talent.
           </p>
         </div>
 
         {/* Professional Signup Section */}
         <div className="rounded-2xl p-4">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {/* Client Professional Signup */}
+            {/* Job Seeker Signup */}
             <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-400 transition-all duration-300 shadow-sm flex flex-col">
               <div className="text-center mb-4">
-                <div className="text-4xl mb-3">🏢</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Employer</h3>
+                <div className="text-4xl mb-3">🎯</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Job Seeker</h3>
                 <p className="text-gray-600 text-sm mb-4">
-                  Post projects and hire top talent for your business needs
+                  Upskill, reskill, and get matched to your dream job opportunities
                 </p>
               </div>
               <div className="flex-grow">
                 <ul className="text-sm text-gray-600 space-y-2 mb-6">
-                  <li>• Post projects</li>
-                  <li>• Access to verified professional developers</li>
-                  <li>• Project management tools</li>
-                  <li>• Secure payment system</li>
-                </ul>
-              </div>
-              <div className="mt-auto">
-                <Link
-                  href="/signup?type=client"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
-                >
-                  Sign Up as Employer
-                </Link>
-              </div>
-            </div>
-
-            {/* Talent Professional Signup */}
-            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300 shadow-sm flex flex-col">
-              <div className="text-center mb-4">
-                <div className="text-4xl mb-3">👨‍💻</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Developer</h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Showcase your skills and find exciting freelance opportunities
-                </p>
-              </div>
-              <div className="flex-grow">
-                <ul className="text-sm text-gray-600 space-y-2 mb-6">
-                  <li>• Create professional profile</li>
-                  <li>• Pick projects</li>
-                  <li>• Upskill with learning resources</li>
-                  <li>• Build your reputation</li>
-                  <li>• Secure payment guarantee</li>
+                  <li>• Access training marketplace</li>
+                  <li>• Earn skill certifications</li>
+                  <li>• Smart job matching</li>
+                  <li>• Track your learning progress</li>
                 </ul>
               </div>
               <div className="mt-auto">
                 <Link
                   href="/signup?type=talent"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
-                  Sign Up as Developer
+                  Sign Up as Job Seeker
                 </Link>
               </div>
             </div>
 
-            {/* Agency Professional Signup */}
-            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300 shadow-sm flex flex-col">
+            {/* Training Provider Signup */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-green-400 transition-all duration-300 shadow-sm flex flex-col">
               <div className="text-center mb-4">
-                <div className="text-4xl mb-3">🏛️</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Trainer</h3>
+                <div className="text-4xl mb-3">🎓</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Training Provider</h3>
                 <p className="text-gray-600 text-sm mb-4">
-                  Scale your business and manage multiple client relationships
+                  List your courses and reach thousands of eager learners
                 </p>
               </div>
               <div className="flex-grow">
                 <ul className="text-sm text-gray-600 space-y-2 mb-6">
-                  <li>• Team collaboration tools</li>
-                  <li>• Multi-project management</li>
-                  <li>• Client relationship tools</li>
-                  <li>• Advanced analytics</li>
+                  <li>• List unlimited courses</li>
+                  <li>• Reach targeted learners</li>
+                  <li>• Issue certifications</li>
+                  <li>• Analytics dashboard</li>
+                  <li>• Secure payment system</li>
                 </ul>
               </div>
               <div className="mt-auto">
                 <Link
                   href="/signup?type=agency"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
+                >
+                  Sign Up as Training Provider
+                </Link>
+              </div>
+            </div>
+
+            {/* Employer Signup */}
+            <div className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-400 transition-all duration-300 shadow-sm flex flex-col">
+              <div className="text-center mb-4">
+                <div className="text-4xl mb-3">🏢</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Join as Employer</h3>
+                <p className="text-gray-600 text-sm mb-4">
+                  Post jobs and hire skilled, trained candidates ready to work
+                </p>
+              </div>
+              <div className="flex-grow">
+                <ul className="text-sm text-gray-600 space-y-2 mb-6">
+                  <li>• Post unlimited jobs</li>
+                  <li>• Access trained talent pool</li>
+                  <li>• Smart candidate matching</li>
+                  <li>• Hiring analytics</li>
+                </ul>
+              </div>
+              <div className="mt-auto">
+                <Link
+                  href="/signup?type=client"
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
-                  Sign Up as Trainer
+                  Sign Up as Employer
                 </Link>
               </div>
             </div>
