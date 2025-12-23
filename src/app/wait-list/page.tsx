@@ -264,7 +264,7 @@ export default function Home() {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
                 </div>
                 <span className="font-bold text-lg tracking-wide" style={{ color: 'var(--color-accent)' }}>
-                  Launching Q1 2025
+                  Launching Q1 2026
                 </span>
               </div>
 
