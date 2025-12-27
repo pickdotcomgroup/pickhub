@@ -42,7 +42,7 @@ export async function GET() {
   }
 }
 
-// PUT - Update trainer profile
+// PUT - Update trainer/organization profile
 export async function PUT(request: Request) {
   try {
     const session = await auth();
@@ -62,23 +62,27 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json() as {
-      firstName?: string;
-      lastName?: string;
-      title?: string;
-      specialization?: string;
-      bio?: string;
-      skills?: string[];
-      experience?: string;
-      certifications?: string[];
-      hourlyRate?: string;
+      organizationName?: string;
+      organizationType?: string;
+      registrationNumber?: string;
+      contactPersonName?: string;
+      contactPersonRole?: string;
+      contactEmail?: string;
+      contactPhone?: string;
+      description?: string;
+      specializations?: string[];
+      trainingAreas?: string[];
+      accreditations?: string[];
       website?: string;
       location?: string;
+      foundedYear?: string;
+      organizationSize?: string;
     };
 
     // Validate required fields
-    if (!body.firstName || !body.lastName) {
+    if (!body.organizationName || !body.contactPersonName) {
       return NextResponse.json(
-        { error: "First name and last name are required" },
+        { error: "Organization name and contact person name are required" },
         { status: 400 }
       );
     }
@@ -86,17 +90,21 @@ export async function PUT(request: Request) {
     const updatedProfile = await db.trainerProfile.update({
       where: { userId: session.user.id },
       data: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        title: body.title ?? null,
-        specialization: body.specialization ?? null,
-        bio: body.bio ?? null,
-        skills: body.skills ?? [],
-        experience: body.experience ?? null,
-        certifications: body.certifications ?? [],
-        hourlyRate: body.hourlyRate ?? null,
+        organizationName: body.organizationName,
+        organizationType: body.organizationType ?? null,
+        registrationNumber: body.registrationNumber ?? null,
+        contactPersonName: body.contactPersonName,
+        contactPersonRole: body.contactPersonRole ?? null,
+        contactEmail: body.contactEmail ?? null,
+        contactPhone: body.contactPhone ?? null,
+        description: body.description ?? null,
+        specializations: body.specializations ?? [],
+        trainingAreas: body.trainingAreas ?? [],
+        accreditations: body.accreditations ?? [],
         website: body.website ?? null,
         location: body.location ?? null,
+        foundedYear: body.foundedYear ?? null,
+        organizationSize: body.organizationSize ?? null,
       },
     });
 

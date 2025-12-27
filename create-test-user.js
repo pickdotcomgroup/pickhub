@@ -64,13 +64,13 @@ async function createTestUsers() {
     await prisma.trainerProfile.create({
       data: {
         userId: trainerUser.id,
-        firstName: 'Test',
-        lastName: 'Trainer',
-        title: 'Senior Developer Coach',
-        specialization: 'Full Stack Development',
-        bio: 'Experienced trainer in web development',
-        skills: ['React', 'Node.js', 'TypeScript'],
-        experience: '10+ years',
+        organizationName: 'Test Training Academy',
+        organizationType: 'training_center',
+        contactPersonName: 'Test Trainer',
+        contactPersonRole: 'Director',
+        description: 'Experienced training organization in web development',
+        specializations: ['React', 'Node.js', 'TypeScript'],
+        trainingAreas: ['Full Stack Development', 'Frontend', 'Backend'],
       },
     });
 

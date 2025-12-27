@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, ArrowLeft, UserPlus } from "lucide-react";
+import { ArrowRight, ArrowLeft, UserPlus, CheckCircle2, Users, Briefcase, GraduationCap, TrendingUp, Shield, Zap, Globe, Award, Target } from "lucide-react";
 
 type ProfessionalType = "employer" | "talent" | "trainer";
 
@@ -29,10 +29,15 @@ interface ProfessionalFormData {
   experience?: string;
   hourlyRate?: string;
   portfolio?: string;
-  // Trainer specific
-  specialization?: string;
-  bio?: string;
-  trainerSkills?: string[];
+  // Trainer/Organization specific
+  organizationName?: string;
+  organizationType?: string;
+  contactPersonName?: string;
+  contactPersonRole?: string;
+  organizationDescription?: string;
+  specializations?: string[];
+  organizationWebsite?: string;
+  organizationLocation?: string;
 }
 
 type FormErrors = Record<string, string>;
@@ -62,6 +67,169 @@ const skillOptions = [
   "Docker",
 ];
 
+const trainingSpecializationOptions = [
+  "Artificial Intelligence (AI)",
+  "Machine Learning (ML)",
+  "Deep Learning (DL)",
+  "Natural Language Processing (NLP)",
+  "Generative AI & LLMs",
+  "Computer Vision",
+  "Data Science",
+  "Data Analytics",
+  "Data Engineering",
+  "Business Intelligence",
+  "Web3 & Blockchain",
+  "Smart Contracts",
+  "Cybersecurity",
+  "Cloud Security",
+  "Ethical Hacking",
+  "Penetration Testing",
+  "Cloud Computing (AWS)",
+  "Cloud Computing (Azure)",
+  "Cloud Computing (GCP)",
+  "DevOps & MLOps",
+  "Full Stack Development",
+  "Mobile App Development",
+  "IoT & Embedded Systems",
+  "Robotics & Automation",
+  "Quantum Computing",
+  "AR/VR Development",
+  "Product Management",
+  "Agile & Scrum",
+];
+
+const marketingContent = {
+  employer: {
+    title: "Hire Top Tech Talent",
+    subtitle: "Find vetted developers ready to build your next big thing",
+    features: [
+      {
+        icon: Users,
+        title: "Access Pre-Vetted Talent",
+        description: "Connect with skilled developers who have been thoroughly assessed for technical expertise",
+      },
+      {
+        icon: Zap,
+        title: "Fast Hiring Process",
+        description: "Reduce time-to-hire with our streamlined matching and interview process",
+      },
+      {
+        icon: Shield,
+        title: "Quality Guaranteed",
+        description: "Every developer is background-checked and skill-verified before joining our platform",
+      },
+      {
+        icon: TrendingUp,
+        title: "Scale Your Team",
+        description: "Quickly scale up or down based on your project needs with flexible engagement models",
+      },
+    ],
+    stats: [
+      { value: "10,000+", label: "Verified Developers" },
+      { value: "500+", label: "Companies Hiring" },
+      { value: "95%", label: "Client Satisfaction" },
+    ],
+  },
+  talent: {
+    title: "Accelerate Your Career",
+    subtitle: "Join a community of top developers and land your dream opportunities",
+    features: [
+      {
+        icon: Briefcase,
+        title: "Premium Job Opportunities",
+        description: "Access exclusive positions at top companies looking for developers like you",
+      },
+      {
+        icon: Award,
+        title: "Showcase Your Skills",
+        description: "Build a professional profile that highlights your expertise and projects",
+      },
+      {
+        icon: Globe,
+        title: "Work Remotely",
+        description: "Find remote-friendly positions that offer flexibility and work-life balance",
+      },
+      {
+        icon: TrendingUp,
+        title: "Grow Your Earnings",
+        description: "Negotiate competitive rates and access higher-paying opportunities",
+      },
+    ],
+    stats: [
+      { value: "$80K+", label: "Avg. Salary" },
+      { value: "2,000+", label: "Open Positions" },
+      { value: "85%", label: "Placement Rate" },
+    ],
+  },
+  trainer: {
+    title: "Empower the Next Generation",
+    subtitle: "Partner with us to train and upskill developers worldwide",
+    features: [
+      {
+        icon: GraduationCap,
+        title: "Reach More Students",
+        description: "Expand your reach and connect with learners seeking quality tech education",
+      },
+      {
+        icon: Target,
+        title: "Industry-Aligned Training",
+        description: "Develop curriculum that meets real-world industry demands and job requirements",
+      },
+      {
+        icon: Users,
+        title: "Build Your Network",
+        description: "Connect with employers looking to hire your graduates and trainees",
+      },
+      {
+        icon: CheckCircle2,
+        title: "Track Success",
+        description: "Monitor student progress and placement rates with comprehensive analytics",
+      },
+    ],
+    stats: [
+      { value: "50+", label: "Partner Organizations" },
+      { value: "5,000+", label: "Students Trained" },
+      { value: "90%", label: "Employment Rate" },
+    ],
+  },
+};
+
+function MarketingPanel({ type }: { type: ProfessionalType }) {
+  const content = marketingContent[type];
+
+  return (
+    <div className="hidden lg:flex lg:w-1/2 flex-col justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-12 text-white">
+      <div className="max-w-lg mx-auto">
+        <h2 className="text-3xl font-bold mb-3">{content.title}</h2>
+        <p className="text-blue-100 text-lg mb-8">{content.subtitle}</p>
+
+        <div className="space-y-6 mb-10">
+          {content.features.map((feature, index) => (
+            <div key={index} className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                <feature.icon className="w-5 h-5 text-blue-200" />
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">{feature.title}</h3>
+                <p className="text-blue-200 text-sm">{feature.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/20">
+          {content.stats.map((stat, index) => (
+            <div key={index} className="text-center">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="text-blue-200 text-sm">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SignupContent() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -78,7 +246,7 @@ function SignupContent() {
       lastName: "",
       professionalType: "talent",
       skills: [],
-      trainerSkills: [],
+      specializations: [],
     });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -147,12 +315,12 @@ function SignupContent() {
         if (!professionalFormData.experience)
           newErrors.experience = "Experience level is required";
       } else if (professionalType === "trainer") {
-        if (!professionalFormData.title?.trim())
-          newErrors.title = "Professional title is required";
-        if (!professionalFormData.specialization?.trim())
-          newErrors.specialization = "Specialization is required";
-        if (!professionalFormData.trainerSkills?.length)
-          newErrors.trainerSkills = "At least one skill is required";
+        if (!professionalFormData.organizationName?.trim())
+          newErrors.organizationName = "Organization name is required";
+        if (!professionalFormData.organizationType?.trim())
+          newErrors.organizationType = "Organization type is required";
+        if (!professionalFormData.specializations?.length)
+          newErrors.specializations = "At least one specialization is required";
       }
     }
 
@@ -200,10 +368,14 @@ function SignupContent() {
           portfolio: professionalFormData.portfolio,
         }),
         ...(professionalType === "trainer" && {
-          title: professionalFormData.title,
-          specialization: professionalFormData.specialization,
-          bio: professionalFormData.bio,
-          skills: professionalFormData.trainerSkills,
+          organizationName: professionalFormData.organizationName,
+          organizationType: professionalFormData.organizationType,
+          contactPersonName: `${professionalFormData.firstName} ${professionalFormData.lastName}`,
+          contactPersonRole: professionalFormData.contactPersonRole,
+          description: professionalFormData.organizationDescription,
+          specializations: professionalFormData.specializations,
+          website: professionalFormData.organizationWebsite,
+          location: professionalFormData.organizationLocation,
         }),
       };
 
@@ -260,7 +432,7 @@ function SignupContent() {
 
   const handleSkillToggle = (
     skill: string,
-    fieldName: "skills" | "trainerSkills" = "skills",
+    fieldName: "skills" | "specializations" = "skills",
   ) => {
     setProfessionalFormData((prev) => ({
       ...prev,
@@ -275,15 +447,19 @@ function SignupContent() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center bg-white py-3">
-      <div className="w-full max-w-4xl px-6">
-        <div className="rounded-2xl bg-white p-8">
+    <main className="flex min-h-screen bg-white">
+      {/* Left Side - Marketing Content */}
+      <MarketingPanel type={professionalType} />
+
+      {/* Right Side - Signup Form */}
+      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center px-6 py-8 mx-auto">
+        <div className="w-full max-w-lg">
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900">
               {professionalType === "employer" && "Employer Sign Up"}
               {professionalType === "talent" && "Developer Sign Up"}
-              {professionalType === "trainer" && "Trainer Sign Up"}
+              {professionalType === "trainer" && "Training Organization Sign Up"}
             </h1>
             <p className="mt-2 text-sm text-gray-600">
               {professionalType === "employer" &&
@@ -291,7 +467,7 @@ function SignupContent() {
               {professionalType === "talent" &&
                 "Create your account to find amazing opportunities"}
               {professionalType === "trainer" &&
-                "Create your account to train and mentor developers"}
+                "Register your organization or institution to provide training"}
             </p>
           </div>
 
@@ -318,13 +494,18 @@ function SignupContent() {
             {/* Step 1: Basic Information */}
             {currentStep === 1 && (
               <div>
+                {professionalType === "trainer" && (
+                  <p className="mb-4 text-sm text-gray-500">
+                    Please provide the contact person details for your organization
+                  </p>
+                )}
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <label
                       htmlFor="firstName"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      First Name *
+                      {professionalType === "trainer" ? "Contact Person First Name *" : "First Name *"}
                     </label>
                     <input
                       type="text"
@@ -333,7 +514,7 @@ function SignupContent() {
                       value={professionalFormData.firstName}
                       onChange={handleInputChange}
                       className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
-                      placeholder="Enter your first name"
+                      placeholder={professionalType === "trainer" ? "Contact person's first name" : "Enter your first name"}
                     />
                     {errors.firstName && (
                       <p className="mt-1 text-sm text-red-400">
@@ -346,7 +527,7 @@ function SignupContent() {
                       htmlFor="lastName"
                       className="mb-1 block text-sm font-medium text-gray-700"
                     >
-                      Last Name *
+                      {professionalType === "trainer" ? "Contact Person Last Name *" : "Last Name *"}
                     </label>
                     <input
                       type="text"
@@ -355,7 +536,7 @@ function SignupContent() {
                       value={professionalFormData.lastName}
                       onChange={handleInputChange}
                       className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
-                      placeholder="Enter your last name"
+                      placeholder={professionalType === "trainer" ? "Contact person's last name" : "Enter your last name"}
                     />
                     {errors.lastName && (
                       <p className="mt-1 text-sm text-red-400">
@@ -370,7 +551,7 @@ function SignupContent() {
                     htmlFor="email"
                     className="mb-1 block text-sm font-medium text-gray-700"
                   >
-                    Email Address *
+                    {professionalType === "trainer" ? "Contact Email *" : "Email Address *"}
                   </label>
                   <input
                     type="email"
@@ -379,7 +560,7 @@ function SignupContent() {
                     value={professionalFormData.email}
                     onChange={handleInputChange}
                     className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.email ? "border-red-500" : "border-gray-300"}`}
-                    placeholder="Enter your email address"
+                    placeholder={professionalType === "trainer" ? "Organization contact email" : "Enter your email address"}
                   />
                   {errors.email && (
                     <p className="mt-1 text-sm text-red-400">
@@ -450,7 +631,9 @@ function SignupContent() {
             {currentStep === 3 && (
               <div>
                 <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  {professionalType === "employer" ? "Company/Agency Information" : "Professional Information"}
+                  {professionalType === "employer" && "Company/Agency Information"}
+                  {professionalType === "talent" && "Professional Information"}
+                  {professionalType === "trainer" && "Organization Information"}
                 </h3>
 
                 {professionalType === "employer" && (
@@ -713,91 +896,156 @@ function SignupContent() {
                   <div className="space-y-4">
                     <div>
                       <label
-                        htmlFor="title"
+                        htmlFor="organizationName"
                         className="mb-1 block text-sm font-medium text-gray-700"
                       >
-                        Professional Title *
+                        Organization / Institution Name *
                       </label>
                       <input
                         type="text"
-                        id="title"
-                        name="title"
-                        value={professionalFormData.title ?? ""}
+                        id="organizationName"
+                        name="organizationName"
+                        value={professionalFormData.organizationName ?? ""}
                         onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.title ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="e.g., Senior Developer Coach"
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.organizationName ? "border-red-500" : "border-gray-300"}`}
+                        placeholder="e.g., Tech Training Academy"
                       />
-                      {errors.title && (
+                      {errors.organizationName && (
                         <p className="mt-1 text-sm text-red-400">
-                          {errors.title}
+                          {errors.organizationName}
                         </p>
                       )}
                     </div>
 
-                    <div>
-                      <label
-                        htmlFor="specialization"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Specialization *
-                      </label>
-                      <input
-                        type="text"
-                        id="specialization"
-                        name="specialization"
-                        value={professionalFormData.specialization ?? ""}
-                        onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="e.g., Frontend Development, React, Career Coaching"
-                      />
-                      {errors.specialization && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.specialization}
-                        </p>
-                      )}
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="organizationType"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Organization Type *
+                        </label>
+                        <select
+                          id="organizationType"
+                          name="organizationType"
+                          value={professionalFormData.organizationType ?? ""}
+                          onChange={handleInputChange}
+                          className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.organizationType ? "border-red-500" : "border-gray-300"}`}
+                        >
+                          <option value="">Select type</option>
+                          <option value="training_center">Training Center</option>
+                          <option value="bootcamp">Bootcamp</option>
+                          <option value="university">University / College</option>
+                          <option value="corporate_training">Corporate Training</option>
+                          <option value="online_academy">Online Academy</option>
+                          <option value="certification_body">Certification Body</option>
+                          <option value="consulting_firm">Consulting Firm</option>
+                          <option value="nonprofit">Non-profit Organization</option>
+                          <option value="other">Other</option>
+                        </select>
+                        {errors.organizationType && (
+                          <p className="mt-1 text-sm text-red-400">
+                            {errors.organizationType}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="contactPersonRole"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Your Role in Organization
+                        </label>
+                        <input
+                          type="text"
+                          id="contactPersonRole"
+                          name="contactPersonRole"
+                          value={professionalFormData.contactPersonRole ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="e.g., Director, Manager, Admin"
+                        />
+                      </div>
                     </div>
 
                     <div>
                       <label
-                        htmlFor="bio"
+                        htmlFor="organizationDescription"
                         className="mb-1 block text-sm font-medium text-gray-700"
                       >
-                        Bio
+                        Organization Description
                       </label>
                       <textarea
-                        id="bio"
-                        name="bio"
+                        id="organizationDescription"
+                        name="organizationDescription"
                         rows={4}
-                        value={professionalFormData.bio ?? ""}
+                        value={professionalFormData.organizationDescription ?? ""}
                         onChange={handleInputChange}
                         className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        placeholder="Tell us about your training experience and expertise"
+                        placeholder="Tell us about your organization, training programs, and expertise"
                       />
                     </div>
 
                     <div>
                       <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Skills & Expertise *
+                        Training Specializations *
                       </label>
-                      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                        {skillOptions.map((skill) => (
+                      <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                        {trainingSpecializationOptions.map((specialization) => (
                           <button
-                            key={skill}
+                            key={specialization}
                             type="button"
                             onClick={() =>
-                              handleSkillToggle(skill, "trainerSkills")
+                              handleSkillToggle(specialization, "specializations")
                             }
-                            className={`rounded-lg px-3 py-2 text-sm transition ${professionalFormData.trainerSkills?.includes(skill) ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                            className={`rounded-lg px-3 py-2 text-sm transition ${professionalFormData.specializations?.includes(specialization) ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
                           >
-                            {skill}
+                            {specialization}
                           </button>
                         ))}
                       </div>
-                      {errors.trainerSkills && (
+                      {errors.specializations && (
                         <p className="mt-1 text-sm text-red-400">
-                          {errors.trainerSkills}
+                          {errors.specializations}
                         </p>
                       )}
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="organizationWebsite"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Website
+                        </label>
+                        <input
+                          type="url"
+                          id="organizationWebsite"
+                          name="organizationWebsite"
+                          value={professionalFormData.organizationWebsite ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="https://www.yourorganization.com"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="organizationLocation"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          id="organizationLocation"
+                          name="organizationLocation"
+                          value={professionalFormData.organizationLocation ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="e.g., San Francisco, CA"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -876,17 +1124,17 @@ function SignupContent() {
               </Link>
             </p>
           </div>
-        </div>
 
-        <div className="mt-6 text-center text-xs text-gray-500">
-          By creating an account, you agree to our{" "}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link href="#" className="text-blue-600 hover:text-blue-700">
-            Privacy Policy
-          </Link>
+          <div className="mt-6 text-center text-xs text-gray-500">
+            By creating an account, you agree to our{" "}
+            <Link href="#" className="text-blue-600 hover:text-blue-700">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="#" className="text-blue-600 hover:text-blue-700">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     </main>

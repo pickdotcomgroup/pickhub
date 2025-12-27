@@ -8,33 +8,41 @@ import Link from "next/link";
 interface TrainerProfile {
   id: string;
   userId: string;
-  firstName: string;
-  lastName: string;
-  title: string | null;
-  specialization: string | null;
-  bio: string | null;
-  skills: string[];
-  experience: string | null;
-  certifications: string[];
-  hourlyRate: string | null;
+  organizationName: string;
+  organizationType: string | null;
+  registrationNumber: string | null;
+  contactPersonName: string;
+  contactPersonRole: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  description: string | null;
+  specializations: string[];
+  trainingAreas: string[];
+  accreditations: string[];
   website: string | null;
   location: string | null;
+  foundedYear: string | null;
+  organizationSize: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 interface FormData {
-  firstName: string;
-  lastName: string;
-  title: string;
-  specialization: string;
-  bio: string;
-  skills: string;
-  experience: string;
-  certifications: string;
-  hourlyRate: string;
+  organizationName: string;
+  organizationType: string;
+  registrationNumber: string;
+  contactPersonName: string;
+  contactPersonRole: string;
+  contactEmail: string;
+  contactPhone: string;
+  description: string;
+  specializations: string;
+  trainingAreas: string;
+  accreditations: string;
   website: string;
   location: string;
+  foundedYear: string;
+  organizationSize: string;
 }
 
 export default function TrainerAccountPage() {
@@ -46,17 +54,21 @@ export default function TrainerAccountPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
-    title: "",
-    specialization: "",
-    bio: "",
-    skills: "",
-    experience: "",
-    certifications: "",
-    hourlyRate: "",
+    organizationName: "",
+    organizationType: "",
+    registrationNumber: "",
+    contactPersonName: "",
+    contactPersonRole: "",
+    contactEmail: "",
+    contactPhone: "",
+    description: "",
+    specializations: "",
+    trainingAreas: "",
+    accreditations: "",
     website: "",
     location: "",
+    foundedYear: "",
+    organizationSize: "",
   });
 
   const fetchProfile = useCallback(async () => {
@@ -68,17 +80,21 @@ export default function TrainerAccountPage() {
       const data = await response.json() as TrainerProfile;
       setProfile(data);
       setFormData({
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? "",
-        title: data.title ?? "",
-        specialization: data.specialization ?? "",
-        bio: data.bio ?? "",
-        skills: data.skills?.join(", ") ?? "",
-        experience: data.experience ?? "",
-        certifications: data.certifications?.join(", ") ?? "",
-        hourlyRate: data.hourlyRate ?? "",
+        organizationName: data.organizationName ?? "",
+        organizationType: data.organizationType ?? "",
+        registrationNumber: data.registrationNumber ?? "",
+        contactPersonName: data.contactPersonName ?? "",
+        contactPersonRole: data.contactPersonRole ?? "",
+        contactEmail: data.contactEmail ?? "",
+        contactPhone: data.contactPhone ?? "",
+        description: data.description ?? "",
+        specializations: data.specializations?.join(", ") ?? "",
+        trainingAreas: data.trainingAreas?.join(", ") ?? "",
+        accreditations: data.accreditations?.join(", ") ?? "",
         website: data.website ?? "",
         location: data.location ?? "",
+        foundedYear: data.foundedYear ?? "",
+        organizationSize: data.organizationSize ?? "",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -125,21 +141,27 @@ export default function TrainerAccountPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          title: formData.title || null,
-          specialization: formData.specialization || null,
-          bio: formData.bio || null,
-          skills: formData.skills
-            ? formData.skills.split(",").map((s) => s.trim()).filter(Boolean)
+          organizationName: formData.organizationName,
+          organizationType: formData.organizationType || null,
+          registrationNumber: formData.registrationNumber || null,
+          contactPersonName: formData.contactPersonName,
+          contactPersonRole: formData.contactPersonRole || null,
+          contactEmail: formData.contactEmail || null,
+          contactPhone: formData.contactPhone || null,
+          description: formData.description || null,
+          specializations: formData.specializations
+            ? formData.specializations.split(",").map((s) => s.trim()).filter(Boolean)
             : [],
-          experience: formData.experience || null,
-          certifications: formData.certifications
-            ? formData.certifications.split(",").map((s) => s.trim()).filter(Boolean)
+          trainingAreas: formData.trainingAreas
+            ? formData.trainingAreas.split(",").map((s) => s.trim()).filter(Boolean)
             : [],
-          hourlyRate: formData.hourlyRate || null,
+          accreditations: formData.accreditations
+            ? formData.accreditations.split(",").map((s) => s.trim()).filter(Boolean)
+            : [],
           website: formData.website || null,
           location: formData.location || null,
+          foundedYear: formData.foundedYear || null,
+          organizationSize: formData.organizationSize || null,
         }),
       });
 
@@ -200,10 +222,10 @@ export default function TrainerAccountPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Edit Profile
+                Edit Organization Profile
               </h1>
               <p className="text-gray-600">
-                Update your trainer profile information
+                Update your organization or institution information
               </p>
             </div>
             <Link
@@ -235,73 +257,102 @@ export default function TrainerAccountPage() {
         <form onSubmit={handleSubmit}>
           <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Personal Information
+              Organization Information
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* First Name */}
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name <span className="text-red-500">*</span>
+              {/* Organization Name */}
+              <div className="md:col-span-2">
+                <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Organization / Institution Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
+                  id="organizationName"
+                  name="organizationName"
+                  value={formData.organizationName}
                   onChange={handleInputChange}
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="Enter your first name"
+                  placeholder="e.g., Tech Training Academy"
                 />
               </div>
 
-              {/* Last Name */}
+              {/* Organization Type */}
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name <span className="text-red-500">*</span>
+                <label htmlFor="organizationType" className="block text-sm font-medium text-gray-700 mb-2">
+                  Organization Type
+                </label>
+                <select
+                  id="organizationType"
+                  name="organizationType"
+                  value={formData.organizationType}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                >
+                  <option value="">Select type</option>
+                  <option value="training_center">Training Center</option>
+                  <option value="bootcamp">Bootcamp</option>
+                  <option value="university">University / College</option>
+                  <option value="corporate_training">Corporate Training</option>
+                  <option value="online_academy">Online Academy</option>
+                  <option value="certification_body">Certification Body</option>
+                  <option value="consulting_firm">Consulting Firm</option>
+                  <option value="nonprofit">Non-profit Organization</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {/* Organization Size */}
+              <div>
+                <label htmlFor="organizationSize" className="block text-sm font-medium text-gray-700 mb-2">
+                  Organization Size
+                </label>
+                <select
+                  id="organizationSize"
+                  name="organizationSize"
+                  value={formData.organizationSize}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                >
+                  <option value="">Select size</option>
+                  <option value="1-10">1-10 employees</option>
+                  <option value="11-50">11-50 employees</option>
+                  <option value="51-200">51-200 employees</option>
+                  <option value="201-500">201-500 employees</option>
+                  <option value="500+">500+ employees</option>
+                </select>
+              </div>
+
+              {/* Registration Number */}
+              <div>
+                <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                  Registration / License Number
                 </label>
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
+                  id="registrationNumber"
+                  name="registrationNumber"
+                  value={formData.registrationNumber}
                   onChange={handleInputChange}
-                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="Enter your last name"
+                  placeholder="Official registration number (if applicable)"
                 />
               </div>
 
-              {/* Title */}
+              {/* Founded Year */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                  Professional Title
+                <label htmlFor="foundedYear" className="block text-sm font-medium text-gray-700 mb-2">
+                  Founded Year
                 </label>
                 <input
                   type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
+                  id="foundedYear"
+                  name="foundedYear"
+                  value={formData.foundedYear}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="e.g., Senior Python Instructor"
-                />
-              </div>
-
-              {/* Specialization */}
-              <div>
-                <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-2">
-                  Specialization
-                </label>
-                <input
-                  type="text"
-                  id="specialization"
-                  name="specialization"
-                  value={formData.specialization}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="e.g., Web Development, Machine Learning"
+                  placeholder="e.g., 2015"
                 />
               </div>
 
@@ -321,46 +372,10 @@ export default function TrainerAccountPage() {
                 />
               </div>
 
-              {/* Experience */}
-              <div>
-                <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-2">
-                  Years of Experience
-                </label>
-                <select
-                  id="experience"
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                >
-                  <option value="">Select experience level</option>
-                  <option value="0-2">0-2 years</option>
-                  <option value="3-5">3-5 years</option>
-                  <option value="6-10">6-10 years</option>
-                  <option value="10+">10+ years</option>
-                </select>
-              </div>
-
-              {/* Hourly Rate */}
-              <div>
-                <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700 mb-2">
-                  Hourly Rate (USD)
-                </label>
-                <input
-                  type="text"
-                  id="hourlyRate"
-                  name="hourlyRate"
-                  value={formData.hourlyRate}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="e.g., 50"
-                />
-              </div>
-
               {/* Website */}
               <div>
                 <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
-                  Website / Portfolio
+                  Website
                 </label>
                 <input
                   type="url"
@@ -369,69 +384,162 @@ export default function TrainerAccountPage() {
                   value={formData.website}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                  placeholder="https://yourwebsite.com"
+                  placeholder="https://yourorganization.com"
                 />
               </div>
             </div>
 
-            {/* Bio */}
+            {/* Description */}
             <div className="mt-6">
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
-                Bio
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+                Organization Description
               </label>
               <textarea
-                id="bio"
-                name="bio"
-                value={formData.bio}
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition resize-none"
-                placeholder="Tell us about yourself, your teaching philosophy, and what makes you a great trainer..."
+                placeholder="Tell us about your organization, training programs, and expertise..."
               />
             </div>
           </div>
 
-          {/* Skills & Certifications */}
+          {/* Contact Person Information */}
           <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Skills & Certifications
+              Contact Person Information
             </h2>
 
-            {/* Skills */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Contact Person Name */}
+              <div>
+                <label htmlFor="contactPersonName" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Person Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="contactPersonName"
+                  name="contactPersonName"
+                  value={formData.contactPersonName}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  placeholder="Full name of contact person"
+                />
+              </div>
+
+              {/* Contact Person Role */}
+              <div>
+                <label htmlFor="contactPersonRole" className="block text-sm font-medium text-gray-700 mb-2">
+                  Role / Position
+                </label>
+                <input
+                  type="text"
+                  id="contactPersonRole"
+                  name="contactPersonRole"
+                  value={formData.contactPersonRole}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  placeholder="e.g., Director, Manager, Admin"
+                />
+              </div>
+
+              {/* Contact Email */}
+              <div>
+                <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Email
+                </label>
+                <input
+                  type="email"
+                  id="contactEmail"
+                  name="contactEmail"
+                  value={formData.contactEmail}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  placeholder="contact@organization.com"
+                />
+              </div>
+
+              {/* Contact Phone */}
+              <div>
+                <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Phone
+                </label>
+                <input
+                  type="tel"
+                  id="contactPhone"
+                  name="contactPhone"
+                  value={formData.contactPhone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                  placeholder="+1 (555) 123-4567"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Specializations & Accreditations */}
+          <div className="bg-gray-50 rounded-2xl p-8 border border-gray-200 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">
+              Specializations & Accreditations
+            </h2>
+
+            {/* Specializations */}
             <div className="mb-6">
-              <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-2">
-                Skills
+              <label htmlFor="specializations" className="block text-sm font-medium text-gray-700 mb-2">
+                Training Specializations
               </label>
               <input
                 type="text"
-                id="skills"
-                name="skills"
-                value={formData.skills}
+                id="specializations"
+                name="specializations"
+                value={formData.specializations}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Enter skills separated by commas (e.g., Python, JavaScript, React)"
+                placeholder="e.g., Web Development, Data Science, Cloud Computing"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Separate multiple skills with commas
+                Separate multiple specializations with commas
               </p>
             </div>
 
-            {/* Certifications */}
-            <div>
-              <label htmlFor="certifications" className="block text-sm font-medium text-gray-700 mb-2">
-                Certifications
+            {/* Training Areas */}
+            <div className="mb-6">
+              <label htmlFor="trainingAreas" className="block text-sm font-medium text-gray-700 mb-2">
+                Training Areas / Technologies
               </label>
               <input
                 type="text"
-                id="certifications"
-                name="certifications"
-                value={formData.certifications}
+                id="trainingAreas"
+                name="trainingAreas"
+                value={formData.trainingAreas}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Enter certifications separated by commas"
+                placeholder="e.g., React, Python, AWS, Machine Learning"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Separate multiple certifications with commas
+                Separate multiple areas with commas
+              </p>
+            </div>
+
+            {/* Accreditations */}
+            <div>
+              <label htmlFor="accreditations" className="block text-sm font-medium text-gray-700 mb-2">
+                Accreditations & Certifications
+              </label>
+              <input
+                type="text"
+                id="accreditations"
+                name="accreditations"
+                value={formData.accreditations}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                placeholder="e.g., ISO 9001, TESDA Accredited, AWS Training Partner"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Separate multiple accreditations with commas
               </p>
             </div>
           </div>

@@ -27,12 +27,14 @@ interface TalentProfileData {
 
 interface TrainerProfileData {
   professionalType: "trainer";
-  firstName: string;
-  lastName: string;
-  title?: string;
-  specialization: string;
-  bio?: string;
-  skills: string[];
+  organizationName: string;
+  organizationType?: string;
+  contactPersonName: string;
+  contactPersonRole?: string;
+  description?: string;
+  specializations: string[];
+  website?: string;
+  location?: string;
 }
 
 interface RequestBody {
@@ -114,12 +116,14 @@ export async function POST(request: NextRequest) {
           await db.trainerProfile.create({
             data: {
               userId: user.id,
-              firstName: trainerData.firstName,
-              lastName: trainerData.lastName,
-              title: trainerData.title,
-              specialization: trainerData.specialization,
-              bio: trainerData.bio,
-              skills: trainerData.skills ?? [],
+              organizationName: trainerData.organizationName,
+              organizationType: trainerData.organizationType,
+              contactPersonName: trainerData.contactPersonName,
+              contactPersonRole: trainerData.contactPersonRole,
+              description: trainerData.description,
+              specializations: trainerData.specializations ?? [],
+              website: trainerData.website,
+              location: trainerData.location,
             },
           });
           break;

@@ -75,9 +75,9 @@ export async function GET(request: Request) {
             },
             trainerProfile: {
               select: {
-                firstName: true,
-                lastName: true,
-                title: true,
+                organizationName: true,
+                contactPersonName: true,
+                organizationType: true,
               },
             },
           },

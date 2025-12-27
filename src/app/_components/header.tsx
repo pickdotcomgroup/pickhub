@@ -348,7 +348,7 @@ export default function Header() {
                   href="/signup?type=trainer"
                   className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
                 >
-                  Become a Trainer
+                  Become a Training Partner
                 </Link>
                 <Link
                   href="/signup?type=employer"
