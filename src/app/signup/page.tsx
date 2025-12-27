@@ -447,7 +447,7 @@ function SignupContent() {
   }
 
   return (
-    <main className="flex min-h-screen bg-white">
+    <main className="flex max-h-screen bg-white">
       {/* Left Side - Marketing Content */}
       <MarketingPanel type={professionalType} />
 

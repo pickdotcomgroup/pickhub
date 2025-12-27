@@ -416,8 +416,8 @@ function AuthContent() {
   const professionalInfo = getProfessionalInfo();
 
   return (
-    <main className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      <div className="mt-16 flex w-full justify-center px-4 py-12">
+    <main className="flex max-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <div className="mt-4 flex w-full justify-center px-4 py-12">
         <div
           className={`w-full ${authMode === "professional" ? "max-w-2xl" : "max-w-md"}`}
         >
