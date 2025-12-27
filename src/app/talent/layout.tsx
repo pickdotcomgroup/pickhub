@@ -23,10 +23,10 @@ export default function TalentLayout({
 
     // Redirect to appropriate dashboard if not a talent
     if (session.user.role !== "talent") {
-      if (session.user.role === "client") {
-        router.push("/client/dashboard");
-      } else if (session.user.role === "agency") {
-        router.push("/agency");
+      if (session.user.role === "employer") {
+        router.push("/employer/dashboard");
+      } else if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else {
         router.push("/dashboard");
       }

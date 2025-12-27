@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -13,12 +12,12 @@ export default function LandingPage() {
 
   // Redirect authenticated users to their respective dashboards
   useEffect(() => {
-    if (session?.user.role === "client") {
-      router.push("/client/dashboard");
+    if (session?.user.role === "trainer") {
+      router.push("/trainer/dashboard");
     } else if (session?.user.role === "talent") {
       router.push("/talent/dashboard");
-    } else if (session?.user.role === "agency") {
-      router.push("/agency/dashboard");
+    } else if (session?.user.role === "employer") {
+      router.push("/employer/dashboard");
     } else if (session?.user.role === "admin") {
       router.push("/admin/dashboard");
     }
@@ -77,7 +76,7 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
               <Link
-                href="/join"
+                 href="/signup?type=talent"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
               >
                 Start Learning Today

@@ -8,16 +8,17 @@ async function createTestUsers() {
     // Create test users with different roles
     const hashedPassword = await bcrypt.hash('password123', 12);
 
-    // Create client user
+    // Create client/employer user
     const clientUser = await prisma.user.create({
       data: {
         email: 'client@test.com',
         password: hashedPassword,
         name: 'Test Client',
+        role: 'employer',
       },
     });
 
-    await prisma.clientProfile.create({
+    await prisma.employerProfile.create({
       data: {
         userId: clientUser.id,
         firstName: 'Test',
@@ -34,6 +35,7 @@ async function createTestUsers() {
         email: 'talent@test.com',
         password: hashedPassword,
         name: 'Test Talent',
+        role: 'talent',
       },
     });
 
@@ -49,31 +51,33 @@ async function createTestUsers() {
       },
     });
 
-    // Create agency user
-    const agencyUser = await prisma.user.create({
+    // Create trainer user
+    const trainerUser = await prisma.user.create({
       data: {
-        email: 'agency@test.com',
+        email: 'trainer@test.com',
         password: hashedPassword,
-        name: 'Test Agency',
+        name: 'Test Trainer',
+        role: 'trainer',
       },
     });
 
-    await prisma.agencyProfile.create({
+    await prisma.trainerProfile.create({
       data: {
-        userId: agencyUser.id,
+        userId: trainerUser.id,
         firstName: 'Test',
-        lastName: 'Agency',
-        agencyName: 'Test Agency Inc',
-        description: 'Full-service digital agency',
-        teamSize: '6-15',
-        skills: ['React', 'Node.js', 'UI/UX Design'],
+        lastName: 'Trainer',
+        title: 'Senior Developer Coach',
+        specialization: 'Full Stack Development',
+        bio: 'Experienced trainer in web development',
+        skills: ['React', 'Node.js', 'TypeScript'],
+        experience: '10+ years',
       },
     });
 
     console.log('Test users created successfully!');
     console.log('Client: client@test.com / password123');
     console.log('Talent: talent@test.com / password123');
-    console.log('Agency: agency@test.com / password123');
+    console.log('Trainer: trainer@test.com / password123');
   } catch (error) {
     console.error('Error creating test users:', error);
   } finally {

@@ -46,22 +46,22 @@ model Session {
 }
 
 model User {
-  id                  String         @id @default(cuid())
+  id                  String           @id @default(cuid())
   name                String?
-  email               String?        @unique
+  email               String?          @unique
   emailVerified       DateTime?
   image               String?
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
   password            String?
-  role                String         @default("user")
+  role                String           @default("user")
   accounts            Account[]
   adminProfile        AdminProfile?
-  agencyProfile       AgencyProfile?
+  employerProfile     EmployerProfile?
+  trainerProfile      TrainerProfile?
   applications        Application[]
-  clientProfile       ClientProfile?
-  clientConversations Conversation[] @relation("ClientConversations")
-  talentConversations Conversation[] @relation("TalentConversations")
+  clientConversations Conversation[]   @relation("ClientConversations")
+  talentConversations Conversation[]   @relation("TalentConversations")
   sentMessages        Message[]
   notifications       Notification[]
   posts               Post[]
@@ -70,7 +70,7 @@ model User {
   talentProfile       TalentProfile?
 }
 
-model ClientProfile {
+model EmployerProfile {
   id          String   @id @default(cuid())
   userId      String   @unique
   firstName   String?
@@ -78,6 +78,10 @@ model ClientProfile {
   companyName String?
   industry    String?
   companySize String?
+  description String?
+  website     String?
+  location    String?
+  foundedYear String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -110,21 +114,23 @@ model TalentProfile {
   verification       TalentVerification? @relation("TalentVerification")
 }
 
-model AgencyProfile {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  firstName   String   @default("")
-  lastName    String   @default("")
-  agencyName  String
-  description String
-  teamSize    String?
-  skills      String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  website     String?
-  location    String?
-  foundedYear String?
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model TrainerProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  firstName     String
+  lastName      String
+  title         String?
+  specialization String?
+  bio           String?
+  skills        String[]
+  experience    String?
+  certifications String[]  @default([])
+  hourlyRate    String?
+  website       String?
+  location      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AdminProfile {

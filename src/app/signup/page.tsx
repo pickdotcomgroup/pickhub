@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, ArrowLeft, UserPlus } from "lucide-react";
 
-type ProfessionalType = "client" | "talent" | "agency";
+type ProfessionalType = "employer" | "talent" | "trainer";
 
 interface ProfessionalFormData {
   email: string;
@@ -16,21 +16,23 @@ interface ProfessionalFormData {
   firstName: string;
   lastName: string;
   professionalType: ProfessionalType;
+  // Employer specific
   companyName?: string;
   industry?: string;
   companySize?: string;
+  description?: string;
+  website?: string;
+  location?: string;
+  // Talent specific
   title?: string;
   skills?: string[];
   experience?: string;
   hourlyRate?: string;
   portfolio?: string;
-  agencyName?: string;
-  teamSize?: string;
-  agencySkills?: string[];
-  description?: string;
-  website?: string;
-  location?: string;
-  foundedYear?: string;
+  // Trainer specific
+  specialization?: string;
+  bio?: string;
+  trainerSkills?: string[];
 }
 
 type FormErrors = Record<string, string>;
@@ -76,16 +78,16 @@ function SignupContent() {
       lastName: "",
       professionalType: "talent",
       skills: [],
-      agencySkills: [],
+      trainerSkills: [],
     });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const totalSteps = professionalType === "client" ? 2 : 3;
+  const totalSteps = 3; // All roles have 3 steps: Basic Info, Password, Professional Info
 
   useEffect(() => {
     const type = searchParams.get("type") as ProfessionalType;
-    if (type && ["client", "talent", "agency"].includes(type)) {
+    if (type && ["employer", "talent", "trainer"].includes(type)) {
       setProfessionalType(type);
       setProfessionalFormData((prev) => ({ ...prev, professionalType: type }));
     }
@@ -93,12 +95,12 @@ function SignupContent() {
 
   useEffect(() => {
     if (session?.user) {
-      if (session.user.role === "client") {
-        router.push("/client/browse");
+      if (session.user.role === "employer") {
+        router.push("/employer/browse");
       } else if (session.user.role === "talent") {
         router.push("/developer");
-      } else if (session.user.role === "agency") {
-        router.push("/agency/browse-clients");
+      } else if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else if (session.user.role === "admin") {
         router.push("/admin/dashboard");
       } else {
@@ -111,17 +113,11 @@ function SignupContent() {
     const newErrors: FormErrors = {};
 
     if (step === 1) {
-      if (professionalType === "agency") {
-        // Agency validation - only agencyName and email required
-        if (!professionalFormData.agencyName?.trim())
-          newErrors.agencyName = "Agency name is required";
-      } else {
-        // Client and Talent validation - firstName and lastName required
-        if (!professionalFormData.firstName.trim())
-          newErrors.firstName = "First name is required";
-        if (!professionalFormData.lastName.trim())
-          newErrors.lastName = "Last name is required";
-      }
+      // All roles require firstName, lastName, and email
+      if (!professionalFormData.firstName.trim())
+        newErrors.firstName = "First name is required";
+      if (!professionalFormData.lastName.trim())
+        newErrors.lastName = "Last name is required";
       if (!professionalFormData.email.trim())
         newErrors.email = "Email is required";
       else if (!/\S+@\S+\.\S+/.test(professionalFormData.email))
@@ -138,20 +134,25 @@ function SignupContent() {
         newErrors.confirmPassword = "Passwords do not match";
       }
     } else if (step === 3) {
-      if (professionalType === "talent") {
+      if (professionalType === "employer") {
+        if (!professionalFormData.companyName?.trim())
+          newErrors.companyName = "Company/Agency name is required";
+        if (!professionalFormData.industry?.trim())
+          newErrors.industry = "Industry is required";
+      } else if (professionalType === "talent") {
         if (!professionalFormData.title?.trim())
           newErrors.title = "Professional title is required";
         if (!professionalFormData.skills?.length)
           newErrors.skills = "At least one skill is required";
         if (!professionalFormData.experience)
           newErrors.experience = "Experience level is required";
-      } else if (professionalType === "agency") {
-        if (!professionalFormData.agencyName?.trim())
-          newErrors.agencyName = "Agency name is required";
-        if (!professionalFormData.description?.trim())
-          newErrors.description = "Agency description is required";
-        if (!professionalFormData.agencySkills?.length)
-          newErrors.agencySkills = "At least one skill is required";
+      } else if (professionalType === "trainer") {
+        if (!professionalFormData.title?.trim())
+          newErrors.title = "Professional title is required";
+        if (!professionalFormData.specialization?.trim())
+          newErrors.specialization = "Specialization is required";
+        if (!professionalFormData.trainerSkills?.length)
+          newErrors.trainerSkills = "At least one skill is required";
       }
     }
 
@@ -183,10 +184,13 @@ function SignupContent() {
         professionalType,
         firstName: professionalFormData.firstName,
         lastName: professionalFormData.lastName,
-        ...(professionalType === "client" && {
+        ...(professionalType === "employer" && {
           companyName: professionalFormData.companyName,
           industry: professionalFormData.industry,
           companySize: professionalFormData.companySize,
+          description: professionalFormData.description,
+          website: professionalFormData.website,
+          location: professionalFormData.location,
         }),
         ...(professionalType === "talent" && {
           title: professionalFormData.title,
@@ -195,14 +199,11 @@ function SignupContent() {
           hourlyRate: professionalFormData.hourlyRate,
           portfolio: professionalFormData.portfolio,
         }),
-        ...(professionalType === "agency" && {
-          agencyName: professionalFormData.agencyName,
-          description: professionalFormData.description,
-          teamSize: professionalFormData.teamSize,
-          skills: professionalFormData.agencySkills,
-          website: professionalFormData.website,
-          location: professionalFormData.location,
-          foundedYear: professionalFormData.foundedYear,
+        ...(professionalType === "trainer" && {
+          title: professionalFormData.title,
+          specialization: professionalFormData.specialization,
+          bio: professionalFormData.bio,
+          skills: professionalFormData.trainerSkills,
         }),
       };
 
@@ -214,10 +215,7 @@ function SignupContent() {
         body: JSON.stringify({
           email: professionalFormData.email,
           password: professionalFormData.password,
-          name:
-            professionalType === "agency"
-              ? professionalFormData.agencyName
-              : `${professionalFormData.firstName} ${professionalFormData.lastName}`,
+          name: `${professionalFormData.firstName} ${professionalFormData.lastName}`,
           professionalData,
         }),
       });
@@ -262,7 +260,7 @@ function SignupContent() {
 
   const handleSkillToggle = (
     skill: string,
-    fieldName: "skills" | "agencySkills" = "skills",
+    fieldName: "skills" | "trainerSkills" = "skills",
   ) => {
     setProfessionalFormData((prev) => ({
       ...prev,
@@ -283,17 +281,17 @@ function SignupContent() {
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900">
-              {professionalType === "client" && "Client Sign Up"}
+              {professionalType === "employer" && "Employer Sign Up"}
               {professionalType === "talent" && "Developer Sign Up"}
-              {professionalType === "agency" && "Agency Sign Up"}
+              {professionalType === "trainer" && "Trainer Sign Up"}
             </h1>
             <p className="mt-2 text-sm text-gray-600">
-              {professionalType === "client" &&
+              {professionalType === "employer" &&
                 "Create your account to start hiring top talent"}
               {professionalType === "talent" &&
                 "Create your account to find amazing opportunities"}
-              {professionalType === "agency" &&
-                "Create your account to connect with clients"}
+              {professionalType === "trainer" &&
+                "Create your account to train and mentor developers"}
             </p>
           </div>
 
@@ -320,184 +318,75 @@ function SignupContent() {
             {/* Step 1: Basic Information */}
             {currentStep === 1 && (
               <div>
-                {professionalType === "agency" ? (
-                  // Agency-specific fields
-                  <div className="space-y-4">
-                    <div>
-                      <label
-                        htmlFor="agencyName"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Agency Name / Company Name *
-                      </label>
-                      <input
-                        type="text"
-                        id="agencyName"
-                        name="agencyName"
-                        value={professionalFormData.agencyName ?? ""}
-                        onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.agencyName ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Enter your agency or company name"
-                      />
-                      {errors.agencyName && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.agencyName}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Business Email *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={professionalFormData.email}
-                        onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.email ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Enter your business email"
-                      />
-                      {errors.email && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.email}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="website"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Company Website
-                      </label>
-                      <input
-                        type="url"
-                        id="website"
-                        name="website"
-                        value={professionalFormData.website ?? ""}
-                        onChange={handleInputChange}
-                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        placeholder="https://www.yourcompany.com"
-                      />
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <label
-                          htmlFor="location"
-                          className="mb-1 block text-sm font-medium text-gray-700"
-                        >
-                          Location
-                        </label>
-                        <input
-                          type="text"
-                          id="location"
-                          name="location"
-                          value={professionalFormData.location ?? ""}
-                          onChange={handleInputChange}
-                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          placeholder="e.g., San Francisco, CA"
-                        />
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="foundedYear"
-                          className="mb-1 block text-sm font-medium text-gray-700"
-                        >
-                          Founded Year
-                        </label>
-                        <input
-                          type="text"
-                          id="foundedYear"
-                          name="foundedYear"
-                          value={professionalFormData.foundedYear ?? ""}
-                          onChange={handleInputChange}
-                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          placeholder="e.g., 2020"
-                        />
-                      </div>
-                    </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="firstName"
+                      className="mb-1 block text-sm font-medium text-gray-700"
+                    >
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={professionalFormData.firstName}
+                      onChange={handleInputChange}
+                      className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
+                      placeholder="Enter your first name"
+                    />
+                    {errors.firstName && (
+                      <p className="mt-1 text-sm text-red-400">
+                        {errors.firstName}
+                      </p>
+                    )}
                   </div>
-                ) : (
-                  // Client and Talent fields
-                  <>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div>
-                        <label
-                          htmlFor="firstName"
-                          className="mb-1 block text-sm font-medium text-gray-700"
-                        >
-                          First Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          name="firstName"
-                          value={professionalFormData.firstName}
-                          onChange={handleInputChange}
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.firstName ? "border-red-500" : "border-gray-300"}`}
-                          placeholder="Enter your first name"
-                        />
-                        {errors.firstName && (
-                          <p className="mt-1 text-sm text-red-400">
-                            {errors.firstName}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label
-                          htmlFor="lastName"
-                          className="mb-1 block text-sm font-medium text-gray-700"
-                        >
-                          Last Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="lastName"
-                          name="lastName"
-                          value={professionalFormData.lastName}
-                          onChange={handleInputChange}
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
-                          placeholder="Enter your last name"
-                        />
-                        {errors.lastName && (
-                          <p className="mt-1 text-sm text-red-400">
-                            {errors.lastName}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                  <div>
+                    <label
+                      htmlFor="lastName"
+                      className="mb-1 block text-sm font-medium text-gray-700"
+                    >
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={professionalFormData.lastName}
+                      onChange={handleInputChange}
+                      className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.lastName ? "border-red-500" : "border-gray-300"}`}
+                      placeholder="Enter your last name"
+                    />
+                    {errors.lastName && (
+                      <p className="mt-1 text-sm text-red-400">
+                        {errors.lastName}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-                    <div className="mt-4">
-                      <label
-                        htmlFor="email"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={professionalFormData.email}
-                        onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.email ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Enter your email address"
-                      />
-                      {errors.email && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.email}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
+                <div className="mt-4">
+                  <label
+                    htmlFor="email"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={professionalFormData.email}
+                    onChange={handleInputChange}
+                    className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.email ? "border-red-500" : "border-gray-300"}`}
+                    placeholder="Enter your email address"
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-400">
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
@@ -556,13 +445,153 @@ function SignupContent() {
               </div>
             )}
 
-            {/* Step 3: Professional Information (only for talent and agency) */}
+            {/* Step 3: Professional Information */}
 
-            {currentStep === 3 && professionalType !== "client" && (
+            {currentStep === 3 && (
               <div>
                 <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                  Professional Information
+                  {professionalType === "employer" ? "Company/Agency Information" : "Professional Information"}
                 </h3>
+
+                {professionalType === "employer" && (
+                  <div className="space-y-4">
+                    <div>
+                      <label
+                        htmlFor="companyName"
+                        className="mb-1 block text-sm font-medium text-gray-700"
+                      >
+                        Company / Agency Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="companyName"
+                        name="companyName"
+                        value={professionalFormData.companyName ?? ""}
+                        onChange={handleInputChange}
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.companyName ? "border-red-500" : "border-gray-300"}`}
+                        placeholder="Enter your company or agency name"
+                      />
+                      {errors.companyName && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {errors.companyName}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="industry"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Industry *
+                        </label>
+                        <select
+                          id="industry"
+                          name="industry"
+                          value={professionalFormData.industry ?? ""}
+                          onChange={handleInputChange}
+                          className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.industry ? "border-red-500" : "border-gray-300"}`}
+                        >
+                          <option value="">Select industry</option>
+                          <option value="technology">Technology</option>
+                          <option value="finance">Finance & Banking</option>
+                          <option value="healthcare">Healthcare</option>
+                          <option value="ecommerce">E-commerce & Retail</option>
+                          <option value="education">Education</option>
+                          <option value="marketing">Marketing & Advertising</option>
+                          <option value="consulting">Consulting</option>
+                          <option value="startup">Startup</option>
+                          <option value="agency">Digital Agency</option>
+                          <option value="other">Other</option>
+                        </select>
+                        {errors.industry && (
+                          <p className="mt-1 text-sm text-red-400">
+                            {errors.industry}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="companySize"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Company Size
+                        </label>
+                        <select
+                          id="companySize"
+                          name="companySize"
+                          value={professionalFormData.companySize ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        >
+                          <option value="">Select size</option>
+                          <option value="1">Just me (Individual)</option>
+                          <option value="2-10">2-10 employees</option>
+                          <option value="11-50">11-50 employees</option>
+                          <option value="51-200">51-200 employees</option>
+                          <option value="201-500">201-500 employees</option>
+                          <option value="500+">500+ employees</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="description"
+                        className="mb-1 block text-sm font-medium text-gray-700"
+                      >
+                        Company Description
+                      </label>
+                      <textarea
+                        id="description"
+                        name="description"
+                        rows={4}
+                        value={professionalFormData.description ?? ""}
+                        onChange={handleInputChange}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        placeholder="Tell us about your company or what you're looking for"
+                      />
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="website"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Website
+                        </label>
+                        <input
+                          type="url"
+                          id="website"
+                          name="website"
+                          value={professionalFormData.website ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="https://www.yourcompany.com"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="location"
+                          className="mb-1 block text-sm font-medium text-gray-700"
+                        >
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          id="location"
+                          name="location"
+                          value={professionalFormData.location ?? ""}
+                          onChange={handleInputChange}
+                          className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          placeholder="e.g., San Francisco, CA"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {professionalType === "talent" && (
                   <div className="space-y-4">
@@ -680,79 +709,75 @@ function SignupContent() {
                   </div>
                 )}
 
-                {professionalType === "agency" && (
+                {professionalType === "trainer" && (
                   <div className="space-y-4">
                     <div>
                       <label
-                        htmlFor="agencyName"
+                        htmlFor="title"
                         className="mb-1 block text-sm font-medium text-gray-700"
                       >
-                        Agency Name *
+                        Professional Title *
                       </label>
                       <input
                         type="text"
-                        id="agencyName"
-                        name="agencyName"
-                        value={professionalFormData.agencyName ?? ""}
+                        id="title"
+                        name="title"
+                        value={professionalFormData.title ?? ""}
                         onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.agencyName ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Enter your agency name"
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.title ? "border-red-500" : "border-gray-300"}`}
+                        placeholder="e.g., Senior Developer Coach"
                       />
-                      {errors.agencyName && (
+                      {errors.title && (
                         <p className="mt-1 text-sm text-red-400">
-                          {errors.agencyName}
+                          {errors.title}
                         </p>
                       )}
                     </div>
 
                     <div>
                       <label
-                        htmlFor="description"
+                        htmlFor="specialization"
                         className="mb-1 block text-sm font-medium text-gray-700"
                       >
-                        Agency Description *
+                        Specialization *
+                      </label>
+                      <input
+                        type="text"
+                        id="specialization"
+                        name="specialization"
+                        value={professionalFormData.specialization ?? ""}
+                        onChange={handleInputChange}
+                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.specialization ? "border-red-500" : "border-gray-300"}`}
+                        placeholder="e.g., Frontend Development, React, Career Coaching"
+                      />
+                      {errors.specialization && (
+                        <p className="mt-1 text-sm text-red-400">
+                          {errors.specialization}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="bio"
+                        className="mb-1 block text-sm font-medium text-gray-700"
+                      >
+                        Bio
                       </label>
                       <textarea
-                        id="description"
-                        name="description"
+                        id="bio"
+                        name="bio"
                         rows={4}
-                        value={professionalFormData.description ?? ""}
+                        value={professionalFormData.bio ?? ""}
                         onChange={handleInputChange}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none ${errors.description ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Describe your agency's services"
+                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        placeholder="Tell us about your training experience and expertise"
                       />
-                      {errors.description && (
-                        <p className="mt-1 text-sm text-red-400">
-                          {errors.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="teamSize"
-                        className="mb-1 block text-sm font-medium text-gray-700"
-                      >
-                        Team Size
-                      </label>
-                      <select
-                        id="teamSize"
-                        name="teamSize"
-                        value={professionalFormData.teamSize ?? ""}
-                        onChange={handleInputChange}
-                        className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                      >
-                        <option value="">Select team size</option>
-                        <option value="1-5">1-5 people</option>
-                        <option value="6-15">6-15 people</option>
-                        <option value="16-50">16-50 people</option>
-                        <option value="50+">50+ people</option>
-                      </select>
                     </div>
 
                     <div>
                       <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Agency Skills & Services *
+                        Skills & Expertise *
                       </label>
                       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                         {skillOptions.map((skill) => (
@@ -760,17 +785,17 @@ function SignupContent() {
                             key={skill}
                             type="button"
                             onClick={() =>
-                              handleSkillToggle(skill, "agencySkills")
+                              handleSkillToggle(skill, "trainerSkills")
                             }
-                            className={`rounded-lg px-3 py-2 text-sm transition ${professionalFormData.agencySkills?.includes(skill) ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                            className={`rounded-lg px-3 py-2 text-sm transition ${professionalFormData.trainerSkills?.includes(skill) ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
                           >
                             {skill}
                           </button>
                         ))}
                       </div>
-                      {errors.agencySkills && (
+                      {errors.trainerSkills && (
                         <p className="mt-1 text-sm text-red-400">
-                          {errors.agencySkills}
+                          {errors.trainerSkills}
                         </p>
                       )}
                     </div>

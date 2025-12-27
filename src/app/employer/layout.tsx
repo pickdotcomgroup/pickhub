@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function AdminLayout({
+export default function EmployerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -21,16 +21,16 @@ export default function AdminLayout({
       return;
     }
 
-    // Redirect to appropriate dashboard if not an admin
-    if (session.user.role !== "admin") {
-      if (session.user.role === "employer") {
-        router.push("/employer/dashboard");
+    // Redirect to appropriate dashboard if not an employer
+    if (session.user.role !== "employer") {
+      if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else if (session.user.role === "talent") {
         router.push("/talent/dashboard");
-      } else if (session.user.role === "trainer") {
-        router.push("/trainer/dashboard");
+      } else if (session.user.role === "admin") {
+        router.push("/admin/dashboard");
       } else {
-        router.push("/");
+        router.push("/dashboard");
       }
     }
   }, [session, status, router]);
@@ -39,13 +39,13 @@ export default function AdminLayout({
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-white">
-        <div className="text-black text-xl">Loading...</div>
+        <div className="text-white text-xl">Loading...</div>
       </main>
     );
   }
 
   // Don't render if not authenticated or wrong role
-  if (!session || session.user.role !== "admin") {
+  if (!session || session.user.role !== "employer") {
     return null;
   }
 

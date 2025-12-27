@@ -12,32 +12,32 @@ export async function GET(request: Request) {
     }
 
     const userId = session.user.id;
-    
+
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const archived = searchParams.get("archived") === "true";
 
     // Determine archive filter based on user role
-    const isClient = await db.user.findUnique({
+    const isEmployer = await db.user.findUnique({
       where: { id: userId },
-      select: { clientProfile: true },
+      select: { employerProfile: true },
     });
 
-    const archiveFilter = isClient?.clientProfile
+    const archiveFilter = isEmployer?.employerProfile
       ? { archivedByClient: archived }
       : { archivedByTalent: archived };
 
-    // Get conversations where user is either client or talent
+    // Get conversations where user is either employer or talent
     // Exclude deleted conversations for the current user
     const conversations = await db.conversation.findMany({
       where: {
         OR: [
-          { 
+          {
             clientId: userId,
             deletedByClient: false,
             ...archiveFilter,
           },
-          { 
+          {
             talentId: userId,
             deletedByTalent: false,
             ...archiveFilter,
@@ -51,18 +51,11 @@ export async function GET(request: Request) {
             name: true,
             email: true,
             image: true,
-            clientProfile: {
+            employerProfile: {
               select: {
                 firstName: true,
                 lastName: true,
                 companyName: true,
-              },
-            },
-            agencyProfile: {
-              select: {
-                firstName: true,
-                lastName: true,
-                agencyName: true,
               },
             },
           },
@@ -80,11 +73,11 @@ export async function GET(request: Request) {
                 title: true,
               },
             },
-            agencyProfile: {
+            trainerProfile: {
               select: {
                 firstName: true,
                 lastName: true,
-                agencyName: true,
+                title: true,
               },
             },
           },
@@ -148,22 +141,22 @@ export async function POST(request: Request) {
 
     const currentUserId = session.user.id;
 
-    // Determine who is client and who is talent/agency
+    // Determine who is employer and who is talent/trainer
     const currentUser = await db.user.findUnique({
       where: { id: currentUserId },
       include: {
-        clientProfile: true,
+        employerProfile: true,
         talentProfile: true,
-        agencyProfile: true,
+        trainerProfile: true,
       },
     });
 
     const otherUser = await db.user.findUnique({
       where: { id: otherUserId },
       include: {
-        clientProfile: true,
+        employerProfile: true,
         talentProfile: true,
-        agencyProfile: true,
+        trainerProfile: true,
       },
     });
 
@@ -171,29 +164,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Determine client and talent/agency IDs
-    // Note: We use talentId field for both talents and agencies
-    // Support three conversation types:
-    // 1. Client <-> Talent
-    // 2. Client <-> Agency
-    // 3. Agency <-> Talent
+    // Determine employer and talent/trainer IDs
+    // Note: We use talentId field for both talents and trainers
+    // Support conversation types:
+    // 1. Employer <-> Talent
+    // 2. Employer <-> Trainer
+    // 3. Trainer <-> Talent
     let clientId: string;
     let talentId: string;
 
-    if (currentUser.clientProfile && (otherUser.talentProfile || otherUser.agencyProfile)) {
-      // Client messaging talent or agency
+    if (currentUser.employerProfile && (otherUser.talentProfile || otherUser.trainerProfile)) {
+      // Employer messaging talent or trainer
       clientId = currentUserId;
       talentId = otherUserId;
-    } else if ((currentUser.talentProfile || currentUser.agencyProfile) && otherUser.clientProfile) {
-      // Talent or agency messaging client
+    } else if ((currentUser.talentProfile || currentUser.trainerProfile) && otherUser.employerProfile) {
+      // Talent or trainer messaging employer
       clientId = otherUserId;
       talentId = currentUserId;
-    } else if (currentUser.agencyProfile && otherUser.talentProfile) {
-      // Agency messaging talent - use agency as "client" and talent as "talent"
+    } else if (currentUser.trainerProfile && otherUser.talentProfile) {
+      // Trainer messaging talent - use trainer as "client" and talent as "talent"
       clientId = currentUserId;
       talentId = otherUserId;
-    } else if (currentUser.talentProfile && otherUser.agencyProfile) {
-      // Talent messaging agency - use agency as "client" and talent as "talent"
+    } else if (currentUser.talentProfile && otherUser.trainerProfile) {
+      // Talent messaging trainer - use trainer as "client" and talent as "talent"
       clientId = otherUserId;
       talentId = currentUserId;
     } else {
@@ -218,8 +211,8 @@ export async function POST(request: Request) {
               name: true,
               email: true,
               image: true,
-              clientProfile: true,
-              agencyProfile: true,
+              employerProfile: true,
+              trainerProfile: true,
             },
           },
           talent: {
@@ -229,7 +222,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               talentProfile: true,
-              agencyProfile: true,
+              trainerProfile: true,
             },
           },
         },
@@ -247,8 +240,8 @@ export async function POST(request: Request) {
               name: true,
               email: true,
               image: true,
-              clientProfile: true,
-              agencyProfile: true,
+              employerProfile: true,
+              trainerProfile: true,
             },
           },
           talent: {
@@ -258,7 +251,7 @@ export async function POST(request: Request) {
               email: true,
               image: true,
               talentProfile: true,
-              agencyProfile: true,
+              trainerProfile: true,
             },
           },
         },

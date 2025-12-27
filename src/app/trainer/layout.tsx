@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function AgencyLayout({
+export default function TrainerLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -21,12 +21,14 @@ export default function AgencyLayout({
       return;
     }
 
-    // Redirect to appropriate dashboard if not an agency
-    if (session.user.role !== "agency") {
-      if (session.user.role === "client") {
-        router.push("/client/dashboard");
+    // Redirect to appropriate dashboard if not a trainer
+    if (session.user.role !== "trainer") {
+      if (session.user.role === "employer") {
+        router.push("/employer/dashboard");
       } else if (session.user.role === "talent") {
         router.push("/talent/dashboard");
+      } else if (session.user.role === "admin") {
+        router.push("/admin/dashboard");
       } else {
         router.push("/dashboard");
       }
@@ -43,7 +45,7 @@ export default function AgencyLayout({
   }
 
   // Don't render if not authenticated or wrong role
-  if (!session || session.user.role !== "agency") {
+  if (!session || session.user.role !== "trainer") {
     return null;
   }
 

@@ -151,12 +151,12 @@ export default function Home() {
 
   // Redirect authenticated users to dashboard
   useEffect(() => {
-    if (session?.user.role === "client") {
-      router.push("/client/dashboard");
+    if (session?.user.role === "employer") {
+      router.push("/employer/dashboard");
     } else if (session?.user.role === "talent") {
       router.push("/talent/dashboard");
-    } else if (session?.user.role === "agency") {
-      router.push("/agency/dashboard");
+    } else if (session?.user.role === "trainer") {
+      router.push("/trainer/dashboard");
     } else if (session?.user.role === "admin") {
       router.push("/admin/dashboard");
     }

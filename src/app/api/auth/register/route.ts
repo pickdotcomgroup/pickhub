@@ -2,13 +2,16 @@ import { type NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { db } from "~/server/db";
 
-interface ClientProfileData {
-  professionalType: "client";
-  firstName?: string;
-  lastName?: string;
-  companyName?: string;
-  industry?: string;
+interface EmployerProfileData {
+  professionalType: "employer";
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  industry: string;
   companySize?: string;
+  description?: string;
+  website?: string;
+  location?: string;
 }
 
 interface TalentProfileData {
@@ -22,24 +25,21 @@ interface TalentProfileData {
   portfolio?: string;
 }
 
-interface AgencyProfileData {
-  professionalType: "agency";
-  firstName?: string;
-  lastName?: string;
-  agencyName: string;
-  description: string;
-  teamSize?: string;
+interface TrainerProfileData {
+  professionalType: "trainer";
+  firstName: string;
+  lastName: string;
+  title?: string;
+  specialization: string;
+  bio?: string;
   skills: string[];
-  website?: string;
-  location?: string;
-  foundedYear?: string;
 }
 
 interface RequestBody {
   email: string;
   password: string;
   name: string;
-  professionalData?: ClientProfileData | TalentProfileData | AgencyProfileData;
+  professionalData?: EmployerProfileData | TalentProfileData | TrainerProfileData;
 }
 
 export async function POST(request: NextRequest) {
@@ -76,21 +76,21 @@ export async function POST(request: NextRequest) {
       const { professionalType, ...profileData } = professionalData;
 
       switch (professionalType) {
-        case "client": {
-          const clientData = profileData as Omit<ClientProfileData, "professionalType">;
-          // Only create client profile if professional data is provided
-          if (clientData.firstName || clientData.lastName || clientData.companyName || clientData.industry) {
-            await db.clientProfile.create({
-              data: {
-                userId: user.id,
-                firstName: clientData.firstName ?? "",
-                lastName: clientData.lastName ?? "",
-                companyName: clientData.companyName ?? "",
-                industry: clientData.industry ?? "",
-                companySize: clientData.companySize,
-              },
-            });
-          }
+        case "employer": {
+          const employerData = profileData as Omit<EmployerProfileData, "professionalType">;
+          await db.employerProfile.create({
+            data: {
+              userId: user.id,
+              firstName: employerData.firstName,
+              lastName: employerData.lastName,
+              companyName: employerData.companyName,
+              industry: employerData.industry,
+              companySize: employerData.companySize,
+              description: employerData.description,
+              website: employerData.website,
+              location: employerData.location,
+            },
+          });
           break;
         }
         case "talent": {
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
               firstName: talentData.firstName,
               lastName: talentData.lastName,
               title: talentData.title,
-              skills: talentData.skills,
+              skills: talentData.skills ?? [],
               experience: talentData.experience,
               hourlyRate: talentData.hourlyRate,
               portfolio: talentData.portfolio,
@@ -109,20 +109,17 @@ export async function POST(request: NextRequest) {
           });
           break;
         }
-        case "agency": {
-          const agencyData = profileData as Omit<AgencyProfileData, "professionalType">;
-          await db.agencyProfile.create({
+        case "trainer": {
+          const trainerData = profileData as Omit<TrainerProfileData, "professionalType">;
+          await db.trainerProfile.create({
             data: {
               userId: user.id,
-              firstName: agencyData.firstName ?? "",
-              lastName: agencyData.lastName ?? "",
-              agencyName: agencyData.agencyName,
-              description: agencyData.description,
-              teamSize: agencyData.teamSize,
-              skills: agencyData.skills,
-              website: agencyData.website,
-              location: agencyData.location,
-              foundedYear: agencyData.foundedYear,
+              firstName: trainerData.firstName,
+              lastName: trainerData.lastName,
+              title: trainerData.title,
+              specialization: trainerData.specialization,
+              bio: trainerData.bio,
+              skills: trainerData.skills ?? [],
             },
           });
           break;

@@ -424,39 +424,10 @@ export default function ManageProjectPage() {
     }
   };
 
-  const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
-    try {
-      const response = await fetch("/api/milestones", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ milestoneId, status: newStatus }),
-      });
-
-      if (response.ok) {
-        const data = await response.json() as { milestone: Milestone };
-        setMilestones(milestones.map(m =>
-          m.id === milestoneId ? data.milestone : m
-        ));
-        toast.success("Milestone status updated!");
-      }
-    } catch (error) {
-      console.error("Error updating milestone status:", error);
-    }
-  };
-
   const handleCloseMilestoneModal = () => {
     setShowMilestoneModal(false);
     setEditingMilestone(null);
     setMilestoneFormData({ title: "", description: "", amount: "", startDate: "", endDate: "" });
-  };
-
-  const getMilestoneStatusColor = (status: string) => {
-    switch (status) {
-      case "pending": return "bg-yellow-100 text-yellow-700 border-yellow-300";
-      case "in_progress": return "bg-blue-100 text-blue-700 border-blue-300";
-      case "completed": return "bg-green-100 text-green-700 border-green-300";
-      default: return "bg-gray-100 text-gray-700 border-gray-300";
-    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -480,10 +451,10 @@ export default function ManageProjectPage() {
       return;
     }
 
-    if (session.user.role !== "client" && session.user.role !== "talent") {
+    if (session.user.role !== "employer" && session.user.role !== "talent") {
       // Redirect based on role
-      if (session.user.role === "agency") {
-        router.push("/agency/dashboard");
+      if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else {
         router.push("/talent/dashboard");
       }
@@ -636,7 +607,7 @@ export default function ManageProjectPage() {
     );
   }
 
-  if (!session || (session.user.role !== "client" && session.user.role !== "talent")) {
+  if (!session || (session.user.role !== "employer" && session.user.role !== "talent")) {
     return null;
   }
 

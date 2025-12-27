@@ -28,9 +28,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "employer") {
       return NextResponse.json(
-        { error: "Only clients can post projects" },
+        { error: "Only employers can post projects" },
         { status: 403 }
       );
     }

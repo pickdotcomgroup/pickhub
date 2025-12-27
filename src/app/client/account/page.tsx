@@ -17,7 +17,7 @@ export default function ClientAccountPage() {
       return;
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "employer") {
       router.push("/dashboard");
       return;
     }
@@ -34,7 +34,7 @@ export default function ClientAccountPage() {
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || session.user.role !== "employer") {
     return null;
   }
 

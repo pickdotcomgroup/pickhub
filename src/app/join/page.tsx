@@ -66,7 +66,7 @@ export default function JoinPage() {
               </div>
               <div className="mt-auto">
                 <Link
-                  href="/signup?type=agency"
+                  href="/signup?type=trainer"
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
                   Sign Up as Training Provider
@@ -93,7 +93,7 @@ export default function JoinPage() {
               </div>
               <div className="mt-auto">
                 <Link
-                  href="/signup?type=client"
+                  href="/signup?type=employer"
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 block text-center"
                 >
                   Sign Up as Employer

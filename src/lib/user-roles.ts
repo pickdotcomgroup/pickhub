@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 
-export type UserRole = "client" | "talent" | "agency" | "admin" | null;
+export type UserRole = "talent" | "admin" | "trainer" | "employer" | null;
 
 export interface UserRoleData {
   role: UserRole;
@@ -13,9 +13,9 @@ export async function getUserRole(userId: string): Promise<UserRoleData> {
     const user = await db.user.findUnique({
       where: { id: userId },
       include: {
-        clientProfile: true,
+        employerProfile: true,
+        trainerProfile: true,
         talentProfile: true,
-        agencyProfile: true,
         adminProfile: true,
       },
     });
@@ -44,18 +44,34 @@ export async function getUserRole(userId: string): Promise<UserRoleData> {
     }
 
     // Determine role based on which profile exists
-    if (user.clientProfile) {
+    if (user.employerProfile) {
       return {
-        role: "client",
-        profile: user.clientProfile,
+        role: "employer",
+        profile: user.employerProfile,
         permissions: [
           "post_projects",
           "hire_talent",
           "manage_projects",
+          "manage_team",
           "view_talent_profiles",
-          "view_agency_profiles",
+          "view_trainer_profiles",
           "send_messages",
           "make_payments",
+        ],
+      };
+    }
+
+    if (user.trainerProfile) {
+      return {
+        role: "trainer",
+        profile: user.trainerProfile,
+        permissions: [
+          "create_courses",
+          "manage_courses",
+          "view_talent_profiles",
+          "send_messages",
+          "receive_payments",
+          "create_certifications",
         ],
       };
     }
@@ -69,27 +85,9 @@ export async function getUserRole(userId: string): Promise<UserRoleData> {
           "create_portfolio",
           "receive_messages",
           "receive_payments",
-          "view_client_profiles",
+          "view_employer_profiles",
           "view_project_details",
-        ],
-      };
-    }
-
-    if (user.agencyProfile) {
-      return {
-        role: "agency",
-        profile: user.agencyProfile,
-        permissions: [
-          "post_projects",
-          "hire_talent",
-          "manage_team",
-          "manage_multiple_projects",
-          "view_talent_profiles",
-          "view_client_profiles",
-          "send_messages",
-          "make_payments",
-          "receive_payments",
-          "team_collaboration",
+          "enroll_in_courses",
         ],
       };
     }
@@ -107,12 +105,12 @@ export function hasPermission(userPermissions: string[], requiredPermission: str
 
 export function getRoleDisplayName(role: UserRole): string {
   switch (role) {
-    case "client":
-      return "Client";
+    case "employer":
+      return "Employer";
     case "talent":
       return "Talent Developer";
-    case "agency":
-      return "Agency";
+    case "trainer":
+      return "Trainer";
     case "admin":
       return "Administrator";
     default:
@@ -122,12 +120,12 @@ export function getRoleDisplayName(role: UserRole): string {
 
 export function getRoleColor(role: UserRole): string {
   switch (role) {
-    case "client":
+    case "employer":
       return "blue";
     case "talent":
       return "green";
-    case "agency":
-      return "indigo";
+    case "trainer":
+      return "purple";
     case "admin":
       return "red";
     default:

@@ -2,40 +2,39 @@ import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import type { Prisma } from "@prisma/client";
 
+// This route now handles employers (previously agencies)
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    
-    // Public browsing of agencies (no authentication required)
+
+    // Public browsing of employers (no authentication required)
     const searchQuery = searchParams.get("search") ?? "";
-    const skills = searchParams.get("skills")?.split(",").filter(Boolean) ?? [];
-    const teamSize = searchParams.get("teamSize") ?? "";
+    const industry = searchParams.get("industry") ?? "";
+    const companySize = searchParams.get("companySize") ?? "";
 
     // Build AND conditions array
     const andConditions: Prisma.UserWhereInput[] = [
       {
-        agencyProfile: {
+        employerProfile: {
           isNot: null,
         },
       },
     ];
 
-    // Add team size filter
-    if (teamSize) {
+    // Add company size filter
+    if (companySize) {
       andConditions.push({
-        agencyProfile: {
-          teamSize: teamSize,
+        employerProfile: {
+          companySize: companySize,
         },
       });
     }
 
-    // Add skills filter
-    if (skills.length > 0) {
+    // Add industry filter
+    if (industry) {
       andConditions.push({
-        agencyProfile: {
-          skills: {
-            hasSome: skills,
-          },
+        employerProfile: {
+          industry: industry,
         },
       });
     }
@@ -55,15 +54,15 @@ export async function GET(request: Request) {
           },
         },
         {
-          agencyProfile: {
-            agencyName: {
+          employerProfile: {
+            companyName: {
               contains: searchQuery,
               mode: "insensitive",
             },
           },
         },
         {
-          agencyProfile: {
+          employerProfile: {
             description: {
               contains: searchQuery,
               mode: "insensitive",
@@ -71,7 +70,7 @@ export async function GET(request: Request) {
           },
         },
         {
-          agencyProfile: {
+          employerProfile: {
             location: {
               contains: searchQuery,
               mode: "insensitive",
@@ -81,11 +80,11 @@ export async function GET(request: Request) {
       ];
     }
 
-    // Fetch agencies with their profiles
-    const agencies = await db.user.findMany({
+    // Fetch employers with their profiles
+    const employers = await db.user.findMany({
       where: whereClause,
       include: {
-        agencyProfile: true,
+        employerProfile: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -94,32 +93,33 @@ export async function GET(request: Request) {
     });
 
     // Transform the data to a cleaner format
-    const transformedAgencies = agencies.map((agency) => ({
-      id: agency.id,
-      name: agency.name,
-      email: agency.email,
-      image: agency.image,
-      profile: agency.agencyProfile
+    const transformedEmployers = employers.map((employer) => ({
+      id: employer.id,
+      name: employer.name,
+      email: employer.email,
+      image: employer.image,
+      profile: employer.employerProfile
         ? {
-            id: agency.agencyProfile.id,
-            firstName: agency.agencyProfile.firstName,
-            lastName: agency.agencyProfile.lastName,
-            agencyName: agency.agencyProfile.agencyName,
-            description: agency.agencyProfile.description,
-            teamSize: agency.agencyProfile.teamSize,
-            skills: agency.agencyProfile.skills,
-            website: agency.agencyProfile.website,
-            location: agency.agencyProfile.location,
-            foundedYear: agency.agencyProfile.foundedYear,
+            id: employer.employerProfile.id,
+            firstName: employer.employerProfile.firstName,
+            lastName: employer.employerProfile.lastName,
+            companyName: employer.employerProfile.companyName,
+            description: employer.employerProfile.description,
+            companySize: employer.employerProfile.companySize,
+            industry: employer.employerProfile.industry,
+            website: employer.employerProfile.website,
+            location: employer.employerProfile.location,
+            foundedYear: employer.employerProfile.foundedYear,
           }
         : null,
     }));
 
-    return NextResponse.json({ agencies: transformedAgencies });
+    // Return as "agencies" for backward compatibility, can be changed to "employers" later
+    return NextResponse.json({ agencies: transformedEmployers, employers: transformedEmployers });
   } catch (error) {
-    console.error("Error fetching agencies:", error);
+    console.error("Error fetching employers:", error);
     return NextResponse.json(
-      { error: "Failed to fetch agencies" },
+      { error: "Failed to fetch employers" },
       { status: 500 }
     );
   }

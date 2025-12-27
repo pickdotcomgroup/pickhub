@@ -37,7 +37,7 @@ export default function NewProjectPage() {
   useEffect(() => {
     if (status === "loading") return;
     if (!session) { router.push("/auth"); return; }
-    if (session.user.role !== "client") { router.push("/dashboard"); return; }
+    if (session.user.role !== "employer") { router.push("/dashboard"); return; }
   }, [session, status, router]);
 
   // Update hourly rate when budget or duration changes
@@ -51,7 +51,7 @@ export default function NewProjectPage() {
     }
   }, [form.budget, form.estimatedDuration, form.projectType]);
 
-  if (status === "loading" || !session || session.user.role !== "client") {
+  if (status === "loading" || !session || session.user.role !== "employer") {
     return <main className="flex min-h-screen items-center justify-center bg-white"><div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div></main>;
   }
 

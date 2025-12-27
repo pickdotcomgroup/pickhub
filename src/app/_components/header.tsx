@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, Building2 } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 // Notification Badge Component
 function NotificationBadge({ count }: { count: number }) {
@@ -344,43 +344,48 @@ export default function Header() {
                 >
                   About Us
                 </Link>
+                <Link
+                  href="/signup?type=trainer"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
+                >
+                  Become a Trainer
+                </Link>
+                <Link
+                  href="/signup?type=employer"
+                  className="border-b-2 border-b-transparent px-4 py-2 text-sm text-gray-700 transition hover:border-b-gray-300 hover:text-gray-900"
+                >
+                  Be an Employer
+                </Link>
               </nav>
             )}
           </div>
 
-
           {/* Quick Actions Navigation */}
           {session?.user && (
             <nav className="mr-4 ml-auto hidden items-center space-x-1 md:flex">
-              {session.user.role === "client" ? (
+              {session.user.role === "employer" ? (
                 <>
                   <Link
-                    href="/client/browse"
-                    className={`${getNavLinkClasses("/client/browse")} flex items-center gap-2`}
+                    href="/employer/browse"
+                    className={`${getNavLinkClasses("/employer/browse")} flex items-center gap-2`}
                   >
                     <span>Browse Developers</span>
                   </Link>
                   <Link
-                    href="/client/browse-agencies"
-                    className={`${getNavLinkClasses("/client/browse-agencies")} flex items-center gap-2`}
-                  >
-                    <span>Browse Agencies</span>
-                  </Link>
-                  <Link
-                    href="/client/projects"
-                    className={`${getNavLinkClasses("/client/projects")} flex items-center gap-2`}
+                    href="/employer/projects"
+                    className={`${getNavLinkClasses("/employer/projects")} flex items-center gap-2`}
                   >
                     <span>My Projects</span>
                   </Link>
                   <Link
-                    href="/client/projects/new"
+                    href="/employer/projects/new"
                     className="flex items-center gap-2 rounded-lg border-2 border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
                   >
                     <span>Post a Project</span>
                   </Link>
                   <Link
-                    href="/client/messages"
-                    className={`relative ${getNavLinkClasses("/client/messages")}`}
+                    href="/employer/messages"
+                    className={`relative ${getNavLinkClasses("/employer/messages")}`}
                     aria-label="Messages"
                   >
                     <span>Messages</span>
@@ -416,35 +421,23 @@ export default function Header() {
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
-              ) : session.user.role === "agency" ? (
+              ) : session.user.role === "trainer" ? (
                 <>
                   <Link
-                    href="/agency/browse-clients"
-                    className={`${getNavLinkClasses("/agency/browse-clients")} flex items-center gap-2`}
+                    href="/trainer/courses"
+                    className={`${getNavLinkClasses("/trainer/courses")} flex items-center gap-2`}
                   >
-                    <span>Browse Clients</span>
+                    <span>My Courses</span>
                   </Link>
                   <Link
-                    href="/agency/browse-developers"
-                    className={`${getNavLinkClasses("/agency/browse-developers")} flex items-center gap-2`}
+                    href="/trainer/students"
+                    className={`${getNavLinkClasses("/trainer/students")} flex items-center gap-2`}
                   >
-                    <span>Browse Developers</span>
+                    <span>Students</span>
                   </Link>
                   <Link
-                    href="/agency/picked-clients"
-                    className={`${getNavLinkClasses("/agency/picked-clients")} flex items-center gap-2`}
-                  >
-                    <span>Picked Clients</span>
-                  </Link>
-                  <Link
-                    href="/agency/picked-developers"
-                    className={`${getNavLinkClasses("/agency/picked-developers")} flex items-center gap-2`}
-                  >
-                    <span>Picked Developers</span>
-                  </Link>
-                  <Link
-                    href="/agency/messages"
-                    className={`relative ${getNavLinkClasses("/agency/messages")}`}
+                    href="/trainer/messages"
+                    className={`relative ${getNavLinkClasses("/trainer/messages")}`}
                     aria-label="Messages"
                   >
                     <span>Messages</span>
@@ -533,9 +526,8 @@ export default function Header() {
                           notifications.map((notification) => (
                             <div
                               key={notification.id}
-                              className={`cursor-pointer border-b border-gray-100 px-4 py-3 transition hover:bg-gray-50 ${
-                                !notification.isRead ? "bg-blue-50" : ""
-                              }`}
+                              className={`cursor-pointer border-b border-gray-100 px-4 py-3 transition hover:bg-gray-50 ${!notification.isRead ? "bg-blue-50" : ""
+                                }`}
                               onClick={() => {
                                 if (!notification.isRead) {
                                   void markNotificationAsRead(notification.id);
@@ -637,9 +629,8 @@ export default function Header() {
                       {getUserInitials(session.user.name)}
                     </div>
                     <svg
-                      className={`hidden h-4 w-4 text-gray-700 transition-transform sm:block ${
-                        isDropdownOpen ? "rotate-180" : ""
-                      }`}
+                      className={`hidden h-4 w-4 text-gray-700 transition-transform sm:block ${isDropdownOpen ? "rotate-180" : ""
+                        }`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -674,9 +665,9 @@ export default function Header() {
                       {/* Menu Items - Filtered by Role */}
                       <div className="py-1">
                         {/* Dashboard Link - Role-specific */}
-                        {session.user.role === "client" && (
+                        {session.user.role === "employer" && (
                           <Link
-                            href="/client/dashboard"
+                            href="/employer/dashboard"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
@@ -720,9 +711,9 @@ export default function Header() {
                           </Link>
                         )}
 
-                        {session.user.role === "agency" && (
+                        {session.user.role === "trainer" && (
                           <Link
-                            href="/agency/dashboard"
+                            href="/trainer/dashboard"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
@@ -767,9 +758,9 @@ export default function Header() {
                         )}
 
                         {/* Account Link - Role-specific */}
-                        {session.user.role === "client" && (
+                        {session.user.role === "employer" && (
                           <Link
-                            href="/client/account"
+                            href="/employer/account"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
@@ -813,9 +804,9 @@ export default function Header() {
                           </Link>
                         )}
 
-                        {session.user.role === "agency" && (
+                        {session.user.role === "trainer" && (
                           <Link
-                            href="/agency/account"
+                            href="/trainer/account"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100"
                             onClick={() => setIsDropdownOpen(false)}
                           >
@@ -894,21 +885,9 @@ export default function Header() {
                 {pathname !== "/signin" && (
                   <Link
                     href="/signin"
-                    className={
-                      pathname === "/join"
-                        ? "rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
-                        : "rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900 sm:px-4 sm:text-base"
-                    }
-                  >
-                    Sign In
-                  </Link>
-                )}
-                {pathname !== "/join" && (
-                  <Link
-                    href="/join"
                     className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
                   >
-                    Join Us
+                    Sign In
                   </Link>
                 )}
               </div>
@@ -923,32 +902,24 @@ export default function Header() {
             className="mt-4 border-t border-gray-200 pt-4 pb-4 md:hidden"
           >
             <nav className="flex flex-col space-y-2">
-              {session.user.role === "client" ? (
+              {session.user.role === "employer" ? (
                 <>
                   <Link
-                    href="/client/dashboard"
-                    className={getMobileNavLinkClasses("/client/dashboard")}
+                    href="/employer/dashboard"
+                    className={getMobileNavLinkClasses("/employer/dashboard")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
-                    href="/client/browse"
-                    className={getMobileNavLinkClasses("/client/browse")}
+                    href="/employer/browse"
+                    className={getMobileNavLinkClasses("/employer/browse")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Browse Developers
                   </Link>
                   <Link
-                    href="/client/browse-agencies"
-                    className={`${getMobileNavLinkClasses("/client/browse-agencies")} flex items-center`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Building2 className="mr-3 h-4 w-4" />
-                    Browse Agencies
-                  </Link>
-                  <Link
-                    href="/client/projects/new"
+                    href="/employer/projects/new"
                     className="flex items-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -968,8 +939,8 @@ export default function Header() {
                     Post a Project
                   </Link>
                   <Link
-                    href="/client/projects"
-                    className={`${getMobileNavLinkClasses("/client/projects")} flex items-center`}
+                    href="/employer/projects"
+                    className={`${getMobileNavLinkClasses("/employer/projects")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <svg
@@ -988,8 +959,8 @@ export default function Header() {
                     My Projects
                   </Link>
                   <Link
-                    href="/client/messages"
-                    className={`relative ${getMobileNavLinkClasses("/client/messages")} flex items-center`}
+                    href="/employer/messages"
+                    className={`relative ${getMobileNavLinkClasses("/employer/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <MessageSquare className="mr-3 h-4 w-4" />
@@ -1030,54 +1001,32 @@ export default function Header() {
                     <NotificationBadge count={unreadCount} />
                   </Link>
                 </>
-              ) : session.user.role === "agency" ? (
+              ) : session.user.role === "trainer" ? (
                 <>
                   <Link
-                    href="/agency/dashboard"
-                    className={getMobileNavLinkClasses("/agency/dashboard")}
+                    href="/trainer/dashboard"
+                    className={getMobileNavLinkClasses("/trainer/dashboard")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
-                    href="/agency/browse-clients"
-                    className={getMobileNavLinkClasses(
-                      "/agency/browse-clients",
-                    )}
+                    href="/trainer/courses"
+                    className={getMobileNavLinkClasses("/trainer/courses")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Browse Clients
+                    My Courses
                   </Link>
                   <Link
-                    href="/agency/browse-developers"
-                    className={getMobileNavLinkClasses(
-                      "/agency/browse-developers",
-                    )}
+                    href="/trainer/students"
+                    className={getMobileNavLinkClasses("/trainer/students")}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    Browse Developers
+                    Students
                   </Link>
                   <Link
-                    href="/agency/picked-clients"
-                    className={getMobileNavLinkClasses(
-                      "/agency/picked-clients",
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Picked Clients
-                  </Link>
-                  <Link
-                    href="/agency/picked-developers"
-                    className={getMobileNavLinkClasses(
-                      "/agency/picked-developers",
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Picked Developers
-                  </Link>
-                  <Link
-                    href="/agency/messages"
-                    className={`relative ${getMobileNavLinkClasses("/agency/messages")} flex items-center`}
+                    href="/trainer/messages"
+                    className={`relative ${getMobileNavLinkClasses("/trainer/messages")} flex items-center`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <MessageSquare className="mr-3 h-4 w-4" />

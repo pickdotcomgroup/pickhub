@@ -17,10 +17,12 @@ export async function withAuth(
   const roleData = await getUserRole(token.sub!);
 
   // Determine role-specific dashboard
-  const dashboardUrl = roleData.role === "client"
-    ? "/client/dashboard"
+  const dashboardUrl = roleData.role === "employer"
+    ? "/employer/dashboard"
     : roleData.role === "talent"
     ? "/talent/dashboard"
+    : roleData.role === "trainer"
+    ? "/trainer/dashboard"
     : roleData.role === "admin"
     ? "/admin/dashboard"
     : "/dashboard";

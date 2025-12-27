@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Play, Clock, Star, Users } from "lucide-react";
+import { Play, Star } from "lucide-react";
+import Image from "next/image";
 
 const filterCategories = [
   "All",
@@ -193,10 +194,12 @@ export default function DeveloperPage() {
                 ) : (
                   <>
                     {/* Thumbnail Image */}
-                    <img
+                    <Image
                       src={`https://img.youtube.com/vi/${category.videoId}/hqdefault.jpg`}
                       alt={category.title}
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                      fill
+                      className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
+                      unoptimized
                     />
                     <div className="absolute inset-0 bg-black/20 transition-colors group-hover:bg-black/30" />
 

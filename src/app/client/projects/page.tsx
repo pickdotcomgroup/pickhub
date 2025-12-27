@@ -311,8 +311,8 @@ ${session?.user.name ?? 'The Team'}`;
       return;
     }
 
-    if (session.user.role !== "client") {
-      router.push("/client/dashboard");
+    if (session.user.role !== "employer") {
+      router.push("/employer/dashboard");
       return;
     }
 
@@ -330,7 +330,7 @@ ${session?.user.name ?? 'The Team'}`;
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || session.user.role !== "employer") {
     return null;
   }
 

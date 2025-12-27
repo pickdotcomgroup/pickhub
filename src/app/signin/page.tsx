@@ -2,13 +2,12 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type AuthMode = "signin" | "signup" | "professional";
-type ProfessionalType = "client" | "talent" | "agency";
+type ProfessionalType = "employer" | "talent" | "trainer";
 
 interface FormData {
   email: string;
@@ -28,10 +27,13 @@ interface ProfessionalFormData {
   // Professional Info
   professionalType: ProfessionalType;
 
-  // Client specific
+  // Employer specific
   companyName?: string;
   industry?: string;
   companySize?: string;
+  description?: string;
+  website?: string;
+  location?: string;
 
   // Talent specific
   title?: string;
@@ -40,11 +42,11 @@ interface ProfessionalFormData {
   hourlyRate?: string;
   portfolio?: string;
 
-  // Agency specific
-  agencyName?: string;
-  teamSize?: string;
-  agencySkills?: string[];
-  description?: string;
+  // Trainer specific
+  specialization?: string;
+  bio?: string;
+  trainerSkills?: string[];
+  certifications?: string[];
 }
 
 type FormErrors = Record<string, string>;
@@ -96,7 +98,7 @@ function AuthContent() {
       lastName: "",
       professionalType: "talent",
       skills: [],
-      agencySkills: [],
+      trainerSkills: [],
     });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +106,7 @@ function AuthContent() {
   // Check for professional signup type in URL
   useEffect(() => {
     const type = searchParams.get("type") as ProfessionalType;
-    if (type && ["client", "talent", "agency"].includes(type)) {
+    if (type && ["employer", "talent", "trainer"].includes(type)) {
       setAuthMode("professional");
       setProfessionalType(type);
       setProfessionalFormData((prev) => ({ ...prev, professionalType: type }));
@@ -115,12 +117,12 @@ function AuthContent() {
   useEffect(() => {
     if (session?.user) {
       // Route users to their role-specific dashboard
-      if (session.user.role === "client") {
-        router.push("/client/browse");
+      if (session.user.role === "employer") {
+        router.push("/employer/dashboard");
       } else if (session.user.role === "talent") {
-        router.push("/developer");
-      } else if (session.user.role === "agency") {
-        router.push("/agency");
+        router.push("/talent/dashboard");
+      } else if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else if (session.user.role === "admin") {
         router.push("/admin/dashboard");
       } else {
@@ -156,8 +158,11 @@ function AuthContent() {
       }
 
       // Professional type specific validation
-      if (professionalType === "client") {
-        // No required professional fields for clients - all optional
+      if (professionalType === "employer") {
+        if (!professionalFormData.companyName?.trim())
+          newErrors.companyName = "Company/Agency name is required";
+        if (!professionalFormData.industry?.trim())
+          newErrors.industry = "Industry is required";
       } else if (professionalType === "talent") {
         if (!professionalFormData.title?.trim())
           newErrors.title = "Professional title is required";
@@ -165,13 +170,11 @@ function AuthContent() {
           newErrors.skills = "At least one skill is required";
         if (!professionalFormData.experience)
           newErrors.experience = "Experience level is required";
-      } else if (professionalType === "agency") {
-        if (!professionalFormData.agencyName?.trim())
-          newErrors.agencyName = "Agency name is required";
-        if (!professionalFormData.description?.trim())
-          newErrors.description = "Agency description is required";
-        if (!professionalFormData.agencySkills?.length)
-          newErrors.agencySkills = "At least one skill is required";
+      } else if (professionalType === "trainer") {
+        if (!professionalFormData.specialization?.trim())
+          newErrors.specialization = "Specialization is required";
+        if (!professionalFormData.trainerSkills?.length)
+          newErrors.trainerSkills = "At least one skill is required";
       }
     } else {
       // Regular form validation
@@ -218,10 +221,13 @@ function AuthContent() {
           professionalType,
           firstName: professionalFormData.firstName,
           lastName: professionalFormData.lastName,
-          ...(professionalType === "client" && {
+          ...(professionalType === "employer" && {
             companyName: professionalFormData.companyName,
             industry: professionalFormData.industry,
             companySize: professionalFormData.companySize,
+            description: professionalFormData.description,
+            website: professionalFormData.website,
+            location: professionalFormData.location,
           }),
           ...(professionalType === "talent" && {
             title: professionalFormData.title,
@@ -230,11 +236,10 @@ function AuthContent() {
             hourlyRate: professionalFormData.hourlyRate,
             portfolio: professionalFormData.portfolio,
           }),
-          ...(professionalType === "agency" && {
-            agencyName: professionalFormData.agencyName,
-            description: professionalFormData.description,
-            teamSize: professionalFormData.teamSize,
-            skills: professionalFormData.agencySkills,
+          ...(professionalType === "trainer" && {
+            specialization: professionalFormData.specialization,
+            bio: professionalFormData.bio,
+            skills: professionalFormData.trainerSkills,
           }),
         };
 
@@ -343,12 +348,12 @@ function AuthContent() {
 
   const handleSkillToggle = (
     skill: string,
-    fieldName: "skills" | "agencySkills" = "skills",
+    fieldName: "skills" | "trainerSkills" = "skills",
   ) => {
     setProfessionalFormData((prev) => ({
       ...prev,
       [fieldName]: prev[fieldName]?.includes(skill)
-        ? prev[fieldName].filter((s) => s !== skill)
+        ? prev[fieldName].filter((s: string) => s !== skill)
         : [...(prev[fieldName] ?? []), skill],
     }));
   };
@@ -373,9 +378,9 @@ function AuthContent() {
 
   const getProfessionalInfo = () => {
     switch (professionalType) {
-      case "client":
+      case "employer":
         return {
-          title: "Join as a Client",
+          title: "Join as an Employer",
           subtitle: "Post projects and hire top Developers",
           icon: "🏢",
           color: "blue",
@@ -387,12 +392,19 @@ function AuthContent() {
           icon: "👨‍💻",
           color: "green",
         };
-      case "agency":
+      case "trainer":
         return {
-          title: "Join as an Agency",
-          subtitle: "Scale your business and manage clients",
-          icon: "🏛️",
-          color: "indigo",
+          title: "Join as a Trainer",
+          subtitle: "Share your expertise and train developers",
+          icon: "🎓",
+          color: "purple",
+        };
+      default:
+        return {
+          title: "Join",
+          subtitle: "Create your account",
+          icon: "👤",
+          color: "gray",
         };
     }
   };
@@ -588,14 +600,162 @@ function AuthContent() {
                   </div>
 
                   {/* Professional Information */}
-                  {professionalType !== "client" && (
-                    <div className="border-t border-gray-200 pt-6">
-                      <h3 className="mb-4 text-lg font-semibold text-gray-900">
-                        Professional Information
-                      </h3>
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                      {professionalType === "employer" ? "Company/Agency Information" : "Professional Information"}
+                    </h3>
 
-                      {/* Talent Fields */}
-                      {professionalType === "talent" && (
+                    {/* Employer Fields */}
+                    {professionalType === "employer" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label
+                            htmlFor="companyName"
+                            className="mb-1 block text-sm font-medium text-gray-700"
+                          >
+                            Company / Agency Name *
+                          </label>
+                          <input
+                            type="text"
+                            id="companyName"
+                            name="companyName"
+                            value={professionalFormData.companyName ?? ""}
+                            onChange={handleInputChange}
+                            className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                              errors.companyName
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
+                            placeholder="Enter your company or agency name"
+                          />
+                          {errors.companyName && (
+                            <p className="mt-1 text-sm text-red-400">
+                              {errors.companyName}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div>
+                            <label
+                              htmlFor="industry"
+                              className="mb-1 block text-sm font-medium text-gray-700"
+                            >
+                              Industry *
+                            </label>
+                            <select
+                              id="industry"
+                              name="industry"
+                              value={professionalFormData.industry ?? ""}
+                              onChange={handleInputChange}
+                              className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none ${
+                                errors.industry
+                                  ? "border-red-500"
+                                  : "border-gray-300"
+                              }`}
+                            >
+                              <option value="">Select industry</option>
+                              <option value="technology">Technology</option>
+                              <option value="finance">Finance & Banking</option>
+                              <option value="healthcare">Healthcare</option>
+                              <option value="ecommerce">E-commerce & Retail</option>
+                              <option value="education">Education</option>
+                              <option value="marketing">Marketing & Advertising</option>
+                              <option value="consulting">Consulting</option>
+                              <option value="startup">Startup</option>
+                              <option value="agency">Digital Agency</option>
+                              <option value="other">Other</option>
+                            </select>
+                            {errors.industry && (
+                              <p className="mt-1 text-sm text-red-400">
+                                {errors.industry}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="companySize"
+                              className="mb-1 block text-sm font-medium text-gray-700"
+                            >
+                              Company Size
+                            </label>
+                            <select
+                              id="companySize"
+                              name="companySize"
+                              value={professionalFormData.companySize ?? ""}
+                              onChange={handleInputChange}
+                              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            >
+                              <option value="">Select size</option>
+                              <option value="1">Just me (Individual)</option>
+                              <option value="2-10">2-10 employees</option>
+                              <option value="11-50">11-50 employees</option>
+                              <option value="51-200">51-200 employees</option>
+                              <option value="201-500">201-500 employees</option>
+                              <option value="500+">500+ employees</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="description"
+                            className="mb-1 block text-sm font-medium text-gray-700"
+                          >
+                            Company Description
+                          </label>
+                          <textarea
+                            id="description"
+                            name="description"
+                            rows={4}
+                            value={professionalFormData.description ?? ""}
+                            onChange={handleInputChange}
+                            className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            placeholder="Tell us about your company or what you're looking for"
+                          />
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div>
+                            <label
+                              htmlFor="website"
+                              className="mb-1 block text-sm font-medium text-gray-700"
+                            >
+                              Website
+                            </label>
+                            <input
+                              type="url"
+                              id="website"
+                              name="website"
+                              value={professionalFormData.website ?? ""}
+                              onChange={handleInputChange}
+                              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="https://www.yourcompany.com"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="location"
+                              className="mb-1 block text-sm font-medium text-gray-700"
+                            >
+                              Location
+                            </label>
+                            <input
+                              type="text"
+                              id="location"
+                              name="location"
+                              value={professionalFormData.location ?? ""}
+                              onChange={handleInputChange}
+                              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="e.g., San Francisco, CA"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Talent Fields */}
+                    {professionalType === "talent" && (
                         <div className="space-y-4">
                           <div>
                             <label
@@ -735,96 +895,57 @@ function AuthContent() {
                         </div>
                       )}
 
-                      {/* Agency Fields */}
-                      {professionalType === "agency" && (
+                      {/* Trainer Fields */}
+                      {professionalType === "trainer" && (
                         <div className="space-y-4">
                           <div>
                             <label
-                              htmlFor="agencyName"
+                              htmlFor="specialization"
                               className="mb-1 block text-sm font-medium text-gray-700"
                             >
-                              Agency Name *
+                              Specialization *
                             </label>
                             <input
                               type="text"
-                              id="agencyName"
-                              name="agencyName"
-                              value={professionalFormData.agencyName ?? ""}
+                              id="specialization"
+                              name="specialization"
+                              value={professionalFormData.specialization ?? ""}
                               onChange={handleInputChange}
                               className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-                                errors.agencyName
+                                errors.specialization
                                   ? "border-red-500"
                                   : "border-gray-300"
                               }`}
-                              placeholder="Enter your agency name"
+                              placeholder="e.g., Web Development, Data Science, DevOps"
                             />
-                            {errors.agencyName && (
+                            {errors.specialization && (
                               <p className="mt-1 text-sm text-red-400">
-                                {errors.agencyName}
+                                {errors.specialization}
                               </p>
                             )}
                           </div>
 
                           <div>
                             <label
-                              htmlFor="description"
+                              htmlFor="bio"
                               className="mb-1 block text-sm font-medium text-gray-700"
                             >
-                              Agency Description *
+                              Bio
                             </label>
                             <textarea
-                              id="description"
-                              name="description"
+                              id="bio"
+                              name="bio"
                               rows={4}
-                              value={professionalFormData.description ?? ""}
+                              value={professionalFormData.bio ?? ""}
                               onChange={handleInputChange}
-                              className={`w-full rounded-lg border bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-                                errors.description
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              }`}
-                              placeholder="Describe your agency's services and expertise"
+                              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-500 transition focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                              placeholder="Tell us about your teaching experience and expertise"
                             />
-                            {errors.description && (
-                              <p className="mt-1 text-sm text-red-400">
-                                {errors.description}
-                              </p>
-                            )}
-                          </div>
-
-                          <div>
-                            <label
-                              htmlFor="teamSize"
-                              className="mb-1 block text-sm font-medium text-gray-700"
-                            >
-                              Team Size
-                            </label>
-                            <select
-                              id="teamSize"
-                              name="teamSize"
-                              value={professionalFormData.teamSize ?? ""}
-                              onChange={handleInputChange}
-                              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            >
-                              <option value="">Select team size</option>
-                              <option value="1-5" className="bg-white">
-                                1-5 people
-                              </option>
-                              <option value="6-15" className="bg-white">
-                                6-15 people
-                              </option>
-                              <option value="16-50" className="bg-white">
-                                16-50 people
-                              </option>
-                              <option value="50+" className="bg-white">
-                                50+ people
-                              </option>
-                            </select>
                           </div>
 
                           <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">
-                              Agency Skills & Services *
+                              Skills You Can Teach *
                             </label>
                             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                               {skillOptions.map((skill) => (
@@ -832,13 +953,13 @@ function AuthContent() {
                                   key={skill}
                                   type="button"
                                   onClick={() =>
-                                    handleSkillToggle(skill, "agencySkills")
+                                    handleSkillToggle(skill, "trainerSkills")
                                   }
                                   className={`rounded-lg px-3 py-2 text-sm transition ${
-                                    professionalFormData.agencySkills?.includes(
+                                    professionalFormData.trainerSkills?.includes(
                                       skill,
                                     )
-                                      ? "bg-blue-600 text-white"
+                                      ? "bg-purple-600 text-white"
                                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                                   }`}
                                 >
@@ -846,16 +967,15 @@ function AuthContent() {
                                 </button>
                               ))}
                             </div>
-                            {errors.agencySkills && (
+                            {errors.trainerSkills && (
                               <p className="mt-1 text-sm text-red-400">
-                                {errors.agencySkills}
+                                {errors.trainerSkills}
                               </p>
                             )}
                           </div>
                         </div>
                       )}
-                    </div>
-                  )}
+                  </div>
                 </div>
               ) : (
                 // Regular Auth Form
@@ -985,11 +1105,11 @@ function AuthContent() {
                 disabled={isLoading}
                 className={`flex w-full items-center justify-center rounded-lg px-4 py-3 font-semibold text-white transition duration-200 disabled:cursor-not-allowed ${
                   authMode === "professional"
-                    ? professionalType === "client"
+                    ? professionalType === "employer"
                       ? "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
                       : professionalType === "talent"
                         ? "bg-green-600 hover:bg-green-700 disabled:bg-green-800"
-                        : "bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800"
+                        : "bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800"
                     : "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800"
                 }`}
               >

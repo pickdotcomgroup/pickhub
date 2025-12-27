@@ -14,9 +14,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (session.user.role !== "talent" && session.user.role !== "agency") {
+    if (session.user.role !== "talent") {
       return NextResponse.json(
-        { error: "Only talents and agencies can apply to projects" },
+        { error: "Only talents can apply to projects" },
         { status: 403 }
       );
     }
@@ -80,14 +80,10 @@ export async function POST(req: Request) {
 
     // Determine the applicant name and type
     let applicantName = "Someone";
-    let applicantType = "developer";
-    
-    if (user?.role === "agency") {
-      applicantName = user.name ?? "An agency";
-      applicantType = "agency";
-    } else if (talentProfile) {
+    const applicantType = "developer";
+
+    if (talentProfile) {
       applicantName = `${talentProfile.firstName} ${talentProfile.lastName}`;
-      applicantType = "developer";
     } else if (user?.name) {
       applicantName = user.name;
     }
@@ -221,9 +217,9 @@ export async function PATCH(req: Request) {
       );
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "employer") {
       return NextResponse.json(
-        { error: "Only clients can update application status" },
+        { error: "Only employers can update application status" },
         { status: 403 }
       );
     }

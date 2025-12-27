@@ -424,39 +424,10 @@ export default function ManageProjectPage() {
     }
   };
 
-  const handleUpdateMilestoneStatus = async (milestoneId: string, newStatus: string) => {
-    try {
-      const response = await fetch("/api/milestones", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ milestoneId, status: newStatus }),
-      });
-
-      if (response.ok) {
-        const data = await response.json() as { milestone: Milestone };
-        setMilestones(milestones.map(m =>
-          m.id === milestoneId ? data.milestone : m
-        ));
-        toast.success("Milestone status updated!");
-      }
-    } catch (error) {
-      console.error("Error updating milestone status:", error);
-    }
-  };
-
   const handleCloseMilestoneModal = () => {
     setShowMilestoneModal(false);
     setEditingMilestone(null);
     setMilestoneFormData({ title: "", description: "", amount: "", startDate: "", endDate: "" });
-  };
-
-  const getMilestoneStatusColor = (status: string) => {
-    switch (status) {
-      case "pending": return "bg-yellow-100 text-yellow-700 border-yellow-300";
-      case "in_progress": return "bg-blue-100 text-blue-700 border-blue-300";
-      case "completed": return "bg-green-100 text-green-700 border-green-300";
-      default: return "bg-gray-100 text-gray-700 border-gray-300";
-    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -480,10 +451,10 @@ export default function ManageProjectPage() {
       return;
     }
 
-    if (session.user.role !== "client" && session.user.role !== "talent") {
+    if (session.user.role !== "employer" && session.user.role !== "talent") {
       // Redirect based on role
-      if (session.user.role === "agency") {
-        router.push("/agency/dashboard");
+      if (session.user.role === "trainer") {
+        router.push("/trainer/dashboard");
       } else {
         router.push("/talent/dashboard");
       }
@@ -636,12 +607,12 @@ export default function ManageProjectPage() {
     );
   }
 
-  if (!session || (session.user.role !== "client" && session.user.role !== "talent")) {
+  if (!session || (session.user.role !== "employer" && session.user.role !== "talent")) {
     return null;
   }
 
   if (error || !project) {
-    const backLink = session.user.role === "talent" ? "/talent/projects" : "/client/projects";
+    const backLink = session.user.role === "talent" ? "/talent/projects" : "/employer/projects";
 
     return (
       <main className="min-h-screen bg-white">
@@ -946,7 +917,7 @@ export default function ManageProjectPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Project Milestones Timeline</h2>
-                  {session.user.role === "client" && (
+                  {session.user.role === "employer" && (
                     <button
                       onClick={() => setShowMilestoneModal(true)}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2"
@@ -1056,7 +1027,7 @@ export default function ManageProjectPage() {
                                             <p className="text-xs text-gray-500 line-clamp-2 mt-1">{milestone.description}</p>
                                           )}
                                         </div>
-                                        {session.user.role === "client" && (
+                                        {session.user.role === "employer" && (
                                           <div className="flex items-center space-x-1">
                                             <button
                                               onClick={() => handleEditMilestone(milestone)}
@@ -1183,7 +1154,7 @@ export default function ManageProjectPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900">Kanban Board</h2>
-                  {session.user.role === "client" && (
+                  {session.user.role === "employer" && (
                     <button
                       onClick={() => setShowTaskModal(true)}
                       className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center space-x-2"
@@ -1232,7 +1203,7 @@ export default function ManageProjectPage() {
                                   <p className="text-xs font-semibold text-gray-500 mb-1">Task Name:</p>
                                   <h4 className="font-medium text-gray-900 text-sm">{task.title}</h4>
                                 </div>
-                                {session.user.role === "client" && (
+                                {session.user.role === "employer" && (
                                   <div className="flex items-center space-x-1">
                                     <button onClick={() => handleEditTask(task)} className="text-gray-400 hover:text-blue-600">
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1303,7 +1274,7 @@ export default function ManageProjectPage() {
                                   <p className="text-xs font-semibold text-gray-500 mb-1">Task Name:</p>
                                   <h4 className="font-medium text-gray-900 text-sm">{task.title}</h4>
                                 </div>
-                                {session.user.role === "client" && (
+                                {session.user.role === "employer" && (
                                   <div className="flex items-center space-x-1">
                                     <button onClick={() => handleEditTask(task)} className="text-gray-400 hover:text-blue-600">
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1374,7 +1345,7 @@ export default function ManageProjectPage() {
                                   <p className="text-xs font-semibold text-gray-500 mb-1">Task Name:</p>
                                   <h4 className="font-medium text-gray-900 text-sm line-through">{task.title}</h4>
                                 </div>
-                                {session.user.role === "client" && (
+                                {session.user.role === "employer" && (
                                   <div className="flex items-center space-x-1">
                                     <button onClick={() => handleEditTask(task)} className="text-gray-400 hover:text-blue-600">
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 
-// Get all users (talents, clients, agencies)
+// Get all users (talents, employers, trainers)
 export async function GET(request: Request) {
   try {
     const session = await auth();
@@ -23,20 +23,20 @@ export async function GET(request: Request) {
 
     // Get query parameters for filtering
     const { searchParams } = new URL(request.url);
-    const userType = searchParams.get("type"); // talent, client, agency, all
+    const userType = searchParams.get("type"); // talent, employer, trainer, all
     const page = parseInt(searchParams.get("page") ?? "1");
     const limit = parseInt(searchParams.get("limit") ?? "20");
     const skip = (page - 1) * limit;
 
     // Build where clause based on user type
     const whereClause: Record<string, unknown> = {};
-    
+
     if (userType === "talent") {
       whereClause.talentProfile = { isNot: null };
-    } else if (userType === "client") {
-      whereClause.clientProfile = { isNot: null };
-    } else if (userType === "agency") {
-      whereClause.agencyProfile = { isNot: null };
+    } else if (userType === "employer") {
+      whereClause.employerProfile = { isNot: null };
+    } else if (userType === "trainer") {
+      whereClause.trainerProfile = { isNot: null };
     }
 
     // Get users with their profiles
@@ -49,8 +49,8 @@ export async function GET(request: Request) {
               verification: true,
             },
           },
-          clientProfile: true,
-          agencyProfile: true,
+          employerProfile: true,
+          trainerProfile: true,
         },
         skip,
         take: limit,
@@ -67,12 +67,12 @@ export async function GET(request: Request) {
       createdAt: user.createdAt,
       type: user.talentProfile
         ? "talent"
-        : user.clientProfile
-          ? "client"
-          : user.agencyProfile
-            ? "agency"
+        : user.employerProfile
+          ? "employer"
+          : user.trainerProfile
+            ? "trainer"
             : "unknown",
-      profile: user.talentProfile ?? user.clientProfile ?? user.agencyProfile,
+      profile: user.talentProfile ?? user.employerProfile ?? user.trainerProfile,
       verification: user.talentProfile?.verification ?? null,
     }));
 

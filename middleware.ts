@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   });
 
   // Protected routes - require authentication
-  const protectedRoutes = ["/client", "/talent", "/agency", "/dashboard", "/profile-setup", "/onboarding"];
+  const protectedRoutes = ["/employer", "/talent", "/trainer", "/dashboard", "/profile-setup", "/onboarding"];
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 
   if (isProtectedRoute && !token) {
@@ -39,10 +39,10 @@ export async function middleware(request: NextRequest) {
     // Get user role from token (set during session callback)
     const userRole = token.role as string | null;
 
-    // Protect client routes
-    if (pathname.startsWith("/client") && userRole !== "client") {
+    // Protect employer routes
+    if (pathname.startsWith("/employer") && userRole !== "employer") {
       const url = new URL(
-        userRole === "talent" ? "/talent" : userRole === "agency" ? "/agency" : "/dashboard",
+        userRole === "talent" ? "/talent/dashboard" : userRole === "trainer" ? "/trainer/dashboard" : "/dashboard",
         request.url
       );
       return NextResponse.redirect(url);
@@ -51,16 +51,16 @@ export async function middleware(request: NextRequest) {
     // Protect talent routes
     if (pathname.startsWith("/talent") && userRole !== "talent") {
       const url = new URL(
-        userRole === "client" ? "/client/dashboard" : userRole === "agency" ? "/agency" : "/dashboard",
+        userRole === "employer" ? "/employer/dashboard" : userRole === "trainer" ? "/trainer/dashboard" : "/dashboard",
         request.url
       );
       return NextResponse.redirect(url);
     }
 
-    // Protect agency routes
-    if (pathname.startsWith("/agency") && userRole !== "agency") {
+    // Protect trainer routes
+    if (pathname.startsWith("/trainer") && userRole !== "trainer") {
       const url = new URL(
-        userRole === "client" ? "/client/dashboard" : userRole === "talent" ? "/talent" : "/dashboard",
+        userRole === "employer" ? "/employer/dashboard" : userRole === "talent" ? "/talent/dashboard" : "/dashboard",
         request.url
       );
       return NextResponse.redirect(url);

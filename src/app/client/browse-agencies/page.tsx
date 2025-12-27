@@ -47,7 +47,7 @@ export default function ClientBrowseAgenciesPage() {
       return;
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "employer") {
       router.push("/dashboard");
       return;
     }
@@ -80,7 +80,7 @@ export default function ClientBrowseAgenciesPage() {
   }, [searchQuery, teamSize, selectedSkills]);
 
   useEffect(() => {
-    if (session?.user.role === "client") {
+    if (session?.user.role === "employer") {
       void fetchAgencies();
     }
   }, [session, fetchAgencies]);
@@ -94,7 +94,7 @@ export default function ClientBrowseAgenciesPage() {
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || session.user.role !== "employer") {
     return null;
   }
 

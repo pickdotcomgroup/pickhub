@@ -75,7 +75,7 @@ export default function ClientBrowsePage() {
       return;
     }
 
-    if (session.user.role !== "client") {
+    if (session.user.role !== "employer") {
       router.push("/dashboard");
       return;
     }
@@ -108,7 +108,7 @@ export default function ClientBrowsePage() {
   }, [searchQuery, experienceLevel, selectedSkills]);
 
   useEffect(() => {
-    if (session?.user.role === "client") {
+    if (session?.user.role === "employer") {
       void fetchTalents();
     }
   }, [session, fetchTalents]);
@@ -122,7 +122,7 @@ export default function ClientBrowsePage() {
     );
   }
 
-  if (!session || session.user.role !== "client") {
+  if (!session || session.user.role !== "employer") {
     return null;
   }
 
