@@ -266,7 +266,7 @@ function SignupContent() {
       if (session.user.role === "employer") {
         router.push("/employer/browse");
       } else if (session.user.role === "talent") {
-        router.push("/developer");
+        router.push("/talent/dashboard");
       } else if (session.user.role === "trainer") {
         router.push("/trainer/dashboard");
       } else if (session.user.role === "admin") {
@@ -447,7 +447,7 @@ function SignupContent() {
   }
 
   return (
-    <main className="flex max-h-screen bg-white">
+    <main className="flex min-h-screen bg-white">
       {/* Left Side - Marketing Content */}
       <MarketingPanel type={professionalType} />
 

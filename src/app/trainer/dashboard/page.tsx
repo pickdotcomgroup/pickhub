@@ -103,7 +103,7 @@ export default function TrainerDashboardPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <main className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Section Skeleton */}
           <div className="mb-8">
@@ -152,7 +152,7 @@ export default function TrainerDashboardPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     );
   }
 
@@ -163,7 +163,7 @@ export default function TrainerDashboardPage() {
   const firstName = profile?.firstName ?? session.user.name?.split(" ")[0] ?? "Trainer";
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
@@ -342,6 +342,6 @@ export default function TrainerDashboardPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

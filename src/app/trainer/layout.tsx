@@ -2,7 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import TrainerAsideNav from "./_components/trainer-aside-nav";
+import TrainerTopHeader from "./_components/trainer-top-header";
+
+interface TrainerProfile {
+  organizationName?: string;
+}
 
 export default function TrainerLayout({
   children,
@@ -11,6 +17,7 @@ export default function TrainerLayout({
 }) {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [organizationName, setOrganizationName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -35,11 +42,32 @@ export default function TrainerLayout({
     }
   }, [session, status, router]);
 
+  // Fetch trainer profile to get organization name
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch("/api/trainer/profile");
+        if (response.ok) {
+          const data = await response.json() as TrainerProfile;
+          if (data.organizationName) {
+            setOrganizationName(data.organizationName);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching trainer profile:", error);
+      }
+    };
+
+    if (session?.user.role === "trainer") {
+      void fetchProfile();
+    }
+  }, [session]);
+
   // Show loading state
   if (status === "loading") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-white">
-        <div className="text-white text-xl">Loading...</div>
+        <div className="text-gray-600 text-xl">Loading...</div>
       </main>
     );
   }
@@ -49,5 +77,15 @@ export default function TrainerLayout({
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <TrainerAsideNav organizationName={organizationName} />
+      <div className="ml-64 flex flex-col min-h-screen">
+        <TrainerTopHeader organizationName={organizationName} />
+        <main className="flex-1">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
 }
