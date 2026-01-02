@@ -18,6 +18,7 @@ export default function TalentLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userRole, setUserRole] = useState<string | undefined>(undefined);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -79,8 +80,12 @@ export default function TalentLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TalentAsideNav userName={session.user.name ?? undefined} />
-      <div className="ml-64 flex flex-col min-h-screen">
+      <TalentAsideNav
+        userName={session.user.name ?? undefined}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarCollapsed ? "ml-20" : "ml-64"}`}>
         <TalentTopHeader userRole={userRole} />
         <main className="flex-1">
           {children}

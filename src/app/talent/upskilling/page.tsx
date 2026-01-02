@@ -210,17 +210,9 @@ export default function TalentUpskillingPage() {
     <main className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Upskilling Marketplace</h1>
-            <p className="text-gray-600">Connect with top training providers and accelerate your career growth.</p>
-          </div>
-          <Link
-              href="/talent/upskilling/my-learning"
-              className="px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition"
-            >
-              My Learning
-            </Link>
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Upskilling Marketplace</h1>
+          <p className="text-gray-600">Connect with top training providers and accelerate your career growth.</p>
         </div>
 
         {/* Search and Filters */}
