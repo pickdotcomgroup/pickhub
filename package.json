@@ -35,6 +35,7 @@
     "lucide-react": "^0.552.0",
     "next": "^15.2.3",
     "next-auth": "5.0.0-beta.25",
+    "paymongo-node": "^10.17.0",
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
     "react-toastify": "^11.0.5",

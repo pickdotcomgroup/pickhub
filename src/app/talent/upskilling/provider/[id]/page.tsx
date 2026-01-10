@@ -22,6 +22,9 @@ import {
   X,
   Shield,
   Zap,
+  Calendar,
+  CreditCard,
+  ArrowLeft,
 } from "lucide-react";
 
 interface Provider {
@@ -78,14 +81,28 @@ interface PricingConfig {
   onsite: PricingTier[];
 }
 
-// Pricing plans data
+// Pricing plans data (matching seed-courses.ts - prices in PHP)
 const pricingPlans: PricingConfig = {
   online: [
+    {
+      id: "free-trial",
+      name: "Free Trial",
+      description: "Try the platform with our free introductory course",
+      price: 0,
+      duration: "1 week",
+      features: [
+        "Access to introductory content",
+        "Self-paced learning",
+        "Community forum access",
+        "No credit card required",
+      ],
+      highlighted: false,
+    },
     {
       id: "online-essential",
       name: "Essential",
       description: "Perfect for individual learners starting their journey",
-      price: 49,
+      price: 2499,
       duration: "1 month",
       features: [
         "Access to core course content",
@@ -100,7 +117,7 @@ const pricingPlans: PricingConfig = {
       id: "online-professional",
       name: "Professional",
       description: "Best for serious professionals advancing their career",
-      price: 99,
+      price: 4999,
       duration: "1 month",
       features: [
         "All Essential features",
@@ -116,7 +133,7 @@ const pricingPlans: PricingConfig = {
       id: "online-team",
       name: "Team",
       description: "Ideal for small teams learning together",
-      price: 199,
+      price: 9999,
       duration: "1 month",
       features: [
         "All Professional features",
@@ -135,7 +152,7 @@ const pricingPlans: PricingConfig = {
       id: "onsite-essential",
       name: "Essential",
       description: "Hands-on workshop experience for individuals",
-      price: 99,
+      price: 4999,
       duration: "1 month",
       features: [
         "In-person workshop attendance",
@@ -150,7 +167,7 @@ const pricingPlans: PricingConfig = {
       id: "onsite-professional",
       name: "Professional",
       description: "Premium onsite experience with mentorship",
-      price: 179,
+      price: 8999,
       duration: "1 month",
       features: [
         "All Essential features",
@@ -166,7 +183,7 @@ const pricingPlans: PricingConfig = {
       id: "onsite-team",
       name: "Team",
       description: "Complete team training solution",
-      price: 399,
+      price: 19999,
       duration: "1 month",
       features: [
         "All Professional features",
@@ -496,7 +513,7 @@ function PricingCard({
 
       {/* Price */}
       <div className="mb-4">
-        <span className="text-4xl font-bold text-gray-900">${tier.price}</span>
+        <span className="text-4xl font-bold text-gray-900">₱{tier.price.toLocaleString()}</span>
         <span className="text-gray-500">/month</span>
       </div>
 
@@ -545,19 +562,20 @@ function PricingCard({
   );
 }
 
-// Pricing Modal Component
+// Pricing Modal Component with Training Type Toggle
 function PricingModal({
-  trainingType,
+  initialTrainingType,
   provider,
   onClose,
   onSelectPlan,
 }: {
-  trainingType: TrainingType;
+  initialTrainingType: TrainingType;
   provider: Provider;
   onClose: () => void;
-  onSelectPlan: (tier: PricingTier) => void;
+  onSelectPlan: (tier: PricingTier, trainingType: TrainingType) => void;
 }) {
-  const plans = pricingPlans[trainingType];
+  const [activeTrainingType, setActiveTrainingType] = useState<TrainingType>(initialTrainingType);
+  const plans = pricingPlans[activeTrainingType];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -579,40 +597,65 @@ function PricingModal({
           </button>
 
           {/* Header */}
-          <div className="p-8 pb-0">
-            <div className="flex items-center gap-3 mb-2">
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
-                  trainingType === "online"
-                    ? "bg-blue-100 text-blue-700 border border-blue-200"
-                    : "bg-amber-100 text-amber-700 border border-amber-200"
-                }`}
-              >
-                {trainingType === "online" ? (
-                  <BookOpen className="w-4 h-4" />
-                ) : (
-                  <Building className="w-4 h-4" />
-                )}
-                {trainingType === "online" ? "Online Training" : "Onsite Training"}
-              </span>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Select a plan for {provider.name}
+          <div className="p-8 pb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Enroll in {provider.name}
             </h2>
-            <p className="text-gray-500 mt-1">
-              Choose the plan that best fits your learning goals. All plans include 1 month of access.
+            <p className="text-gray-500 mb-6">
+              Choose your preferred training format and plan.
             </p>
+
+            {/* Training Type Toggle */}
+            <div className="flex items-center justify-center">
+              <div className="inline-flex bg-gray-100 rounded-xl p-1">
+                <button
+                  onClick={() => setActiveTrainingType("online")}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition ${
+                    activeTrainingType === "online"
+                      ? "bg-white text-blue-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  Online Training
+                </button>
+                <button
+                  onClick={() => setActiveTrainingType("onsite")}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition ${
+                    activeTrainingType === "onsite"
+                      ? "bg-white text-amber-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <Building className="w-5 h-5" />
+                  Onsite Training
+                </button>
+              </div>
+            </div>
+
+            {/* Training Type Description */}
+            <div className="mt-4 text-center">
+              {activeTrainingType === "online" ? (
+                <p className="text-sm text-gray-500">
+                  Learn at your own pace with video lessons, live sessions, and online resources.
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Hands-on workshops at physical locations with in-person instruction.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Pricing Cards */}
-          <div className="p-8">
+          <div className="px-8 pb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {plans.map((tier) => (
                 <PricingCard
                   key={tier.id}
                   tier={tier}
-                  trainingType={trainingType}
-                  onSelect={onSelectPlan}
+                  trainingType={activeTrainingType}
+                  onSelect={(t) => onSelectPlan(t, activeTrainingType)}
                 />
               ))}
             </div>
@@ -641,6 +684,205 @@ function PricingModal({
   );
 }
 
+// Scheduling Modal Component
+function SchedulingModal({
+  tier,
+  trainingType,
+  provider,
+  onClose,
+  onBack,
+  onProceedToPayment,
+  isProcessing,
+}: {
+  tier: PricingTier;
+  trainingType: TrainingType;
+  provider: Provider;
+  onClose: () => void;
+  onBack: () => void;
+  onProceedToPayment: () => void;
+  isProcessing: boolean;
+}) {
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>("");
+
+  // Generate available dates (next 30 days)
+  const availableDates: string[] = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() + i + 1);
+    return date.toISOString().split("T")[0] ?? "";
+  }).filter((d) => d !== "");
+
+  // Available time slots
+  const timeSlots = [
+    "09:00 AM",
+    "10:00 AM",
+    "11:00 AM",
+    "01:00 PM",
+    "02:00 PM",
+    "03:00 PM",
+    "04:00 PM",
+    "05:00 PM",
+  ];
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const canProceed = selectedDate && selectedTime;
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-screen items-center justify-center p-4">
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+          onClick={onClose}
+        ></div>
+
+        {/* Modal Content */}
+        <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition z-10"
+          >
+            <X className="w-6 h-6 text-gray-500" />
+          </button>
+
+          {/* Header */}
+          <div className="p-6 border-b border-gray-100">
+            <button
+              onClick={onBack}
+              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-4 transition"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to plans
+            </button>
+            <div className="flex items-center gap-3 mb-2">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
+                  trainingType === "online"
+                    ? "bg-blue-100 text-blue-700 border border-blue-200"
+                    : "bg-amber-100 text-amber-700 border border-amber-200"
+                }`}
+              >
+                <Calendar className="w-4 h-4" />
+                Schedule Training
+              </span>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Schedule your {tier.name} training
+            </h2>
+            <p className="text-gray-500 mt-1">
+              Select your preferred date and time for {provider.name}
+            </p>
+          </div>
+
+          {/* Selected Plan Summary */}
+          <div className="p-6 bg-gray-50 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">Selected Plan</p>
+                <p className="font-semibold text-gray-900">{tier.name} - {trainingType === "online" ? "Online" : "Onsite"}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Price</p>
+                <p className="text-2xl font-bold text-gray-900">₱{tier.price.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Date Selection */}
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600" />
+              Select Date
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+              {availableDates.slice(0, 14).map((date) => (
+                <button
+                  key={date}
+                  onClick={() => setSelectedDate(date)}
+                  className={`p-3 text-sm rounded-lg border transition ${
+                    selectedDate === date
+                      ? "border-blue-500 bg-blue-50 text-blue-700 font-medium"
+                      : "border-gray-200 hover:border-blue-200 hover:bg-blue-50/50"
+                  }`}
+                >
+                  <div className="font-medium">
+                    {new Date(date).toLocaleDateString("en-US", { weekday: "short" })}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {new Date(date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Time Selection */}
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-blue-600" />
+              Select Time
+            </h3>
+            <div className="grid grid-cols-4 gap-2">
+              {timeSlots.map((time) => (
+                <button
+                  key={time}
+                  onClick={() => setSelectedTime(time)}
+                  className={`p-3 text-sm rounded-lg border transition ${
+                    selectedTime === time
+                      ? "border-blue-500 bg-blue-50 text-blue-700 font-medium"
+                      : "border-gray-200 hover:border-blue-200 hover:bg-blue-50/50"
+                  }`}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Summary & Payment Button */}
+          <div className="p-6">
+            {canProceed && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  <CheckCircle className="w-4 h-4 inline mr-2" />
+                  <strong>Scheduled:</strong> {formatDate(selectedDate)} at {selectedTime}
+                </p>
+              </div>
+            )}
+
+            <button
+              onClick={onProceedToPayment}
+              disabled={!canProceed || isProcessing}
+              className={`w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 transition ${
+                canProceed && !isProcessing
+                  ? "bg-blue-600 hover:bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              <CreditCard className="w-5 h-5" />
+              {isProcessing ? "Processing..." : `Proceed to Payment - ₱${tier.price.toLocaleString()}`}
+            </button>
+
+            <p className="text-center text-sm text-gray-500 mt-3">
+              Payment will open in a new tab. You&apos;ll be enrolled after successful payment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProviderProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -649,7 +891,10 @@ export default function ProviderProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [provider, setProvider] = useState<Provider | null>(null);
   const [pricingModalOpen, setPricingModalOpen] = useState(false);
+  const [schedulingModalOpen, setSchedulingModalOpen] = useState(false);
   const [selectedTrainingType, setSelectedTrainingType] = useState<TrainingType | null>(null);
+  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Event handlers for pricing modal
   const handleOpenPricingModal = (type: TrainingType) => {
@@ -662,13 +907,70 @@ export default function ProviderProfilePage() {
     setSelectedTrainingType(null);
   };
 
-  const handleSelectPlan = (tier: PricingTier) => {
-    // Navigate to scheduling page based on training type
-    const route = selectedTrainingType === "online"
-      ? `/talent/upskilling/provider/${providerId}/schedule/online`
-      : `/talent/upskilling/provider/${providerId}/schedule/onsite`;
+  const handleCloseAllModals = () => {
+    setPricingModalOpen(false);
+    setSchedulingModalOpen(false);
+    setSelectedTrainingType(null);
+    setSelectedTier(null);
+  };
 
-    router.push(`${route}?plan=${tier.id}&price=${tier.price}&name=${encodeURIComponent(tier.name)}`);
+  // When a plan is selected, show scheduling modal
+  const handleSelectPlan = (tier: PricingTier, trainingType: TrainingType) => {
+    setSelectedTier(tier);
+    setSelectedTrainingType(trainingType);
+    setPricingModalOpen(false);
+    setSchedulingModalOpen(true);
+  };
+
+  // Go back from scheduling to pricing
+  const handleBackToPricing = () => {
+    setSchedulingModalOpen(false);
+    setSelectedTier(null);
+    setPricingModalOpen(true);
+  };
+
+  // Process payment - opens in new tab
+  const handleProceedToPayment = async () => {
+    if (isProcessingPayment || !selectedTier) return;
+    setIsProcessingPayment(true);
+
+    try {
+      // Create checkout session via API
+      const response = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "course",
+          courseId: selectedTier.id,
+          successUrl: `${window.location.origin}/payments/success?type=course&courseId=${selectedTier.id}`,
+          cancelUrl: `${window.location.origin}/payments/cancel?courseId=${providerId}`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = (await response.json()) as { error?: string };
+        throw new Error(errorData.error ?? "Failed to create checkout");
+      }
+
+      const data = (await response.json()) as { checkoutUrl?: string };
+
+      // Open PayMongo checkout in new tab
+      if (data.checkoutUrl) {
+        window.open(data.checkoutUrl, "_blank");
+        // Close modals and show success message
+        handleCloseAllModals();
+        alert("Payment page opened in a new tab. Complete your payment there.");
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Failed to start checkout. Please try again.");
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   useEffect(() => {
@@ -800,22 +1102,13 @@ export default function ProviderProfilePage() {
                 <StarRating rating={provider.rating} showCount count={provider.reviewCount} />
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => handleOpenPricingModal("onsite")}
-                  className="flex items-center gap-2 px-6 py-3 bg-white text-gray-900 rounded-lg font-medium hover:bg-gray-100 transition"
-                >
-                  <Building className="w-5 h-5" />
-                  Onsite Training
-                </button>
-                <button
-                  onClick={() => handleOpenPricingModal("online")}
-                  className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
-                >
-                  <BookOpen className="w-5 h-5" />
-                  Online Training
-                </button>
-              </div>
+              <button
+                onClick={() => handleOpenPricingModal("online")}
+                className="flex items-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold text-lg hover:bg-blue-700 transition shadow-lg"
+              >
+                <BookOpen className="w-6 h-6" />
+                Enroll Now
+              </button>
             </div>
           </div>
         </div>
@@ -978,10 +1271,23 @@ export default function ProviderProfilePage() {
       {/* Pricing Modal */}
       {pricingModalOpen && selectedTrainingType && provider && (
         <PricingModal
-          trainingType={selectedTrainingType}
+          initialTrainingType={selectedTrainingType}
           provider={provider}
           onClose={handleClosePricingModal}
           onSelectPlan={handleSelectPlan}
+        />
+      )}
+
+      {/* Scheduling Modal */}
+      {schedulingModalOpen && selectedTrainingType && selectedTier && provider && (
+        <SchedulingModal
+          tier={selectedTier}
+          trainingType={selectedTrainingType}
+          provider={provider}
+          onClose={handleCloseAllModals}
+          onBack={handleBackToPricing}
+          onProceedToPayment={handleProceedToPayment}
+          isProcessing={isProcessingPayment}
         />
       )}
     </main>

@@ -79,13 +79,13 @@ export default function LandingPage() {
                  href="/signup?type=talent"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-full transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
               >
-                Start Learning Today
+                Upskills Now!
               </Link>
               <Link
                 href="/home-page"
                 className="bg-white hover:bg-gray-50 text-gray-900 font-semibold py-4 px-8 rounded-full transition duration-200 border-2 border-gray-300 hover:border-gray-400 text-lg"
               >
-                Browse Courses & Jobs
+                Find Jobs
               </Link>
             </div>
 

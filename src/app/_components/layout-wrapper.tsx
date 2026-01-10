@@ -16,7 +16,8 @@ export default function LayoutWrapper({
     !hideHeaderPaths.includes(pathname) &&
     !(pathname.startsWith("/client/projects/") && pathname !== "/client/projects/new") &&
     !pathname.startsWith("/talent") &&
-    !pathname.startsWith("/trainer");
+    !pathname.startsWith("/trainer") &&
+    !pathname.startsWith("/employer");
 
   return (
     <>

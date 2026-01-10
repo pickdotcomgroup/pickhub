@@ -12,6 +12,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 
 interface NavItem {
@@ -23,9 +25,11 @@ interface NavItem {
 
 interface TrainerAsideNavProps {
   organizationName?: string;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export default function TrainerAsideNav({ organizationName = "Code Academy" }: TrainerAsideNavProps) {
+export default function TrainerAsideNav({ organizationName = "Code Academy", isCollapsed, onToggleCollapse }: TrainerAsideNavProps) {
   const pathname = usePathname();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -95,11 +99,24 @@ export default function TrainerAsideNav({ organizationName = "Code Academy" }: T
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-40">
+    <aside className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 flex flex-col z-40 transition-all duration-300 ${isCollapsed ? "w-20" : "w-64"}`}>
+      {/* Toggle Button */}
+      <button
+        onClick={onToggleCollapse}
+        className="absolute -right-3 top-8 w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 transition-colors z-50"
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isCollapsed ? (
+          <ChevronRight className="w-4 h-4 text-gray-600" />
+        ) : (
+          <ChevronLeft className="w-4 h-4 text-gray-600" />
+        )}
+      </button>
+
       {/* Logo Section */}
-      <div className="p-6 border-b border-gray-100">
+      <div className={`border-b border-gray-100 ${isCollapsed ? "p-4" : "p-6"}`}>
         <Link href="/trainer/dashboard" className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
             <svg
               className="w-6 h-6 text-white"
               fill="none"
@@ -114,14 +131,16 @@ export default function TrainerAsideNav({ organizationName = "Code Academy" }: T
               />
             </svg>
           </div>
-          <div>
-            <h1 className="font-bold text-gray-900 text-lg leading-tight">
-              {organizationName}
-            </h1>
-            <p className="text-xs text-gray-500 uppercase tracking-wider">
-              Trainer Provider
-            </p>
-          </div>
+          {!isCollapsed && (
+            <div>
+              <h1 className="font-bold text-gray-900 text-lg leading-tight">
+                {organizationName}
+              </h1>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">
+                Trainer Provider
+              </p>
+            </div>
+          )}
         </Link>
       </div>
 
@@ -133,28 +152,30 @@ export default function TrainerAsideNav({ organizationName = "Code Academy" }: T
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group ${
-                active
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+              className={`relative flex items-center ${isCollapsed ? "justify-center" : "justify-between"} px-4 py-3 rounded-lg transition-all duration-200 group ${active
+                ? "bg-blue-50 text-blue-700"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`}
+              title={isCollapsed ? item.label : undefined}
             >
-              <div className="flex items-center space-x-3">
+              <div className={`flex items-center ${isCollapsed ? "" : "space-x-3"}`}>
                 <span
-                  className={`${
-                    active
-                      ? "text-blue-600"
-                      : "text-gray-400 group-hover:text-gray-600"
-                  }`}
+                  className={`${active
+                    ? "text-blue-600"
+                    : "text-gray-400 group-hover:text-gray-600"
+                    }`}
                 >
                   {item.icon}
                 </span>
-                <span className="font-medium">{item.label}</span>
+                {!isCollapsed && <span className="box text-sm">{item.label}</span>}
               </div>
-              {item.badge !== undefined && item.badge > 0 && (
+              {!isCollapsed && item.badge !== undefined && item.badge > 0 && (
                 <span className="bg-blue-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full min-w-[20px] text-center">
                   {item.badge > 99 ? "99+" : item.badge}
                 </span>
+              )}
+              {isCollapsed && item.badge !== undefined && item.badge > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full" />
               )}
             </Link>
           );
@@ -165,10 +186,11 @@ export default function TrainerAsideNav({ organizationName = "Code Academy" }: T
       <div className="p-4 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-3 w-full px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group"
+          className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"} w-full px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200 group`}
+          title={isCollapsed ? "Logout" : undefined}
         >
           <LogOut className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
-          <span className="font-medium">Logout</span>
+          {!isCollapsed && <span className="font-medium">Logout</span>}
         </button>
       </div>
     </aside>

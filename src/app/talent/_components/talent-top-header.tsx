@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { Search, Bell, Settings, LogOut, User, GraduationCap } from "lucide-react";
+import { Search, Bell, Settings, LogOut, User } from "lucide-react";
 import Image from "next/image";
 
 interface TalentTopHeaderProps {
@@ -67,7 +67,6 @@ export default function TalentTopHeader({ userRole = "Full Stack Developer" }: T
             href="/talent/upskilling"
             className="hidden md:flex items-center space-x-2 px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-medium"
           >
-            <GraduationCap className="w-4 h-4" />
             <span>Upskilling</span>
           </Link>
 

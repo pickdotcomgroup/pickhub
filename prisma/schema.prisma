@@ -46,28 +46,37 @@ model Session {
 }
 
 model User {
-  id                  String           @id @default(cuid())
+  id                  String              @id @default(cuid())
   name                String?
-  email               String?          @unique
+  email               String?             @unique
   emailVerified       DateTime?
   image               String?
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   password            String?
-  role                String           @default("user")
+  role                String              @default("user")
   accounts            Account[]
   adminProfile        AdminProfile?
   employerProfile     EmployerProfile?
   trainerProfile      TrainerProfile?
   applications        Application[]
-  clientConversations Conversation[]   @relation("ClientConversations")
-  talentConversations Conversation[]   @relation("TalentConversations")
+  clientConversations Conversation[]      @relation("ClientConversations")
+  talentConversations Conversation[]      @relation("TalentConversations")
   sentMessages        Message[]
   notifications       Notification[]
   posts               Post[]
   projects            Project[]
   sessions            Session[]
   talentProfile       TalentProfile?
+  // Payment-related relations
+  orders              Order[]
+  enrollments         Enrollment[]
+  payouts             Payout[]
+  trainerCourses      Course[]            @relation("TrainerCourses")
+  jobPostingPayments  JobPostingPayment[]
+  // Job posting relations
+  jobs                Job[]
+  jobApplications     JobApplication[]
 }
 
 model EmployerProfile {
@@ -97,6 +106,9 @@ model TalentProfile {
   experience         String
   hourlyRate         String?
   portfolio          String?
+  phone              String?
+  resumeUrl          String?
+  resumeName         String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   activePicks        Int                 @default(0)
@@ -198,28 +210,30 @@ model SkillTest {
 }
 
 model Project {
-  id                String        @id @default(cuid())
-  title             String
-  description       String
-  budget            Float
-  deadline          DateTime
-  category          String
-  skills            String[]
-  projectType       String        @default("fixed")
-  status            String        @default("open")
-  clientId          String
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  estimatedDuration Int?
-  projectTemplate   String?
-  techStack         String[]      @default([])
-  visibility        String        @default("public")
-  minimumTier       String        @default("bronze")
-  hourlyRate        Float?
-  applications      Application[]
-  tasks             Task[]
-  milestones        Milestone[]
-  client            User          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  id                 String             @id @default(cuid())
+  projectKey         String             @unique
+  title              String
+  description        String
+  budget             Float
+  deadline           DateTime
+  category           String
+  skills             String[]
+  projectType        String             @default("fixed")
+  status             String             @default("open")
+  clientId           String
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  estimatedDuration  Int?
+  projectTemplate    String?
+  techStack          String[]           @default([])
+  visibility         String             @default("public")
+  minimumTier        String             @default("bronze")
+  hourlyRate         Float?
+  applications       Application[]
+  tasks              Task[]
+  milestones         Milestone[]
+  client             User               @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  jobPostingPayment  JobPostingPayment?
 
   @@index([clientId])
   @@index([status])
@@ -360,4 +374,181 @@ model Waitlist {
 
   @@index([email])
   @@index([createdAt])
+}
+
+// ==================== PAYMENT MODELS ====================
+
+// Course catalog
+model Course {
+  id              String       @id @default(cuid())
+  title           String
+  description     String
+  price           Float
+  currency        String       @default("PHP")
+  trainerId       String
+  status          String       @default("draft") // draft, published, archived
+  level           String       @default("beginner") // beginner, intermediate, advanced
+  duration        String?      // e.g., "8 hours"
+  thumbnail       String?
+  category        String?
+  skills          String[]     @default([])
+  // Training availability options
+  onlineAvailable Boolean      @default(true)
+  onsiteAvailable Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  trainer         User         @relation("TrainerCourses", fields: [trainerId], references: [id], onDelete: Cascade)
+  enrollments     Enrollment[]
+  orders          Order[]
+
+  @@index([trainerId])
+  @@index([status])
+  @@index([category])
+}
+
+// Order tracking for payments
+model Order {
+  id                  String    @id @default(cuid())
+  userId              String
+  courseId            String?
+  paymongoCheckoutId  String    @unique
+  paymongoPaymentId   String?
+  type                String    // course_purchase, job_posting
+  amount              Float
+  currency            String    @default("PHP")
+  platformFee         Float     // 15% of amount
+  trainerPayout       Float?    // 85% of amount (for course purchases)
+  status              String    @default("pending") // pending, paid, refunded, failed
+  paidAt              DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course              Course?   @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  payout              Payout?
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+  @@index([paymongoCheckoutId])
+}
+
+// Course enrollment records
+model Enrollment {
+  id          String    @id @default(cuid())
+  userId      String
+  courseId    String
+  orderId     String?
+  progress    Float     @default(0) // 0-100 percentage
+  status      String    @default("active") // active, completed, paused, expired
+  enrolledAt  DateTime  @default(now())
+  completedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+}
+
+// Trainer payout tracking
+model Payout {
+  id          String    @id @default(cuid())
+  trainerId   String
+  orderId     String    @unique
+  amount      Float     // 85% of course price
+  status      String    @default("pending") // pending, processing, completed, failed
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  trainer     User      @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([trainerId])
+  @@index([status])
+}
+
+// Job posting payment for employers
+model JobPostingPayment {
+  id                 String    @id @default(cuid())
+  employerId         String
+  projectId          String    @unique
+  paymongoCheckoutId String    @unique
+  amount             Float
+  type               String    // single_post, featured
+  expiresAt          DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  employer           User      @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([employerId])
+  @@index([projectId])
+}
+
+// ==================== JOB POSTING MODELS ====================
+
+// Job postings by employers
+model Job {
+  id                   String           @id @default(cuid())
+  // Basic Info
+  title                String
+  employmentType       String           // Full-time, Part-time, Contract, Freelance, Internship
+  workLocationType     String           // Remote, On-site, Hybrid
+  location             String?
+  // Salary
+  salaryMin            Float?
+  salaryMax            Float?
+  salaryPeriod         String?          // Per Year, Per Month, Per Hour, Per Project
+  // Description
+  description          String
+  // Requirements
+  experienceLevel      String           // Entry Level, Mid Level, Senior Level, Lead, Executive
+  education            String?          // High School, Associate, Bachelor's, Master's, PhD, No Requirement
+  skills               String[]         @default([])
+  responsibilities     String?
+  qualifications       String?
+  // Benefits & Perks
+  benefits             String[]         @default([])
+  equity               String?
+  signingBonus         Float?
+  relocationAssistance Boolean          @default(false)
+  visaSponsorship      Boolean          @default(false)
+  // Status & Metadata
+  status               String           @default("draft") // draft, active, closed
+  viewCount            Int              @default(0)
+  // Relations
+  employerId           String
+  employer             User             @relation(fields: [employerId], references: [id], onDelete: Cascade)
+  applications         JobApplication[]
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+
+  @@index([employerId])
+  @@index([status])
+  @@index([employmentType])
+  @@index([workLocationType])
+  @@index([experienceLevel])
+}
+
+// Job applications from talents
+model JobApplication {
+  id          String    @id @default(cuid())
+  jobId       String
+  talentId    String
+  coverLetter String?
+  resumeUrl   String?
+  status      String    @default("pending") // pending, reviewed, shortlisted, rejected, hired
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  job         Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  talent      User      @relation(fields: [talentId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, talentId])
+  @@index([jobId])
+  @@index([talentId])
+  @@index([status])
 }

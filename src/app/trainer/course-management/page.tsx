@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Search, MoreVertical, BookOpen, Users, Star } from "lucide-react";
+import { Plus, Search, MoreVertical, BookOpen, Users, Star, Globe, Building } from "lucide-react";
 
 interface Course {
   id: string;
@@ -15,6 +15,47 @@ interface Course {
   completionRate: number;
   rating: number;
   thumbnail?: string;
+  onlineAvailable: boolean;
+  onsiteAvailable: boolean;
+}
+
+// Toggle Switch Component
+function ToggleSwitch({
+  enabled,
+  onChange,
+  label,
+  icon: Icon,
+  activeColor = "blue",
+}: {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+  label: string;
+  icon: React.ElementType;
+  activeColor?: "blue" | "amber";
+}) {
+  const colorClasses = {
+    blue: enabled ? "bg-blue-600" : "bg-gray-200",
+    amber: enabled ? "bg-amber-500" : "bg-gray-200",
+  };
+
+  return (
+    <button
+      onClick={() => onChange(!enabled)}
+      className="flex items-center gap-2 group"
+      title={`${enabled ? "Disable" : "Enable"} ${label}`}
+    >
+      <Icon className={`w-4 h-4 ${enabled ? (activeColor === "blue" ? "text-blue-600" : "text-amber-500") : "text-gray-400"}`} />
+      <div
+        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${colorClasses[activeColor]}`}
+      >
+        <span
+          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+            enabled ? "translate-x-4" : "translate-x-0.5"
+          }`}
+        />
+      </div>
+    </button>
+  );
 }
 
 export default function CourseManagementPage() {
@@ -22,35 +63,58 @@ export default function CourseManagementPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [courses] = useState<Course[]>([
+  const [courses, setCourses] = useState<Course[]>([
     {
       id: "1",
       title: "Advanced React Patterns",
       status: "published",
-      price: 49.99,
+      price: 2499,
       students: 843,
       completionRate: 75,
       rating: 4.8,
+      onlineAvailable: true,
+      onsiteAvailable: true,
     },
     {
       id: "2",
       title: "Python for Data Science",
       status: "published",
-      price: 59.99,
+      price: 4999,
       students: 621,
       completionRate: 68,
       rating: 4.6,
+      onlineAvailable: true,
+      onsiteAvailable: false,
     },
     {
       id: "3",
       title: "UI/UX Fundamentals",
       status: "draft",
-      price: 39.99,
+      price: 2499,
       students: 0,
       completionRate: 0,
       rating: 0,
+      onlineAvailable: false,
+      onsiteAvailable: true,
     },
   ]);
+
+  // Handle training type toggle
+  const handleToggleTrainingType = (courseId: string, type: "online" | "onsite", enabled: boolean) => {
+    setCourses((prev) =>
+      prev.map((course) => {
+        if (course.id === courseId) {
+          return {
+            ...course,
+            ...(type === "online" ? { onlineAvailable: enabled } : { onsiteAvailable: enabled }),
+          };
+        }
+        return course;
+      })
+    );
+    // TODO: Call API to update course training availability
+    console.log(`Course ${courseId}: ${type} set to ${enabled}`);
+  };
 
   useEffect(() => {
     if (status === "loading") return;
@@ -215,6 +279,9 @@ export default function CourseManagementPage() {
                     Price
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Training Options
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Students
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -244,7 +311,25 @@ export default function CourseManagementPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">
-                      ${course.price.toFixed(2)}
+                      ₱{course.price.toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-4">
+                        <ToggleSwitch
+                          enabled={course.onlineAvailable}
+                          onChange={(enabled) => handleToggleTrainingType(course.id, "online", enabled)}
+                          label="Online"
+                          icon={Globe}
+                          activeColor="blue"
+                        />
+                        <ToggleSwitch
+                          enabled={course.onsiteAvailable}
+                          onChange={(enabled) => handleToggleTrainingType(course.id, "onsite", enabled)}
+                          label="Onsite"
+                          icon={Building}
+                          activeColor="amber"
+                        />
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                       {course.students.toLocaleString()}

@@ -64,12 +64,13 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
+    // Create user with the appropriate role
     const user = await db.user.create({
       data: {
         email: email,
         password: hashedPassword,
         name: name,
+        role: professionalData?.professionalType ?? "user",
       },
     });
 

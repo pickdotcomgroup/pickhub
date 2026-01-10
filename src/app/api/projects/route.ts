@@ -2,6 +2,24 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { NextResponse } from "next/server";
 
+// Helper function to generate unique project key
+async function generateProjectKey(): Promise<string> {
+  const lastProject = await db.project.findFirst({
+    orderBy: { createdAt: "desc" },
+    select: { projectKey: true },
+  });
+
+  let nextNumber = 1;
+  if (lastProject?.projectKey) {
+    const match = /PRJ-(\d+)/.exec(lastProject.projectKey);
+    if (match?.[1]) {
+      nextNumber = parseInt(match[1], 10) + 1;
+    }
+  }
+
+  return `PRJ-${nextNumber.toString().padStart(3, "0")}`;
+}
+
 interface ProjectRequestBody {
   title?: string;
   description?: string;
@@ -59,9 +77,13 @@ export async function POST(req: Request) {
       );
     }
 
+    // Generate unique project key
+    const projectKey = await generateProjectKey();
+
     // Create project in database
     const project = await db.project.create({
       data: {
+        projectKey: projectKey,
         title: title,
         description: description,
         budget: parseFloat(String(budget)),

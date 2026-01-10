@@ -163,7 +163,7 @@ export default function TalentBrowsePage() {
     );
   };
 
-  const getTierColor = (tier: string) => {
+  const _getTierColor = (tier: string) => {
     switch (tier) {
       case "gold":
         return "text-yellow-400";
@@ -280,7 +280,7 @@ export default function TalentBrowsePage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Pick Projects</h1>
               <p className="text-gray-600">Find and apply to projects that match your skills</p>
             </div>
-            {talentProfile && (
+            {/* {talentProfile && (
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="flex items-center gap-4">
                   <div>
@@ -312,7 +312,7 @@ export default function TalentBrowsePage() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 

@@ -18,6 +18,9 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    // PayMongo Payment Integration
+    PAYMONGO_SECRET_KEY: z.string().optional(),
+    PAYMONGO_WEBHOOK_SECRET: z.string().optional(),
   },
 
   /**
@@ -27,6 +30,7 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_PAYMONGO_PUBLIC_KEY: z.string().optional(),
   },
 
   /**
@@ -40,6 +44,10 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     // SUPABASE_URL: process.env.SUPABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    // PayMongo Payment Integration
+    PAYMONGO_SECRET_KEY: process.env.PAYMONGO_SECRET_KEY,
+    PAYMONGO_WEBHOOK_SECRET: process.env.PAYMONGO_WEBHOOK_SECRET,
+    NEXT_PUBLIC_PAYMONGO_PUBLIC_KEY: process.env.NEXT_PUBLIC_PAYMONGO_PUBLIC_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

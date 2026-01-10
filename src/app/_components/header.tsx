@@ -49,16 +49,6 @@ export default function Header() {
     return pathname === path;
   };
 
-  // Helper function to get navigation link classes
-  const getNavLinkClasses = (path: string) => {
-    const baseClasses = "px-4 py-2 text-sm transition border-b-2";
-    const activeClasses = "text-blue-600 border-b-blue-600 font-semibold";
-    const inactiveClasses =
-      "text-gray-700 hover:text-gray-900 border-b-transparent hover:border-b-gray-300";
-
-    return `${baseClasses} ${isActivePath(path) ? activeClasses : inactiveClasses}`;
-  };
-
   // Helper function for mobile nav link classes
   const getMobileNavLinkClasses = (path: string) => {
     const baseClasses = "px-4 py-3 text-sm rounded-lg transition";
@@ -359,104 +349,7 @@ export default function Header() {
               </nav>
             )}
           </div>
-
-          {/* Quick Actions Navigation */}
-          {session?.user && (
-            <nav className="mr-4 ml-auto hidden items-center space-x-1 md:flex">
-              {session.user.role === "employer" ? (
-                <>
-                  <Link
-                    href="/employer/browse"
-                    className={`${getNavLinkClasses("/employer/browse")} flex items-center gap-2`}
-                  >
-                    <span>Browse Developers</span>
-                  </Link>
-                  <Link
-                    href="/employer/projects"
-                    className={`${getNavLinkClasses("/employer/projects")} flex items-center gap-2`}
-                  >
-                    <span>My Projects</span>
-                  </Link>
-                  <Link
-                    href="/employer/projects/new"
-                    className="flex items-center gap-2 rounded-lg border-2 border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
-                  >
-                    <span>Post a Project</span>
-                  </Link>
-                  <Link
-                    href="/employer/messages"
-                    className={`relative ${getNavLinkClasses("/employer/messages")}`}
-                    aria-label="Messages"
-                  >
-                    <span>Messages</span>
-                    <NotificationBadge count={unreadCount} />
-                  </Link>
-                </>
-              ) : session.user.role === "talent" ? (
-                <>
-                  <Link
-                    href="/developer/trainings"
-                    className={`${getNavLinkClasses("/developer/trainings")} flex items-center gap-2`}
-                  >
-                    Trainings
-                  </Link>
-                  <Link
-                    href="/developer/jobs"
-                    className={`${getNavLinkClasses("/developer/jobs")} flex items-center gap-2`}
-                  >
-                    Browse Job
-                  </Link>
-                  <Link
-                    href="/talent/browse"
-                    className={`${getNavLinkClasses("/talent/browse")} flex items-center gap-2`}
-                  >
-                    Browse Project
-                  </Link>
-                  <Link
-                    href="/talent/messages"
-                    className={`relative ${getNavLinkClasses("/talent/messages")}`}
-                    aria-label="Messages"
-                  >
-                    <span>Message</span>
-                    <NotificationBadge count={unreadCount} />
-                  </Link>
-                </>
-              ) : session.user.role === "trainer" ? (
-                <>
-                  <Link
-                    href="/trainer/courses"
-                    className={`${getNavLinkClasses("/trainer/courses")} flex items-center gap-2`}
-                  >
-                    <span>My Courses</span>
-                  </Link>
-                  <Link
-                    href="/trainer/students"
-                    className={`${getNavLinkClasses("/trainer/students")} flex items-center gap-2`}
-                  >
-                    <span>Students</span>
-                  </Link>
-                  <Link
-                    href="/trainer/messages"
-                    className={`relative ${getNavLinkClasses("/trainer/messages")}`}
-                    aria-label="Messages"
-                  >
-                    <span>Messages</span>
-                    <NotificationBadge count={unreadCount} />
-                  </Link>
-                </>
-              ) : session.user.role === "admin" ? (
-                <>
-                  <Link
-                    href="/admin/dashboard"
-                    className={getNavLinkClasses("/admin/dashboard")}
-                  >
-                    Dashboard
-                  </Link>
-                </>
-              ) : null}
-            </nav>
-          )}
-
+          
           <div className="flex items-center gap-2">
             {session?.user ? (
               <>
@@ -882,7 +775,14 @@ export default function Header() {
               </>
             ) : pathname !== "/wait-list" ? (
               <div className="flex items-center space-x-2 sm:space-x-3">
-                {pathname !== "/signin" && (
+                {pathname === "/signin" ? (
+                  <Link
+                    href="/signup?type=talent"
+                    className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
+                  >
+                    Signup as Talent
+                  </Link>
+                ) : (
                   <Link
                     href="/signin"
                     className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"

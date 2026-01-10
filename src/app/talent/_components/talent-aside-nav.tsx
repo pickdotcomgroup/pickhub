@@ -13,6 +13,9 @@ import {
   ChevronRight,
   Bot,
   GraduationCap,
+  SquareChartGantt,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 
 interface NavItem {
@@ -62,10 +65,16 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
       label: "AI Jobs",
       href: "/talent/jobs",
       icon: <Bot className="w-5 h-5" />,
-      
+
     },
     {
-      label: "Projects",
+      label: "Project browse",
+      href: "/talent/browse",
+      icon: <SquareChartGantt className="w-5 h-5" />,
+
+    },
+    {
+      label: "My Projects",
       href: "/talent/projects",
       icon: <FolderKanban className="w-5 h-5" />,
     },
@@ -117,6 +126,7 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
         )}
       </button>
 
+
       {/* Logo Section */}
       <div className={`border-b border-gray-100 ${isCollapsed ? "p-4" : "p-6"}`}>
         <Link href="/talent/dashboard" className="flex items-center space-x-3">
@@ -153,20 +163,18 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex items-center ${isCollapsed ? "justify-center" : "justify-between"} px-4 py-3 rounded-lg transition-all duration-200 group ${
-                active
+              className={`relative flex items-center ${isCollapsed ? "justify-center" : "justify-between"} px-4 py-3 rounded-lg transition-all duration-200 group ${active
                   ? "bg-blue-50 text-blue-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+                }`}
               title={isCollapsed ? item.label : undefined}
             >
               <div className={`flex items-center ${isCollapsed ? "" : "space-x-3"}`}>
                 <span
-                  className={`${
-                    active
+                  className={`${active
                       ? "text-blue-600"
                       : "text-gray-400 group-hover:text-gray-600"
-                  }`}
+                    }`}
                 >
                   {item.icon}
                 </span>
@@ -185,6 +193,36 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
         })}
       </nav>
 
+      {/* Upskilling CTA */}
+      <div className="px-4 pb-4">
+        {isCollapsed ? (
+          <Link
+            href="/talent/upskilling"
+            className="flex items-center justify-center w-full p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl hover:from-purple-600 hover:to-blue-700 transition-all duration-200 group"
+            title="Level up your skills"
+          >
+            <Sparkles className="w-5 h-5 text-white" />
+          </Link>
+        ) : (
+          <Link
+            href="/talent/upskilling"
+            className="block p-4 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl hover:from-purple-600 hover:to-blue-700 transition-all duration-200 group"
+          >
+            <div className="flex items-center space-x-2 mb-2">
+              <Sparkles className="w-5 h-5 text-white" />
+              <span className="text-white font-semibold text-sm">Level Up!</span>
+            </div>
+            <p className="text-white/90 text-xs mb-3">
+              Boost your career with in-demand skills and certifications
+            </p>
+            <div className="flex items-center text-white text-xs font-medium group-hover:translate-x-1 transition-transform duration-200">
+              <span>Explore courses</span>
+              <ArrowRight className="w-3 h-3 ml-1" />
+            </div>
+          </Link>
+        )}
+      </div>
+
       {/* Bottom Navigation Items */}
       <div className="p-4 border-t border-gray-100">
         {bottomNavItems.map((item) => {
@@ -193,19 +231,17 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all duration-200 group ${
-                active
+              className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-3"} px-4 py-3 rounded-lg transition-all duration-200 group ${active
                   ? "bg-blue-50 text-blue-700"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-              }`}
+                }`}
               title={isCollapsed ? item.label : undefined}
             >
               <span
-                className={`${
-                  active
+                className={`${active
                     ? "text-blue-600"
                     : "text-gray-400 group-hover:text-gray-600"
-                }`}
+                  }`}
               >
                 {item.icon}
               </span>

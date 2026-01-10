@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import {
   Search,
   MapPin,
@@ -13,47 +13,21 @@ import {
   Home,
   Briefcase,
   ChevronDown,
-  Bot,
-  Cpu,
-  Database,
-  Brain,
-  Sparkles,
-  Settings,
-  Zap,
+  DollarSign,
+  Loader2,
 } from "lucide-react";
-import {
-  aiJobsData,
-  jobTypeFilters,
-  experienceLevelFilters,
-  salaryRangeFilters,
-  sortOptions,
-} from "./ai-jobs-data";
+import { api } from "~/trpc/react";
 
-const companyIcons: Record<string, React.ReactNode> = {
-  microsoft: <Cpu className="w-6 h-6 text-blue-600" />,
-  netflix: <Database className="w-6 h-6 text-red-600" />,
-  stripe: <Settings className="w-6 h-6 text-purple-600" />,
-  openai: <Brain className="w-6 h-6 text-green-600" />,
-  tesla: <Zap className="w-6 h-6 text-red-500" />,
-  google: <Sparkles className="w-6 h-6 text-blue-500" />,
-  databricks: <Database className="w-6 h-6 text-orange-500" />,
-  meta: <Bot className="w-6 h-6 text-blue-600" />,
-  spotify: <Sparkles className="w-6 h-6 text-green-500" />,
-  anthropic: <Brain className="w-6 h-6 text-orange-600" />,
-  "boston-dynamics": <Bot className="w-6 h-6 text-yellow-600" />,
-  ibm: <Cpu className="w-6 h-6 text-blue-700" />,
-  amazon: <Database className="w-6 h-6 text-orange-500" />,
-  deepmind: <Brain className="w-6 h-6 text-blue-500" />,
-  adobe: <Sparkles className="w-6 h-6 text-red-600" />,
-  waymo: <Bot className="w-6 h-6 text-teal-600" />,
-  tempus: <Database className="w-6 h-6 text-blue-600" />,
-  nvidia: <Cpu className="w-6 h-6 text-green-600" />,
-};
+const sortOptions = [
+  { value: "newest", label: "Most Recent" },
+  { value: "salary_high", label: "Salary (High to Low)" },
+  { value: "salary_low", label: "Salary (Low to High)" },
+];
 
 export default function TalentJobsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,18 +35,30 @@ export default function TalentJobsPage() {
 
   // Filter states
   const [selectedJobTypes, setSelectedJobTypes] = useState<string[]>([]);
-  const [selectedExperienceLevels, setSelectedExperienceLevels] = useState<string[]>([
-    "Mid Level",
-    "Senior Level",
-  ]);
-  const [selectedSalaryRange, setSelectedSalaryRange] = useState<string>("200k+");
+  const [selectedExperienceLevels, setSelectedExperienceLevels] = useState<string[]>([]);
+  const [selectedSalaryRange, setSelectedSalaryRange] = useState<string>("");
 
   // Sort state
-  const [sortBy, setSortBy] = useState("most-relevant");
+  const [sortBy, setSortBy] = useState<"newest" | "salary_high" | "salary_low">("newest");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
 
   // Bookmarked jobs
   const [bookmarkedJobs, setBookmarkedJobs] = useState<string[]>([]);
+
+  // Fetch jobs from tRPC
+  const { data: jobsData, isLoading: isJobsLoading } = api.jobs.getAll.useQuery({
+    search: searchQuery || undefined,
+    location: locationQuery || undefined,
+    employmentType: selectedJobTypes.length === 1 ? selectedJobTypes[0] : undefined,
+    experienceLevel: selectedExperienceLevels.length === 1 ? selectedExperienceLevels[0] : undefined,
+    salaryMin: selectedSalaryRange === "100k-150k" ? 100000 : selectedSalaryRange === "150k-200k" ? 150000 : selectedSalaryRange === "200k+" ? 200000 : undefined,
+    salaryMax: selectedSalaryRange === "100k-150k" ? 150000 : selectedSalaryRange === "150k-200k" ? 200000 : undefined,
+    sortBy,
+    limit: 50,
+  });
+
+  // Fetch filter data
+  const { data: filtersData } = api.jobs.getFilters.useQuery();
 
   useEffect(() => {
     if (status === "loading") return;
@@ -100,116 +86,12 @@ export default function TalentJobsPage() {
       } catch (error) {
         console.error("Error checking verification:", error);
       } finally {
-        setIsLoading(false);
+        setIsPageLoading(false);
       }
     };
 
     void checkVerification();
   }, [session, status, router]);
-
-  // Filter and sort jobs
-  const filteredJobs = useMemo(() => {
-    let jobs = [...aiJobsData];
-
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      jobs = jobs.filter(
-        (job) =>
-          job.title.toLowerCase().includes(query) ||
-          job.company.toLowerCase().includes(query) ||
-          job.description.toLowerCase().includes(query)
-      );
-    }
-
-    // Filter by location
-    if (locationQuery) {
-      const query = locationQuery.toLowerCase();
-      jobs = jobs.filter((job) => job.location.toLowerCase().includes(query));
-    }
-
-    // Filter by job type
-    if (selectedJobTypes.length > 0) {
-      jobs = jobs.filter(
-        (job) =>
-          selectedJobTypes.includes(job.jobType) ||
-          (selectedJobTypes.includes("Remote") && job.workType === "Remote")
-      );
-    }
-
-    // Filter by experience level
-    if (selectedExperienceLevels.length > 0) {
-      jobs = jobs.filter((job) =>
-        selectedExperienceLevels.includes(job.experienceLevel)
-      );
-    }
-
-    // Filter by salary range
-    if (selectedSalaryRange) {
-      jobs = jobs.filter((job) => {
-        const salaryStr = job.salaryRange;
-        const match = /\$(\d+)k/.exec(salaryStr);
-        if (!match?.[1]) return true;
-        const salary = parseInt(match[1]) * 1000;
-        switch (selectedSalaryRange) {
-          case "100k-150k":
-            return salary >= 100000 && salary <= 150000;
-          case "150k-200k":
-            return salary >= 150000 && salary <= 200000;
-          case "200k+":
-            return salary >= 200000;
-          default:
-            return true;
-        }
-      });
-    }
-
-    // Sort jobs
-    switch (sortBy) {
-      case "newest":
-        jobs.sort((a, b) => {
-          const getHours = (posted: string) => {
-            if (posted.includes("hour")) return parseInt(posted);
-            if (posted.includes("day"))
-              return parseInt(posted) * 24;
-            if (posted.includes("week"))
-              return parseInt(posted) * 24 * 7;
-            return 0;
-          };
-          return getHours(a.postedAt) - getHours(b.postedAt);
-        });
-        break;
-      case "salary-high":
-        jobs.sort((a, b) => {
-          const getSalary = (range: string) => {
-            const match = /\$(\d+)k/.exec(range);
-            return match?.[1] ? parseInt(match[1]) : 0;
-          };
-          return getSalary(b.salaryRange) - getSalary(a.salaryRange);
-        });
-        break;
-      case "salary-low":
-        jobs.sort((a, b) => {
-          const getSalary = (range: string) => {
-            const match = /\$(\d+)k/.exec(range);
-            return match?.[1] ? parseInt(match[1]) : 0;
-          };
-          return getSalary(a.salaryRange) - getSalary(b.salaryRange);
-        });
-        break;
-      default:
-        break;
-    }
-
-    return jobs;
-  }, [
-    searchQuery,
-    locationQuery,
-    selectedJobTypes,
-    selectedExperienceLevels,
-    selectedSalaryRange,
-    sortBy,
-  ]);
 
   const handleJobTypeChange = (value: string) => {
     setSelectedJobTypes((prev) =>
@@ -256,7 +138,59 @@ export default function TalentJobsPage() {
     }
   };
 
-  if (status === "loading" || isLoading) {
+  const formatSalary = (min?: number | null, max?: number | null, period?: string | null) => {
+    if (!min && !max) return "Salary not specified";
+    const formatNum = (n: number) => {
+      if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+      return `$${n}`;
+    };
+    if (min && max) {
+      return `${formatNum(min)} - ${formatNum(max)}${period ? ` ${period}` : ""}`;
+    }
+    if (min) return `${formatNum(min)}+${period ? ` ${period}` : ""}`;
+    if (max) return `Up to ${formatNum(max)}${period ? ` ${period}` : ""}`;
+    return "Salary not specified";
+  };
+
+  const formatPostedAt = (date: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - new Date(date).getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffHours < 1) return "Just now";
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? "s" : ""} ago`;
+    return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? "s" : ""} ago`;
+  };
+
+  const jobs = jobsData?.jobs ?? [];
+
+  // Static filter options
+  const jobTypeFilters = [
+    { value: "Full-time", label: "Full-time" },
+    { value: "Part-time", label: "Part-time" },
+    { value: "Contract", label: "Contract" },
+    { value: "Freelance", label: "Freelance" },
+    { value: "Internship", label: "Internship" },
+  ];
+
+  const experienceLevelFilters = [
+    { value: "Entry Level", label: "Entry Level" },
+    { value: "Mid Level", label: "Mid Level" },
+    { value: "Senior Level", label: "Senior Level" },
+    { value: "Lead", label: "Lead" },
+    { value: "Executive", label: "Executive" },
+  ];
+
+  const salaryRangeFilters = [
+    { value: "100k-150k", label: "$100k - $150k" },
+    { value: "150k-200k", label: "$150k - $200k" },
+    { value: "200k+", label: "$200k+" },
+  ];
+
+  if (status === "loading" || isPageLoading) {
     return (
       <main className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-6xl mx-auto">
@@ -283,7 +217,7 @@ export default function TalentJobsPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">
-            Find Your Next AI Role
+            Find Your Next Role
           </h1>
         </div>
 
@@ -294,7 +228,7 @@ export default function TalentJobsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="AI Researcher, ML Engineer, Data Scientist..."
+                placeholder="Job title, company, or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -311,7 +245,7 @@ export default function TalentJobsPage() {
               />
             </div>
             <button className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition whitespace-nowrap">
-              Search AI Jobs
+              Search Jobs
             </button>
           </div>
         </div>
@@ -337,27 +271,30 @@ export default function TalentJobsPage() {
                   Job Type
                 </h3>
                 <div className="space-y-2.5">
-                  {jobTypeFilters.map((filter) => (
-                    <label
-                      key={filter.value}
-                      className="flex items-center justify-between cursor-pointer"
-                    >
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedJobTypes.includes(filter.value)}
-                          onChange={() => handleJobTypeChange(filter.value)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                        />
-                        <span className="ml-2.5 text-sm text-gray-700">
-                          {filter.label}
-                        </span>
-                      </div>
-                      <span className="text-sm text-gray-400">
-                        {filter.count}
-                      </span>
-                    </label>
-                  ))}
+                  {jobTypeFilters.map((filter) => {
+                    const count = filtersData?.employmentTypes.find(
+                      (t) => t.value === filter.value
+                    )?.count ?? 0;
+                    return (
+                      <label
+                        key={filter.value}
+                        className="flex items-center justify-between cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedJobTypes.includes(filter.value)}
+                            onChange={() => handleJobTypeChange(filter.value)}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="ml-2.5 text-sm text-gray-700">
+                            {filter.label}
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-400">{count}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -367,24 +304,30 @@ export default function TalentJobsPage() {
                   Experience Level
                 </h3>
                 <div className="space-y-2.5">
-                  {experienceLevelFilters.map((filter) => (
-                    <label
-                      key={filter.value}
-                      className="flex items-center cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedExperienceLevels.includes(filter.value)}
-                        onChange={() =>
-                          handleExperienceLevelChange(filter.value)
-                        }
-                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                      />
-                      <span className="ml-2.5 text-sm text-gray-700">
-                        {filter.label}
-                      </span>
-                    </label>
-                  ))}
+                  {experienceLevelFilters.map((filter) => {
+                    const count = filtersData?.experienceLevels.find(
+                      (l) => l.value === filter.value
+                    )?.count ?? 0;
+                    return (
+                      <label
+                        key={filter.value}
+                        className="flex items-center justify-between cursor-pointer"
+                      >
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedExperienceLevels.includes(filter.value)}
+                            onChange={() => handleExperienceLevelChange(filter.value)}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="ml-2.5 text-sm text-gray-700">
+                            {filter.label}
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-400">{count}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -424,11 +367,9 @@ export default function TalentJobsPage() {
               <p className="text-sm text-gray-600">
                 Showing{" "}
                 <span className="font-semibold text-gray-900">
-                  {filteredJobs.length}
+                  {jobs.length}
                 </span>{" "}
-                <span className="text-blue-600 font-medium">
-                  AI & ML results
-                </span>
+                job{jobs.length !== 1 ? "s" : ""}
               </p>
               <div className="relative">
                 <button
@@ -447,7 +388,7 @@ export default function TalentJobsPage() {
                       <button
                         key={option.value}
                         onClick={() => {
-                          setSortBy(option.value);
+                          setSortBy(option.value as "newest" | "salary_high" | "salary_low");
                           setShowSortDropdown(false);
                         }}
                         className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
@@ -464,101 +405,142 @@ export default function TalentJobsPage() {
               </div>
             </div>
 
+            {/* Loading State */}
+            {isJobsLoading && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              </div>
+            )}
+
             {/* Job Cards */}
-            <div className="space-y-4">
-              {filteredJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition cursor-pointer"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4 flex-1">
-                      {/* Company Logo */}
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        {job.logoIcon && companyIcons[job.logoIcon] ? (
-                          companyIcons[job.logoIcon]
-                        ) : (
-                          <Briefcase className="w-6 h-6 text-gray-400" />
-                        )}
-                      </div>
-
-                      {/* Job Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {job.title}
-                        </h3>
-                        <p className="text-gray-600 mb-3">
-                          {job.company} • {job.location}
-                        </p>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                            {getWorkTypeIcon(job.workType)}
-                            {job.workType}
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                            <Clock className="w-3.5 h-3.5" />
-                            {job.jobType}
-                          </span>
-                          <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-sm font-medium rounded-full border border-green-200">
-                            {job.salaryRange}
-                          </span>
+            {!isJobsLoading && (
+              <div className="space-y-4">
+                {jobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition cursor-pointer"
+                    onClick={() => router.push(`/talent/jobs/${job.id}`)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-4 flex-1">
+                        {/* Company Logo */}
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          {job.employer.image ? (
+                            <img
+                              src={job.employer.image}
+                              alt={job.employer.employerProfile?.companyName ?? "Company"}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          ) : (
+                            <Briefcase className="w-6 h-6 text-gray-400" />
+                          )}
                         </div>
 
-                        {/* Description */}
-                        <p className="text-gray-600 text-sm line-clamp-2 mb-4">
-                          {job.description}
-                        </p>
+                        {/* Job Info */}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                            {job.title}
+                          </h3>
+                          <p className="text-gray-600 mb-3">
+                            {job.employer.employerProfile?.companyName ?? job.employer.name ?? "Company"}
+                            {job.location && ` • ${job.location}`}
+                          </p>
 
-                        {/* Footer */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Calendar className="w-4 h-4 mr-1.5" />
-                            Posted {job.postedAt}
+                          {/* Tags */}
+                          <div className="flex flex-wrap items-center gap-2 mb-3">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                              {getWorkTypeIcon(job.workLocationType)}
+                              {job.workLocationType}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
+                              <Clock className="w-3.5 h-3.5" />
+                              {job.employmentType}
+                            </span>
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-sm font-medium rounded-full border border-green-200">
+                              <DollarSign className="w-3.5 h-3.5" />
+                              {formatSalary(job.salaryMin, job.salaryMax, job.salaryPeriod)}
+                            </span>
                           </div>
-                          <button className="px-5 py-2 border border-blue-600 text-blue-600 font-medium text-sm rounded-lg hover:bg-blue-50 transition">
-                            Apply Now
-                          </button>
+
+                          {/* Skills */}
+                          {job.skills.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mb-3">
+                              {job.skills.slice(0, 4).map((skill) => (
+                                <span
+                                  key={skill}
+                                  className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                              {job.skills.length > 4 && (
+                                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded">
+                                  +{job.skills.length - 4} more
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Description */}
+                          <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                            {job.description}
+                          </p>
+
+                          {/* Footer */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-sm text-gray-500">
+                              <Calendar className="w-4 h-4 mr-1.5" />
+                              Posted {formatPostedAt(job.createdAt)}
+                            </div>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/talent/jobs/${job.id}/apply`);
+                              }}
+                              className="px-5 py-2 border border-blue-600 text-blue-600 font-medium text-sm rounded-lg hover:bg-blue-50 transition"
+                            >
+                              Apply Now
+                            </button>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Bookmark */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleBookmark(job.id);
+                        }}
+                        className="ml-4 flex-shrink-0"
+                      >
+                        <Bookmark
+                          className={`w-5 h-5 ${
+                            bookmarkedJobs.includes(job.id)
+                              ? "fill-blue-600 text-blue-600"
+                              : "text-gray-400 hover:text-gray-600"
+                          }`}
+                        />
+                      </button>
                     </div>
-
-                    {/* Bookmark */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleBookmark(job.id);
-                      }}
-                      className="ml-4 flex-shrink-0"
-                    >
-                      <Bookmark
-                        className={`w-5 h-5 ${
-                          bookmarkedJobs.includes(job.id)
-                            ? "fill-blue-600 text-blue-600"
-                            : "text-gray-400 hover:text-gray-600"
-                        }`}
-                      />
-                    </button>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {filteredJobs.length === 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Search className="w-8 h-8 text-gray-400" />
+                {jobs.length === 0 && !isJobsLoading && (
+                  <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      No jobs found
+                    </h3>
+                    <p className="text-gray-600">
+                      Try adjusting your filters or search terms to find more
+                      opportunities.
+                    </p>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No jobs found
-                  </h3>
-                  <p className="text-gray-600">
-                    Try adjusting your filters or search terms to find more
-                    opportunities.
-                  </p>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -264,7 +264,7 @@ function SignupContent() {
   useEffect(() => {
     if (session?.user) {
       if (session.user.role === "employer") {
-        router.push("/employer/browse");
+        router.push("/employer/dashboard");
       } else if (session.user.role === "talent") {
         router.push("/talent/dashboard");
       } else if (session.user.role === "trainer") {

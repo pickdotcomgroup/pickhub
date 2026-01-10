@@ -13,7 +13,13 @@ import {
   Mail,
   Smartphone,
   Eye,
+  CheckCircle,
+  ExternalLink,
+  Loader2,
+  Crown,
+  Star,
 } from "lucide-react";
+import { TALENT_TIERS, formatTierPrice } from "~/lib/subscription-tiers";
 
 interface SettingSection {
   id: string;
@@ -27,6 +33,20 @@ export default function TalentSettingsPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("account");
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const [currentSubscription] = useState<{
+    tier: string;
+    status: string;
+    currentPeriodEnd: string;
+  } | null>(null);
+  const [orderHistory] = useState<Array<{
+    id: string;
+    type: string;
+    amount: number;
+    status: string;
+    createdAt: string;
+    course?: { title: string };
+  }>>([]);
 
   // Settings sections
   const settingSections: SettingSection[] = [
@@ -388,40 +408,216 @@ export default function TalentSettingsPage() {
     </div>
   );
 
+  const handleUpgradePlan = async (tierId: string) => {
+    const tier = Object.values(TALENT_TIERS).find(t => t.id === tierId);
+    if (!tier?.polarProductId) {
+      alert("This plan is not yet available for purchase. Please contact support.");
+      return;
+    }
+
+    setSubscriptionLoading(true);
+    try {
+      const response = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "subscription",
+          productId: tier.polarProductId,
+          tier: tierId,
+          successUrl: `${window.location.origin}/payments/success?type=subscription`,
+          cancelUrl: `${window.location.origin}/talent/settings`,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to create checkout");
+
+      const data = (await response.json()) as { checkoutUrl?: string };
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
+    } catch (error) {
+      console.error("Upgrade error:", error);
+      alert("Failed to start upgrade. Please try again.");
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
+  const handleManageBilling = async () => {
+    try {
+      const response = await fetch("/api/trpc/payments.getCustomerPortalUrl");
+      const data = (await response.json()) as { result?: { data?: { url?: string } } };
+      if (data?.result?.data?.url) {
+        window.open(data.result.data.url, "_blank");
+      } else {
+        alert("Billing portal is not available. Please contact support.");
+      }
+    } catch (error) {
+      console.error("Portal error:", error);
+    }
+  };
+
   const renderBillingSection = () => (
     <div className="space-y-6">
+      {/* Current Plan */}
       <div>
         <h3 className="text-lg font-medium text-gray-900 mb-4">Current Plan</h3>
         <div className="p-6 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-600 font-medium">Free Plan</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">$0/month</p>
-              <p className="text-sm text-gray-600 mt-2">Basic access to job listings and profile</p>
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-blue-600" />
+                <p className="text-sm text-blue-600 font-medium">
+                  {currentSubscription ? currentSubscription.tier : "Free"} Plan
+                </p>
+              </div>
+              <p className="text-2xl font-bold text-gray-900 mt-1">
+                {currentSubscription
+                  ? formatTierPrice(TALENT_TIERS[currentSubscription.tier] ?? TALENT_TIERS.free!)
+                  : "$0/month"}
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                {currentSubscription
+                  ? `Renews on ${new Date(currentSubscription.currentPeriodEnd).toLocaleDateString()}`
+                  : "Basic access to job listings and profile"}
+              </p>
             </div>
-            <button className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">
-              Upgrade Plan
-            </button>
+            {currentSubscription ? (
+              <button
+                onClick={handleManageBilling}
+                className="flex items-center gap-2 px-6 py-2.5 bg-white text-blue-600 border border-blue-200 rounded-lg font-medium hover:bg-blue-50 transition"
+              >
+                Manage Billing
+                <ExternalLink className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                onClick={() => handleUpgradePlan("talent_professional")}
+                disabled={subscriptionLoading}
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                {subscriptionLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  "Upgrade Plan"
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Available Plans */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Methods</h3>
-        <div className="p-4 bg-gray-50 rounded-lg text-center">
-          <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No payment methods added</p>
-          <button className="mt-3 text-blue-600 font-medium hover:text-blue-700">
-            Add Payment Method
-          </button>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Available Plans</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(TALENT_TIERS).map(([key, tier]) => (
+            <div
+              key={tier.id}
+              className={`p-5 rounded-xl border-2 ${
+                tier.recommended
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 bg-white"
+              }`}
+            >
+              {tier.recommended && (
+                <div className="flex items-center gap-1 text-blue-600 text-sm font-medium mb-2">
+                  <Star className="w-4 h-4" />
+                  Recommended
+                </div>
+              )}
+              <h4 className="font-bold text-gray-900">{tier.name}</h4>
+              <p className="text-2xl font-bold text-gray-900 mt-2">
+                {formatTierPrice(tier)}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">{tier.description}</p>
+
+              <ul className="mt-4 space-y-2">
+                {tier.benefits.slice(0, 4).map((benefit, idx) => (
+                  <li key={idx} className="flex items-center gap-2 text-sm">
+                    <CheckCircle
+                      className={`w-4 h-4 ${
+                        benefit.included ? "text-green-500" : "text-gray-300"
+                      }`}
+                    />
+                    <span className={benefit.included ? "text-gray-700" : "text-gray-400"}>
+                      {benefit.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              {key !== "free" && (
+                <button
+                  onClick={() => handleUpgradePlan(tier.id)}
+                  disabled={subscriptionLoading || currentSubscription?.tier === key}
+                  className={`w-full mt-4 py-2 rounded-lg font-medium transition ${
+                    currentSubscription?.tier === key
+                      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                      : tier.recommended
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {currentSubscription?.tier === key ? "Current Plan" : "Select Plan"}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
+      {/* Order History */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Billing History</h3>
-        <div className="p-4 bg-gray-50 rounded-lg text-center">
-          <p className="text-gray-500">No billing history</p>
-        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Order History</h3>
+        {orderHistory.length > 0 ? (
+          <div className="border border-gray-200 rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Date</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Description</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Amount</th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-500">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {orderHistory.map((order) => (
+                  <tr key={order.id}>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {order.course?.title ?? order.type}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      ${order.amount.toFixed(2)}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                          order.status === "paid"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-6 bg-gray-50 rounded-lg text-center">
+            <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-500">No orders yet</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Your purchase history will appear here
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

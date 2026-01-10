@@ -18,6 +18,7 @@ export default function TrainerLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [organizationName, setOrganizationName] = useState<string | undefined>(undefined);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -79,8 +80,12 @@ export default function TrainerLayout({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <TrainerAsideNav organizationName={organizationName} />
-      <div className="ml-64 flex flex-col min-h-screen">
+      <TrainerAsideNav
+        organizationName={organizationName}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+      />
+      <div className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarCollapsed ? "ml-20" : "ml-64"}`}>
         <TrainerTopHeader organizationName={organizationName} />
         <main className="flex-1">
           {children}
