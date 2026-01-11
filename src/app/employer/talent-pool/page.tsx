@@ -9,24 +9,51 @@ import {
   Search,
   Bookmark,
   BookmarkCheck,
-  MapPin,
+  Award,
   Briefcase,
   X,
   ChevronDown,
-  UserPlus,
+  DollarSign,
 } from "lucide-react";
+
+interface TalentProfile {
+  id: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  skills: string[];
+  experience: string;
+  hourlyRate: string | null;
+  portfolio: string | null;
+  tier: string;
+  completedProjects: number;
+  successRate: number;
+  verificationStatus: string;
+  platformAccess: boolean;
+  bio: string | null;
+}
+
+interface TalentData {
+  id: string;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+  profile: TalentProfile | null;
+}
 
 interface Talent {
   id: string;
   name: string;
   title: string;
-  location: string;
   experience: string;
   bio: string;
   skills: string[];
   avatar?: string;
   isBookmarked: boolean;
-  isRemote?: boolean;
+  tier: string;
+  completedProjects: number;
+  successRate: number;
+  hourlyRate: string | null;
 }
 
 interface ActiveFilter {
@@ -48,76 +75,13 @@ export default function EmployerTalentPoolPage() {
     { id: "2", label: "3-5 Years Exp", type: "experience" },
   ]);
 
-  // Mock data - in real app, fetch from API
-  const [stats] = useState({
-    totalCandidates: 1240,
-    newThisWeek: 15,
+  const [stats, setStats] = useState({
+    totalCandidates: 0,
+    newThisWeek: 0,
   });
 
-  const [talents, setTalents] = useState<Talent[]>([
-    {
-      id: "1",
-      name: "Sarah Jenkins",
-      title: "Senior Frontend Engineer",
-      location: "San Francisco, CA",
-      experience: "6y exp",
-      bio: "Specialized in building scalable React applications. Passionate abo...",
-      skills: ["React", "TypeScript", "Node.js", "GraphQL"],
-      isBookmarked: false,
-    },
-    {
-      id: "2",
-      name: "David Chen",
-      title: "Full Stack Developer",
-      location: "Remote",
-      experience: "4y exp",
-      bio: "Versatile developer comfortable with both frontend and backend. Strong...",
-      skills: ["Vue.js", "Python", "AWS", "Django"],
-      isBookmarked: false,
-      isRemote: true,
-    },
-    {
-      id: "3",
-      name: "Elena Rodriguez",
-      title: "Product Designer",
-      location: "Austin, TX",
-      experience: "8y exp",
-      bio: "Senior product designer focused on creating intuitive and beautiful user...",
-      skills: ["Figma", "UI/UX", "Prototyping"],
-      isBookmarked: true,
-    },
-    {
-      id: "4",
-      name: "Michael Kim",
-      title: "Data Analyst",
-      location: "New York, NY",
-      experience: "3y exp",
-      bio: "Analytical thinker with a strong background in statistical analysis a...",
-      skills: ["SQL", "Tableau", "R"],
-      isBookmarked: false,
-    },
-    {
-      id: "5",
-      name: "Amanda Jones",
-      title: "Marketing Specialist",
-      location: "Remote",
-      experience: "5y exp",
-      bio: "Digital marketing expert with a focus on SEO and content strategy....",
-      skills: ["SEO", "Content", "Analytics"],
-      isBookmarked: false,
-      isRemote: true,
-    },
-    {
-      id: "6",
-      name: "James Lee",
-      title: "DevOps Engineer",
-      location: "Seattle, WA",
-      experience: "7y exp",
-      bio: "Experienced DevOps engineer with a passion for automation and cloud...",
-      skills: ["Docker", "K8s", "CI/CD"],
-      isBookmarked: false,
-    },
-  ]);
+  const [talents, setTalents] = useState<Talent[]>([]);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
 
   const roles = [
     { value: "all", label: "All Roles" },
@@ -151,18 +115,63 @@ export default function EmployerTalentPoolPage() {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+    // Fetch talents from API
+    const fetchTalents = async () => {
+      try {
+        const response = await fetch("/api/talents");
+        const data = (await response.json()) as { talents?: TalentData[] };
 
-    return () => clearTimeout(timer);
-  }, [session, status, router]);
+        if (data.talents) {
+          const transformedTalents: Talent[] = data.talents.map(
+            (talent) => ({
+              id: talent.id,
+              name:
+                talent.profile?.firstName && talent.profile?.lastName
+                  ? `${talent.profile.firstName} ${talent.profile.lastName}`
+                  : talent.name ?? "Unknown",
+              title: talent.profile?.title ?? "No title",
+              experience: talent.profile?.experience ?? "N/A",
+              bio: talent.profile?.bio ?? "No bio available",
+              skills: talent.profile?.skills ?? [],
+              avatar: talent.image ?? undefined,
+              isBookmarked: bookmarkedIds.has(talent.id),
+              tier: talent.profile?.tier ?? "bronze",
+              completedProjects: talent.profile?.completedProjects ?? 0,
+              successRate: talent.profile?.successRate ?? 0,
+              hourlyRate: talent.profile?.hourlyRate ?? null,
+            })
+          );
+
+          setTalents(transformedTalents);
+          setStats({
+            totalCandidates: transformedTalents.length,
+            newThisWeek: Math.min(transformedTalents.length, 5),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching talents:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void fetchTalents();
+  }, [session, status, router, bookmarkedIds]);
 
   const removeFilter = (filterId: string) => {
     setActiveFilters(activeFilters.filter((f) => f.id !== filterId));
   };
 
   const toggleBookmark = (talentId: string) => {
+    setBookmarkedIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(talentId)) {
+        newSet.delete(talentId);
+      } else {
+        newSet.add(talentId);
+      }
+      return newSet;
+    });
     setTalents(
       talents.map((t) => (t.id === talentId ? { ...t, isBookmarked: !t.isBookmarked } : t))
     );
@@ -251,17 +260,6 @@ export default function EmployerTalentPoolPage() {
               <p className="text-sm text-green-600 font-medium">+{stats.newThisWeek} this week</p>
             </div>
             <div className="h-8 w-px bg-gray-200 hidden md:block"></div>
-            <button className="flex items-center space-x-2 px-4 py-2.5 border border-gray-200 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
-              <Bookmark className="w-4 h-4" />
-              <span>Saved Searches</span>
-            </button>
-            <Link
-              href="/employer/talent-pool/add"
-              className="flex items-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Add Candidate</span>
-            </Link>
           </div>
         </div>
 
@@ -398,16 +396,22 @@ export default function EmployerTalentPoolPage() {
                 </button>
               </div>
 
-              {/* Location and Experience */}
+              {/* Tier and Experience */}
               <div className="flex items-center space-x-4 mb-3 text-sm text-gray-500">
                 <div className="flex items-center space-x-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{talent.location}</span>
+                  <Award className="w-4 h-4" />
+                  <span className="capitalize">{talent.tier}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Briefcase className="w-4 h-4" />
                   <span>{talent.experience}</span>
                 </div>
+                {talent.hourlyRate && (
+                  <div className="flex items-center space-x-1">
+                    <DollarSign className="w-4 h-4" />
+                    <span>{talent.hourlyRate}/hr</span>
+                  </div>
+                )}
               </div>
 
               {/* Bio */}

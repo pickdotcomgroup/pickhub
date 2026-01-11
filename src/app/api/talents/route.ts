@@ -151,6 +151,7 @@ export async function GET(request: Request) {
             successRate: talent.talentProfile.successRate,
             verificationStatus: talent.talentProfile.verificationStatus,
             platformAccess: talent.talentProfile.platformAccess,
+            bio: talent.talentProfile.bio,
           }
         : null,
     }));

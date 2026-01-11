@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SendHorizontal, MoreVertical, Archive, Trash2, ArchiveIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -63,6 +63,7 @@ interface MessageWithSender extends Message {
 export default function TrainerMessagesPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<MessageWithSender[]>([]);
@@ -74,6 +75,7 @@ export default function TrainerMessagesPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const shouldAutoScrollRef = useRef(true);
+  const hasHandledToParam = useRef(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -119,6 +121,59 @@ export default function TrainerMessagesPage() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [openMenuId]);
+
+  // Handle 'to' query parameter - create or select conversation with specified user
+  useEffect(() => {
+    const toUserId = searchParams.get("to");
+
+    if (!toUserId || hasHandledToParam.current || loading || status !== "authenticated") {
+      return;
+    }
+
+    hasHandledToParam.current = true;
+
+    const createOrSelectConversation = async () => {
+      try {
+        // Create or get existing conversation
+        const response = await fetch("/api/conversations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ otherUserId: toUserId }),
+        });
+
+        if (response.ok) {
+          const conversation = (await response.json()) as Conversation;
+
+          // Refresh conversations list to include the new/existing conversation
+          await fetchConversations();
+
+          // Select the conversation and fetch its messages
+          setSelectedConversation(conversation);
+          shouldAutoScrollRef.current = true;
+
+          const messagesResponse = await fetch(`/api/messages?conversationId=${conversation.id}`);
+          if (messagesResponse.ok) {
+            const messagesData = (await messagesResponse.json()) as MessageWithSender[];
+            setMessages(messagesData);
+          }
+
+          // Mark messages as read
+          await fetch("/api/messages/mark-read", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ conversationId: conversation.id }),
+          });
+
+          // Clear the 'to' parameter from URL without refreshing
+          router.replace("/trainer/messages", { scroll: false });
+        }
+      } catch (error) {
+        console.error("Error creating conversation:", error);
+      }
+    };
+
+    void createOrSelectConversation();
+  }, [searchParams, loading, status, router]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
