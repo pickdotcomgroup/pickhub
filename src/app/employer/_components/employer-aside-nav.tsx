@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  LayoutDashboard,
   Briefcase,
   FolderKanban,
   Users,
@@ -57,11 +56,11 @@ export default function EmployerAsideNav({
   }, []);
 
   const mainNavItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      href: "/employer/dashboard",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-    },
+    // {
+    //   label: "Dashboard",
+    //   href: "/employer/dashboard",
+    //   icon: <LayoutDashboard className="w-5 h-5" />,
+    // },
     {
       label: "Applicants",
       href: "/employer/applicants",

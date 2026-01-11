@@ -5,7 +5,6 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import {
-  LayoutDashboard,
   BookOpen,
   Users,
   MessageSquare,
@@ -54,18 +53,18 @@ export default function TrainerAsideNav({ organizationName = "Code Academy", isC
   }, []);
 
   const navItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      href: "/trainer/dashboard",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-    },
+    // {
+    //   label: "Dashboard",
+    //   href: "/trainer/dashboard",
+    //   icon: <LayoutDashboard className="w-5 h-5" />,
+    // },
     {
       label: "Course Management",
       href: "/trainer/course-management",
       icon: <BookOpen className="w-5 h-5" />,
     },
     {
-      label: "Enrollments",
+      label: "Enrollees",
       href: "/trainer/enrollments",
       icon: <Users className="w-5 h-5" />,
     },

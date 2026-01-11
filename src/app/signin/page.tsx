@@ -118,11 +118,11 @@ function AuthContent() {
     if (session?.user) {
       // Route users to their role-specific dashboard
       if (session.user.role === "employer") {
-        router.push("/employer/dashboard");
+        router.push("/employer/applicants");
       } else if (session.user.role === "talent") {
-        router.push("/talent/dashboard");
+        router.push("/talent/jobs");
       } else if (session.user.role === "trainer") {
-        router.push("/trainer/dashboard");
+        router.push("/trainer/course-management");
       } else if (session.user.role === "admin") {
         router.push("/admin/dashboard");
       } else {

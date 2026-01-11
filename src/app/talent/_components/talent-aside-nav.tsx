@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  LayoutDashboard,
   FolderKanban,
   ShoppingBag,
   MessageSquare,
@@ -56,11 +55,11 @@ export default function TalentAsideNav({ userName: _userName = "Alex Dev", isCol
   }, []);
 
   const mainNavItems: NavItem[] = [
-    {
-      label: "Dashboard",
-      href: "/talent/dashboard",
-      icon: <LayoutDashboard className="w-5 h-5" />,
-    },
+    // {
+    //   label: "Dashboard",
+    //   href: "/talent/dashboard",
+    //   icon: <LayoutDashboard className="w-5 h-5" />,
+    // },
     {
       label: "AI Jobs",
       href: "/talent/jobs",
