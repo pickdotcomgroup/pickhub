@@ -38,29 +38,37 @@ export default function Footer() {
             <h3 className="text-gray-900 font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/browse" className="text-gray-600 hover:text-gray-900 transition">
-                  Browse
+                <Link  href="/signup?type=trainer" className="text-gray-600 hover:text-gray-900 transition">
+                  Become a Training Partner
                 </Link>
               </li>
               <li>
-                <Link href="/join" className="text-gray-600 hover:text-gray-900 transition">
-                  Join Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/auth" className="text-gray-600 hover:text-gray-900 transition">
-                  Sign In
-                </Link>
-              </li>
-              <li>
-                <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 transition">
-                  Dashboard
+                <Link href="/signup?type=employer" className="text-gray-600 hover:text-gray-900 transition">
+                  Become a Employer
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Categories */}
+          <div>
+            <h3 className="text-gray-900 font-semibold mb-4">Categories</h3>
+            <ul className="space-y-2">
+              <li>
+                <span className="text-gray-600">🏢 Clients</span>
+              </li>
+              <li>
+                <span className="text-gray-600">👨‍💻 Talents</span>
+              </li>
+              <li>
+                <span className="text-gray-600">🏛️ Agencies</span>
+              </li>
+              <li>
+                <span className="text-gray-600">💼 Projects</span>
+              </li>
+            </ul>
+          </div>
+                    {/* Categories */}
           <div>
             <h3 className="text-gray-900 font-semibold mb-4">Categories</h3>
             <ul className="space-y-2">

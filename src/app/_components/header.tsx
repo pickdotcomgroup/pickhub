@@ -349,7 +349,7 @@ export default function Header() {
               </nav>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             {session?.user ? (
               <>
@@ -783,12 +783,20 @@ export default function Header() {
                     Signup as Talent
                   </Link>
                 ) : (
-                  <Link
-                    href="/signin"
-                    className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
-                  >
-                    Sign In
-                  </Link>
+                  <>
+                    <Link
+                      href="/signup?type=talent"
+                      className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
+                    >
+                      Signup as Talent
+                    </Link>
+                    <Link
+                      href="/signin"
+                      className="rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 sm:px-5 sm:text-base"
+                    >
+                      Sign In
+                    </Link>
+                  </>
                 )}
               </div>
             ) : null}
