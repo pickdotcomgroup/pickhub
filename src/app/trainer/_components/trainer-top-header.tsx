@@ -70,15 +70,6 @@ export default function TrainerTopHeader({ organizationName }: TrainerTopHeaderP
             )}
           </button>
 
-          {/* Create New Course Button */}
-          <Link
-            href="/trainer/course-management"
-            className="hidden md:flex items-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
-          >
-            <span className="text-lg">+</span>
-            <span>Create New Course</span>
-          </Link>
-
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button

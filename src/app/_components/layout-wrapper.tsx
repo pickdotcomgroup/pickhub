@@ -11,7 +11,7 @@ export default function LayoutWrapper({
   const pathname = usePathname();
 
   // Pages where we don't want to show the header
-  const hideHeaderPaths = ["/auth"];
+  const hideHeaderPaths = ["/auth", "/wait-list"];
   const shouldShowHeader =
     !hideHeaderPaths.includes(pathname) &&
     !(pathname.startsWith("/client/projects/") && pathname !== "/client/projects/new") &&
